@@ -566,4 +566,90 @@ export const BEGINNER_LEVELS = [
       },
     },
   },
+  /* ----------------------- L2 hands-on: sklearn ---------------------- */
+  {
+    id: 'code-first-classifier',
+    kind: 'code',
+    title: 'Train Your First Classifier',
+    concept: 'Fit a model and measure its accuracy — in real Python',
+    explanation:
+      'You have seen what classification is. Now you will actually train a model. We use scikit-learn on the classic Iris flowers dataset: fit a model on training data, predict on data it has never seen, and measure how often it is right.',
+    example: {
+      text: 'Remember the spine: model = parameters + loss + optimization. scikit-learn runs that whole loop for you behind a single .fit() call — your job is to wire it up and judge the result.',
+    },
+    workedExample: {
+      intro:
+        'Watch the shape of every scikit-learn program: load data → split into train/test → fit on train → predict on test → score. The key idea: we ALWAYS test on data the model did not train on.',
+      steps: [
+        'Load Iris and split it: X_train/y_train teach the model; X_test/y_test are held back to grade it honestly.',
+        'Create a model (KNeighborsClassifier) and call model.fit(X_train, y_train). That is the whole training step.',
+        'Predict with model.predict(X_test), then compare to y_test with accuracy_score. Testing on unseen data is how we catch memorization.',
+      ],
+      takeaway: 'Every sklearn model is the same five beats: load → split → fit → predict → score.',
+    },
+    guided: {
+      prompt:
+        'Before the full exercise: which data should you call .fit() on?\n\nX_train / y_train  —  or  —  X_test / y_test ?',
+      hints: [
+        'The test set exists to grade the model. If the model trained on it, the grade would be a lie.',
+        'We fit (teach) on the training split, then keep the test split untouched until scoring.',
+      ],
+      answer: 'Fit on X_train, y_train.',
+      explanation:
+        'You always train on the training split and reserve the test split to measure honest, unseen-data performance.',
+    },
+    goDeeper: {
+      title: 'Why hold out a test set at all?',
+      body: 'A model can score 100% by memorizing the training rows and still fail on anything new — that is overfitting. The held-out test set is the only honest measure of generalization: performance on data the model has never seen. From here on, every model you build will be judged this way.',
+    },
+    video: {
+      title: 'Your first scikit-learn model',
+      description: 'The five-beat shape of every sklearn program, from load to score.',
+      duration: '4:00',
+    },
+    activity: {
+      type: 'notebook',
+      prompt:
+        'Finish the two missing lines (fit the model, then predict on the test set) so the classifier reaches at least 90% accuracy.',
+      data: {
+        packages: ['scikit-learn'],
+        starter: `from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0
+)
+
+model = KNeighborsClassifier(n_neighbors=3)
+# 1) Train the model on the TRAINING data:
+# model.fit(...)
+
+# 2) Predict on the TEST data:
+# preds = model.predict(...)
+
+preds = model.predict(X_test)  # remove or keep — must end with predictions in \`preds\`
+acc = accuracy_score(y_test, preds)
+print("accuracy:", round(acc, 3))`,
+        tests: `assert 'model' in dir(), "Create and fit a model named 'model'."
+assert 'preds' in dir(), "Store predictions in a variable named 'preds'."
+from sklearn.metrics import accuracy_score
+_acc = accuracy_score(y_test, preds)
+assert _acc >= 0.9, f"Accuracy is {_acc:.2f} — fit on the training data and predict on X_test to reach 0.90."`,
+        hints: [
+          'Call model.fit(X_train, y_train) before predicting — an unfit model cannot classify.',
+          'Predict on the held-out set: preds = model.predict(X_test).',
+          'Full shape: model.fit(X_train, y_train) then preds = model.predict(X_test). Then accuracy_score(y_test, preds) ≥ 0.90.',
+        ],
+      },
+      feedback: {
+        correct:
+          'That is a trained, working classifier — fit on training data, judged on unseen data, over 90% accurate. You just ran the whole model = parameters + loss + optimization loop.',
+        incorrect:
+          'Not yet. Make sure you fit on the TRAINING data and predict on the TEST data — read the hint and try again.',
+      },
+    },
+  },
 ]
