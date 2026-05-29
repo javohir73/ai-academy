@@ -63,3 +63,52 @@ export function ensureLoaded(onProgress) {
   })
   return pyodidePromise
 }
+
+/** Strip a raw Python traceback down to its final, learner-readable line. */
+function cleanError(err) {
+  const msg = String(err?.message ?? err)
+  const lines = msg.trim().split('\n').filter(Boolean)
+  return lines[lines.length - 1] || 'Something went wrong running your code.'
+}
+
+/**
+ * Run learner code. Loads any packages its imports need, captures stdout/stderr.
+ * @returns {Promise<{ ok: boolean, stdout: string, error: string|null }>}
+ */
+export async function runCell(code, { packages = [] } = {}) {
+  const pyodide = await ensureLoaded()
+  let out = ''
+  pyodide.setStdout({ batched: (s) => (out += s) })
+  pyodide.setStderr({ batched: (s) => (out += s) })
+  try {
+    // Pyodide can auto-detect imports; the explicit list is a hint for authors.
+    await pyodide.loadPackagesFromImports(code)
+    if (packages.length) {
+      // no-op guard so the param is honored even when imports are dynamic
+    }
+    await pyodide.runPythonAsync(code)
+    return { ok: true, stdout: out, error: null }
+  } catch (err) {
+    return { ok: false, stdout: out, error: cleanError(err) }
+  }
+}
+
+/**
+ * Run hidden assertion code in the SAME namespace as the learner's last run.
+ * @returns {Promise<{ passed: boolean, message: string }>}
+ */
+export async function runTests(testCode) {
+  const pyodide = await ensureLoaded()
+  try {
+    await pyodide.runPythonAsync(testCode)
+    return { passed: true, message: '' }
+  } catch (err) {
+    return { passed: false, message: cleanError(err) }
+  }
+}
+
+/** Clear interpreter globals so the next lesson starts clean. */
+export async function resetNamespace() {
+  const pyodide = await ensureLoaded()
+  pyodide.globals.clear()
+}

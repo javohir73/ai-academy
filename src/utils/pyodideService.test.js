@@ -41,3 +41,72 @@ describe('pyodideService.ensureLoaded', () => {
     expect(loadPyodide).toHaveBeenCalledTimes(1)
   })
 })
+
+describe('pyodideService.runCell', () => {
+  beforeEach(() => {
+    document.head.innerHTML = ''
+    delete globalThis.loadPyodide
+  })
+
+  async function bootedService(py) {
+    const svc = await freshService()
+    svc.__setScriptLoaderForTest(async () => {
+      globalThis.loadPyodide = vi.fn().mockResolvedValue(py)
+    })
+    await svc.ensureLoaded()
+    return svc
+  }
+
+  it('loads packages from imports and returns captured stdout on success', async () => {
+    const py = fakePyodide()
+    // Simulate stdout capture: when runPythonAsync runs, push to the batched writer.
+    py.setStdout.mockImplementation(({ batched }) => {
+      py.__emit = batched
+    })
+    py.runPythonAsync.mockImplementation(async () => {
+      py.__emit('hello\n')
+    })
+    const svc = await bootedService(py)
+
+    const res = await svc.runCell('print("hello")', { packages: ['numpy'] })
+
+    expect(py.loadPackagesFromImports).toHaveBeenCalledWith('print("hello")')
+    expect(res.ok).toBe(true)
+    expect(res.stdout).toContain('hello')
+    expect(res.error).toBeNull()
+  })
+
+  it('returns ok:false and the error message when the code raises', async () => {
+    const py = fakePyodide()
+    py.runPythonAsync.mockRejectedValue(new Error('NameError: name "x" is not defined'))
+    const svc = await bootedService(py)
+
+    const res = await svc.runCell('print(x)', { packages: [] })
+
+    expect(res.ok).toBe(false)
+    expect(res.error).toContain('NameError')
+  })
+
+  it('runTests returns passed:true when assertions do not raise', async () => {
+    const py = fakePyodide()
+    const svc = await bootedService(py)
+    const res = await svc.runTests('assert 1 == 1')
+    expect(res.passed).toBe(true)
+  })
+
+  it('runTests returns passed:false with the assertion message on failure', async () => {
+    const py = fakePyodide()
+    py.runPythonAsync.mockRejectedValue(new Error('AssertionError: accuracy too low'))
+    const svc = await bootedService(py)
+    const res = await svc.runTests('assert acc > 0.8, "accuracy too low"')
+    expect(res.passed).toBe(false)
+    expect(res.message).toContain('accuracy too low')
+  })
+
+  it('resetNamespace clears interpreter globals', async () => {
+    const py = fakePyodide()
+    const svc = await bootedService(py)
+    await svc.resetNamespace()
+    expect(py.globals.clear).toHaveBeenCalled()
+  })
+})
