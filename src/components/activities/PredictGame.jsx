@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Lock, CheckCircle2 } from 'lucide-react'
+import { Lock, CheckCircle2, Minus, Plus } from 'lucide-react'
 
 /*
  * PredictGame — a tiny live "model" (level 6). The predicted value is a simple
@@ -29,6 +29,14 @@ export default function PredictGame({ data, onResult }) {
   function update(id, value) {
     if (submitted) return
     setValues((v) => ({ ...v, [id]: Number(value) }))
+  }
+
+  function stepInput(input, direction) {
+    if (submitted) return
+    setValues((v) => {
+      const next = clamp(v[input.id] + input.step * direction, input.min, input.max)
+      return { ...v, [input.id]: next }
+    })
   }
 
   function lockIn() {
@@ -69,16 +77,34 @@ export default function PredictGame({ data, onResult }) {
             <span>{input.label}</span>
             <span className="val">{values[input.id]}</span>
           </label>
-          <input
-            id={`slider-${input.id}`}
-            type="range"
-            min={input.min}
-            max={input.max}
-            step={input.step}
-            value={values[input.id]}
-            disabled={submitted}
-            onChange={(e) => update(input.id, e.target.value)}
-          />
+          <div className="slider-control">
+            <button
+              className="icon-btn slider-step"
+              onClick={() => stepInput(input, -1)}
+              disabled={submitted || values[input.id] <= input.min}
+              aria-label={`Decrease ${input.label}`}
+            >
+              <Minus size={16} />
+            </button>
+            <input
+              id={`slider-${input.id}`}
+              type="range"
+              min={input.min}
+              max={input.max}
+              step={input.step}
+              value={values[input.id]}
+              disabled={submitted}
+              onChange={(e) => update(input.id, e.target.value)}
+            />
+            <button
+              className="icon-btn slider-step"
+              onClick={() => stepInput(input, 1)}
+              disabled={submitted || values[input.id] >= input.max}
+              aria-label={`Increase ${input.label}`}
+            >
+              <Plus size={16} />
+            </button>
+          </div>
         </div>
       ))}
 

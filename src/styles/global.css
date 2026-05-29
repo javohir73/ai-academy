@@ -941,6 +941,22 @@ a {
   font-weight: 600;
   color: var(--accent-strong);
 }
+.slider-control {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: var(--s2);
+}
+.slider-step {
+  width: 36px;
+  height: 36px;
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+.slider-step:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
 input[type='range'] {
   width: 100%;
   accent-color: var(--accent);

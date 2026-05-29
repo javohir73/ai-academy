@@ -81,6 +81,22 @@ npm run build
 npm run preview
 ```
 
+## Deploying Online
+
+The app builds to static files in `dist/`, so it can be hosted on Vercel,
+Netlify, GitHub Pages, Cloudflare Pages, S3, or any static web host.
+
+Typical hosted build settings:
+
+```text
+Build command: npm run build
+Publish directory: dist
+```
+
+There is no backend to provision. Pyodide and Python packages load in the
+learner's browser from the pinned CDN at runtime, so the hosted site needs normal
+internet access to that CDN.
+
 ## Project Structure
 
 ```text
@@ -115,8 +131,8 @@ src/
 - captures stdout and stderr
 - loads requested Python packages
 - runs hidden assertion tests in the same namespace
-- applies timeouts so boot, package loading, code execution, and tests do not
-  leave the learner stuck forever
+- applies timeouts around boot, package loading, code execution promises, and
+  tests so network stalls fail with friendly retry paths
 
 Notebook activities use the same activity contract as the rest of the app:
 
@@ -177,7 +193,8 @@ localStorage.removeItem('ai-academy:progress.v1')
 - Add Level 4 Computer Vision.
 - Add richer projects and portfolio artifacts.
 - Move Pyodide execution into a Web Worker before heavy public use, so long or
-  infinite Python code cannot block the main UI thread.
+  infinite CPU-bound Python code can be interrupted without blocking the main UI
+  thread.
 - Add real lesson videos or short animations to replace placeholders.
 
 ## Current Verification

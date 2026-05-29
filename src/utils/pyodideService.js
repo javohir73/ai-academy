@@ -22,8 +22,9 @@ const BOOT_TIMEOUT_MS = 60000
 // generous, but finite — a stalled package fetch must not freeze the Run button.
 const PACKAGE_TIMEOUT_MS = 60000
 
-// Cap on running learner code / hidden tests: CPU-bound in the main thread, so
-// shorter — an accidental infinite loop should fail fast with a friendly error.
+// Cap on running learner code / hidden tests. This catches async stalls and
+// long-running Pyodide promises; a Web Worker is still needed for hard
+// interruption of CPU-bound Python that blocks the main thread.
 const EXEC_TIMEOUT_MS = 15000
 
 let pyodidePromise = null
@@ -130,7 +131,8 @@ export async function runCell(code, { packages = [] } = {}) {
       packageTimeoutMs,
       'Loading the required Python packages took too long. Check your connection and run again.',
     )
-    // Bound execution too, so an accidental infinite loop fails fast.
+    // Bound execution promises too. A future Worker can add hard cancellation
+    // for CPU-bound Python that blocks the main thread.
     await withTimeout(
       pyodide.runPythonAsync(code),
       execTimeoutMs,
