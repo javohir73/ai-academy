@@ -1,26 +1,34 @@
 /* =====================================================================
-   TRACKS — the course is organized into curriculum LEVELS (a concept-course
-   slice of the full 7-level AI Academy curriculum; see ../../curriculum/).
-   The levels shipped here are 1 (Fundamentals of AI), 2 (Introduction to ML)
-   and 5 (LLMs — Evaluation & Responsible AI).
+   TRACKS — the course organized into curriculum LEVELS (L0, L1, L2, L3, L5).
 
-   The flat `LEVELS` array (all lessons, in order) drives the shared, chained
-   unlock rule in useProgress: each lesson unlocks when the previous one is
-   completed, so each level naturally unlocks only after the one before it.
+   Concept-first model: beginner levels (L0, L1) are code-free; runnable-code
+   lessons (kind: 'code') begin at L2 and are listed AFTER each level's concept
+   lessons. Because useProgress unlocks each lesson only when the previous one
+   (by flat index) is done, ordering concept-before-code makes the platform earn
+   intuition before the keyboard — no unlock-logic changes needed.
 
-   Lessons live in levels.js / intermediate.js and are composed into levels
-   here BY ID, so re-grouping a lesson is a one-line change and never moves
-   content between files. To add a lesson, add it to a data file and list its
-   id in the right level below.
+   Lessons live in the data files and are composed here BY ID, so re-grouping a
+   lesson is a one-line change.
    ===================================================================== */
+import { FOUNDATIONS_LEVELS } from './foundations.js'
 import { BEGINNER_LEVELS } from './levels.js'
 import { INTERMEDIATE_LEVELS } from './intermediate.js'
 
 // Index every lesson by id so tracks can be composed by curriculum level.
-const BY_ID = Object.fromEntries([...BEGINNER_LEVELS, ...INTERMEDIATE_LEVELS].map((l) => [l.id, l]))
+const BY_ID = Object.fromEntries(
+  [...FOUNDATIONS_LEVELS, ...BEGINNER_LEVELS, ...INTERMEDIATE_LEVELS].map((l) => [l.id, l]),
+)
 const pick = (...ids) => ids.map((id) => BY_ID[id])
 
 export const TRACKS = [
+  {
+    id: 'level-0',
+    tag: 'Level 0',
+    title: 'Foundations',
+    blurb:
+      'The on-ramp: what data is and why good examples come before any model. Concept-first, no code required.',
+    levels: pick('what-is-data'),
+  },
   {
     id: 'level-1',
     tag: 'Level 1',
@@ -34,7 +42,7 @@ export const TRACKS = [
     tag: 'Level 2',
     title: 'Introduction to Machine Learning',
     blurb:
-      'How machines learn patterns from data: training data, features and labels, classification, prediction, bias, overfitting, and a first look at neural networks.',
+      'How machines learn patterns from data: training data, features and labels, classification, prediction, bias, overfitting — then your first real models in Python.',
     levels: pick(
       'what-ml',
       'training-data',
@@ -44,12 +52,22 @@ export const TRACKS = [
       'bias',
       'overfitting',
       'neural-networks',
+      'code-first-classifier',
+      'code-metrics-overfitting',
     ),
+  },
+  {
+    id: 'level-3',
+    tag: 'Level 3',
+    title: 'Neural Networks & Problem Solving',
+    blurb:
+      'The bridge from rules to learning. Start hands-on with search — an agent that finds the shortest path in code — the skeleton smarter algorithms build on.',
+    levels: pick('code-bfs-maze'),
   },
   {
     id: 'level-5',
     tag: 'Level 5',
-    pro: true, // career-focused evaluation track — gets the distinct "pro" styling
+    pro: true,
     title: 'LLMs in Practice — Evaluation & Responsible AI',
     blurb:
       'Train like a real AI model evaluator: score outputs, rank answers, catch hallucinations, and improve weak responses against a rubric.',
@@ -73,9 +91,9 @@ export const LEVELS = TRACKS.flatMap((t) => t.levels)
 export const MAX_STARS = LEVELS.length * 3
 
 /**
- * Tracks annotated with the flat (global) index of each of their levels, so
- * the sidebar / overview can map a level-local lesson back to its position in
- * LEVELS (used for unlock checks and navigation).
+ * Tracks annotated with the flat (global) index of each of their levels, so the
+ * sidebar / overview can map a level-local lesson back to its position in LEVELS
+ * (used for unlock checks and navigation).
  */
 export const TRACKS_WITH_OFFSETS = (() => {
   let offset = 0
