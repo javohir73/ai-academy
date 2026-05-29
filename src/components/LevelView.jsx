@@ -1,0 +1,198 @@
+import { useState } from 'react'
+import {
+  ChevronLeft,
+  Lightbulb,
+  ListChecks,
+  PlayCircle,
+  BookOpen,
+  Users,
+  Target,
+  ArrowRight,
+} from 'lucide-react'
+import ActivityShell from './ActivityShell.jsx'
+import VideoCard from './VideoCard.jsx'
+import WorkedExample from './WorkedExample.jsx'
+import GuidedPractice from './GuidedPractice.jsx'
+import GoDeeper from './GoDeeper.jsx'
+import SpacedReview from './SpacedReview.jsx'
+import { iconForLevel } from './levelIcons.js'
+
+/*
+ * A single lesson, taught with gradual release of responsibility:
+ *
+ *   I do   (learn)    — concept, video, everyday example and a narrated worked
+ *                       example. The learner watches an expert think.
+ *   We do  (guided)   — one scaffolded attempt with an escalating hint ladder.
+ *   You do (practice) — the independent challenge, framed as a mastery check.
+ *
+ * A phase stepper lets the learner move between phases. The We-do phase only
+ * appears when the lesson provides `guided` data, so lessons that have not been
+ * upgraded to the full structure still render correctly (just I do → You do).
+ */
+
+const PHASE_META = {
+  learn: { doing: 'I do', title: 'Learn', Icon: BookOpen },
+  guided: { doing: 'We do', title: 'Practice together', Icon: Users },
+  practice: { doing: 'You do', title: 'Mastery check', Icon: Target },
+}
+
+export default function LevelView({
+  level,
+  levelIndex,
+  totalLevels,
+  onComplete,
+  onBack,
+  onNext,
+}) {
+  const Icon = iconForLevel(level.id)
+
+  // Build the phase list for THIS lesson (skip We-do if there's no guided data).
+  const phases = ['learn', level.guided ? 'guided' : null, 'practice'].filter(Boolean)
+  const [phase, setPhase] = useState('learn')
+  const phaseIndex = phases.indexOf(phase)
+
+  function goNextPhase() {
+    const next = phases[phaseIndex + 1]
+    if (next) {
+      setPhase(next)
+      window.scrollTo({ top: 0 })
+    }
+  }
+
+  const nextPhase = phases[phaseIndex + 1]
+  const continueLabel =
+    nextPhase === 'guided'
+      ? 'Practice it together'
+      : nextPhase === 'practice'
+      ? 'Try the challenge yourself'
+      : null
+
+  return (
+    <article>
+      <button className="back-link" onClick={onBack}>
+        <ChevronLeft size={18} /> Course overview
+      </button>
+
+      <header className="lesson-head">
+        <span className="lesson-head__icon" aria-hidden="true">
+          <Icon size={26} />
+        </span>
+        <div>
+          <div className="lesson-head__crumb">
+            Lesson {levelIndex + 1} of {totalLevels}
+          </div>
+          <h1>{level.title}</h1>
+          <div className="lesson-head__concept">{level.concept}</div>
+        </div>
+      </header>
+
+      {/* Phase stepper — the gradual-release path through the lesson. */}
+      <nav className="phase-steps" aria-label="Lesson steps">
+        {phases.map((p, i) => {
+          const meta = PHASE_META[p]
+          const StepIcon = meta.Icon
+          const state = i === phaseIndex ? ' phase-step--active' : i < phaseIndex ? ' phase-step--past' : ''
+          return (
+            <button
+              key={p}
+              className={`phase-step${state}`}
+              onClick={() => setPhase(p)}
+              aria-current={i === phaseIndex ? 'step' : undefined}
+            >
+              <span className="phase-step__icon">
+                <StepIcon size={16} />
+              </span>
+              <span className="phase-step__text">
+                <span className="phase-step__doing">{meta.doing}</span>
+                <span className="phase-step__title">{meta.title}</span>
+              </span>
+            </button>
+          )
+        })}
+      </nav>
+
+      {/* ---------------------------- I DO ---------------------------- */}
+      {phase === 'learn' && (
+        <>
+          {level.spacedReview && <SpacedReview data={level.spacedReview} />}
+
+          <section className="section" aria-label="Concept">
+            <div className="section__label">Concept</div>
+            <p className="concept-text">{level.explanation}</p>
+          </section>
+
+          {level.video && (
+            <section className="section" aria-label="Watch">
+              <div className="section__label">
+                <PlayCircle size={15} /> Watch
+              </div>
+              <VideoCard
+                title={level.video.title}
+                description={level.video.description}
+                duration={level.video.duration}
+                src={level.video.src}
+              />
+            </section>
+          )}
+
+          <section className="section" aria-label="Everyday example">
+            <div className="section__label">
+              <Lightbulb size={15} /> Everyday example
+            </div>
+            <div className="callout">
+              <Lightbulb className="callout__icon" size={20} aria-hidden="true" />
+              <p>{level.example.text}</p>
+            </div>
+          </section>
+
+          {level.workedExample && (
+            <section className="section" aria-label="Worked example">
+              <div className="section__label">
+                <BookOpen size={15} /> Worked example
+              </div>
+              <WorkedExample data={level.workedExample} />
+            </section>
+          )}
+
+          {level.goDeeper && <GoDeeper data={level.goDeeper} />}
+        </>
+      )}
+
+      {/* ---------------------------- WE DO --------------------------- */}
+      {phase === 'guided' && (
+        <section className="section" aria-label="Practice together">
+          <div className="section__label">
+            <Users size={15} /> Practice together
+          </div>
+          <p className="prompt">Let's work through one step by step. Reach for a hint whenever you're stuck.</p>
+          <GuidedPractice data={level.guided} />
+        </section>
+      )}
+
+      {/* --------------------------- YOU DO --------------------------- */}
+      {phase === 'practice' && (
+        <section className="section" aria-label="Mastery check">
+          <div className="section__label">
+            <ListChecks size={15} /> Mastery check
+          </div>
+          <p className="prompt">{level.activity.prompt}</p>
+          <ActivityShell
+            activity={level.activity}
+            onComplete={(stars) => onComplete(level.id, stars)}
+            onNext={onNext}
+            onBack={onBack}
+          />
+        </section>
+      )}
+
+      {/* Phase navigation (not shown on the You-do step — the activity owns its own controls). */}
+      {phase !== 'practice' && continueLabel && (
+        <div className="phase-nav">
+          <button className="btn btn--primary" onClick={goNextPhase}>
+            {continueLabel} <ArrowRight size={18} />
+          </button>
+        </div>
+      )}
+    </article>
+  )
+}
