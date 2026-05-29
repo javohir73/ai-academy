@@ -83,19 +83,65 @@ npm run preview
 
 ## Deploying Online
 
-The app builds to static files in `dist/`, so it can be hosted on Vercel,
-Netlify, GitHub Pages, Cloudflare Pages, S3, or any static web host.
+The app builds to **static files** in `dist/`, so it hosts on Vercel, Netlify,
+GitHub Pages, Cloudflare Pages, S3, or any static host. There is no backend to
+provision.
 
-Typical hosted build settings:
+Universal build settings (any host):
 
 ```text
-Build command: npm run build
+Build command:     npm run build
 Publish directory: dist
+Node version:      18+ (set NODE_VERSION=18 if the host needs it)
 ```
 
-There is no backend to provision. Pyodide and Python packages load in the
-learner's browser from the pinned CDN at runtime, so the hosted site needs normal
-internet access to that CDN.
+**Two things worth knowing up front:**
+
+- **No `base` change needed, anywhere.** `vite.config.js` sets `base: './'`
+  (relative asset URLs), so the same build works at a domain root (Vercel,
+  Netlify) *and* under a sub-path (`https://user.github.io/<repo>/`, GitHub
+  Pages) without edits.
+- **No SPA-routing/404 config needed.** The app is a single page with no
+  client-side router — there are no deep-link routes to rewrite, so you do
+  **not** need a `_redirects` / catch-all / `404.html` rule.
+- **Runtime needs the CDN.** Pyodide and Python packages download in the
+  learner's browser from the pinned jsDelivr CDN the first time a Level 2+ code
+  lesson opens. The hosted site itself is static, but learners need normal
+  internet access for those code lessons (concept lessons work regardless).
+
+### Vercel (zero-config)
+
+1. Push this repo to GitHub/GitLab/Bitbucket.
+2. In Vercel: **Add New → Project → Import** the repo.
+3. Vercel auto-detects Vite. Confirm: Build `npm run build`, Output `dist`.
+4. **Deploy.** Every push to the default branch redeploys.
+
+CLI alternative: `npm i -g vercel && vercel` (then `vercel --prod`).
+
+### Netlify
+
+A `netlify.toml` is included (build = `npm run build`, publish = `dist`), so:
+
+1. Push the repo to your Git host.
+2. In Netlify: **Add new site → Import an existing project**, pick the repo.
+   The settings come from `netlify.toml` — just confirm and deploy.
+
+CLI / drag-and-drop alternatives: `npx netlify-cli deploy --prod`, or build
+locally and drag the `dist/` folder onto the Netlify dashboard.
+
+### GitHub Pages
+
+A workflow is included at `.github/workflows/deploy-pages.yml` that builds on
+every push to `main` and publishes `dist/` to Pages. One-time setup:
+
+1. Push the repo to GitHub.
+2. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
+3. Push to `main` (or re-run the workflow). The site publishes at
+   `https://<user>.github.io/<repo>/`. Because `base` is relative, no further
+   config is required.
+
+Manual alternative (no Actions): `npm run build`, then publish `dist/` with
+`npx gh-pages -d dist`.
 
 ## Project Structure
 
