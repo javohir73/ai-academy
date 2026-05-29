@@ -81,11 +81,9 @@ export async function runCell(code, { packages = [] } = {}) {
   pyodide.setStdout({ batched: (s) => (out += s) })
   pyodide.setStderr({ batched: (s) => (out += s) })
   try {
-    // Pyodide can auto-detect imports; the explicit list is a hint for authors.
+    // Load packages two ways: explicit list from the lesson, plus auto-detected imports.
+    if (packages.length) await pyodide.loadPackage(packages)
     await pyodide.loadPackagesFromImports(code)
-    if (packages.length) {
-      // no-op guard so the param is honored even when imports are dynamic
-    }
     await pyodide.runPythonAsync(code)
     return { ok: true, stdout: out, error: null }
   } catch (err) {

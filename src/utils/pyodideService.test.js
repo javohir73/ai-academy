@@ -8,6 +8,7 @@ async function freshService() {
 
 function fakePyodide() {
   return {
+    loadPackage: vi.fn().mockResolvedValue(undefined),
     loadPackagesFromImports: vi.fn().mockResolvedValue(undefined),
     runPythonAsync: vi.fn().mockResolvedValue(undefined),
     globals: { clear: vi.fn() },
@@ -40,6 +41,18 @@ describe('pyodideService.ensureLoaded', () => {
     expect(b).toBe(py)
     expect(loadPyodide).toHaveBeenCalledTimes(1)
   })
+
+  it('clears the memo on boot failure so a later call can retry', async () => {
+    const svc = await freshService()
+    let calls = 0
+    svc.__setScriptLoaderForTest(async () => {
+      calls += 1
+      if (calls === 1) throw new Error('pyodide-script-failed')
+      globalThis.loadPyodide = vi.fn().mockResolvedValue(fakePyodide())
+    })
+    await expect(svc.ensureLoaded()).rejects.toThrow('pyodide-script-failed')
+    await expect(svc.ensureLoaded()).resolves.toBeDefined() // retry works
+  })
 })
 
 describe('pyodideService.runCell', () => {
@@ -70,6 +83,7 @@ describe('pyodideService.runCell', () => {
 
     const res = await svc.runCell('print("hello")', { packages: ['numpy'] })
 
+    expect(py.loadPackage).toHaveBeenCalledWith(['numpy'])
     expect(py.loadPackagesFromImports).toHaveBeenCalledWith('print("hello")')
     expect(res.ok).toBe(true)
     expect(res.stdout).toContain('hello')
