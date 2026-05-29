@@ -25,9 +25,10 @@ describe('NotebookGame', () => {
     svc.resetNamespace.mockResolvedValue(undefined)
   })
 
-  it('seeds the editor with starter code', () => {
+  it('seeds the editor with starter code', async () => {
     render(<NotebookGame data={baseData} onResult={() => {}} />)
     expect(screen.getByRole('textbox')).toHaveValue('acc = 0.9')
+    await waitFor(() => expect(svc.resetNamespace).toHaveBeenCalled())
   })
 
   it('reports correct when the code runs and all tests pass', async () => {

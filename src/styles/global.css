@@ -2486,6 +2486,14 @@ input[type='range'] {
   font-size: 0.76rem;
 }
 
+/* "Coming soon" note under a track header (e.g. L4 not built yet) */
+.track-comingsoon {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--muted, #64748b);
+}
+
 /* ---- Hands-on code (notebook) activity ---------------------------- */
 .code-badge {
   display: inline-block;

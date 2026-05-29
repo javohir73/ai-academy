@@ -47,9 +47,15 @@ export default function ActivityShell({ activity, onComplete, onNext, onBack }) 
   }
 
   // Retry after a wrong answer: keep the wrong-count so stars reflect effort.
+  // Bumping resetKey remounts the activity (fresh state) — right for most games.
+  // Notebook lessons are the exception: remounting would discard the learner's
+  // typed code (and re-boot Pyodide), so we only dismiss the banner and let them
+  // edit and re-run. ("Reset cell" inside NotebookGame still restores the starter.)
   function tryAgain() {
     setResult(null)
-    setResetKey((k) => k + 1)
+    if (activity.type !== 'notebook') {
+      setResetKey((k) => k + 1)
+    }
   }
 
   // Fresh attempt after a win: reset the wrong-count for a clean score.

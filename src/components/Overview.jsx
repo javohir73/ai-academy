@@ -55,6 +55,9 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
               <p className="muted" style={{ margin: 0 }}>
                 {track.blurb}
               </p>
+              {track.comingSoon && (
+                <p className="track-comingsoon">{track.comingSoon}</p>
+              )}
               {trackLocked && prevTrack && (
                 <p className="track-locked track-locked--inline">
                   <Lock size={14} /> Complete {prevTrack.tag} to unlock these lessons

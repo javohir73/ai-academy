@@ -624,13 +624,13 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 model = KNeighborsClassifier(n_neighbors=3)
-# 1) Train the model on the TRAINING data:
-# model.fit(...)
 
-# 2) Predict on the TEST data:
-# preds = model.predict(...)
+# 1) Train the model on the TRAINING data. Replace this line:
+model.fit(...)  # TODO: fit on X_train, y_train
 
-preds = model.predict(X_test)  # remove or keep — must end with predictions in \`preds\`
+# 2) Predict on the TEST data. Replace this line:
+preds = ...  # TODO: predict on X_test
+
 acc = accuracy_score(y_test, preds)
 print("accuracy:", round(acc, 3))`,
         tests: `assert 'model' in dir(), "Create and fit a model named 'model'."

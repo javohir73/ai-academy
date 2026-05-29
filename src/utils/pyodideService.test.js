@@ -117,6 +117,30 @@ describe('pyodideService.runCell', () => {
     expect(res.error).toContain('NameError')
   })
 
+  it('returns ok:false when package loading hangs past the timeout', async () => {
+    const py = fakePyodide()
+    py.loadPackage.mockReturnValue(new Promise(() => {}))
+    const svc = await bootedService(py)
+    svc.__setExecTimeoutsForTest({ packageMs: 20 })
+
+    const res = await svc.runCell('import sklearn', { packages: ['scikit-learn'] })
+
+    expect(res.ok).toBe(false)
+    expect(res.error).toContain('Loading the required Python packages took too long')
+  })
+
+  it('returns ok:false when learner code hangs past the timeout', async () => {
+    const py = fakePyodide()
+    py.runPythonAsync.mockReturnValue(new Promise(() => {}))
+    const svc = await bootedService(py)
+    svc.__setExecTimeoutsForTest({ execMs: 20 })
+
+    const res = await svc.runCell('while True: pass', { packages: [] })
+
+    expect(res.ok).toBe(false)
+    expect(res.error).toContain('Your code took too long to run')
+  })
+
   it('runTests returns passed:true when assertions do not raise', async () => {
     const py = fakePyodide()
     const svc = await bootedService(py)
@@ -131,6 +155,18 @@ describe('pyodideService.runCell', () => {
     const res = await svc.runTests('assert acc > 0.8, "accuracy too low"')
     expect(res.passed).toBe(false)
     expect(res.message).toContain('accuracy too low')
+  })
+
+  it('runTests returns passed:false when hidden checks hang past the timeout', async () => {
+    const py = fakePyodide()
+    py.runPythonAsync.mockReturnValue(new Promise(() => {}))
+    const svc = await bootedService(py)
+    svc.__setExecTimeoutsForTest({ execMs: 20 })
+
+    const res = await svc.runTests('while True: pass')
+
+    expect(res.passed).toBe(false)
+    expect(res.message).toContain('Checking your answer took too long')
   })
 
   it('resetNamespace clears interpreter globals', async () => {

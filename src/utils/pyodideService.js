@@ -18,8 +18,18 @@ const CDN_BASE = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`
 // forever (60s — generous for a large WASM + sklearn download on a slow link).
 const BOOT_TIMEOUT_MS = 60000
 
+// Cap on loading a lesson's packages (e.g. scikit-learn): network-bound, so
+// generous, but finite — a stalled package fetch must not freeze the Run button.
+const PACKAGE_TIMEOUT_MS = 60000
+
+// Cap on running learner code / hidden tests: CPU-bound in the main thread, so
+// shorter — an accidental infinite loop should fail fast with a friendly error.
+const EXEC_TIMEOUT_MS = 15000
+
 let pyodidePromise = null
 let bootTimeoutMs = BOOT_TIMEOUT_MS
+let packageTimeoutMs = PACKAGE_TIMEOUT_MS
+let execTimeoutMs = EXEC_TIMEOUT_MS
 
 // Injectable for tests; production injects the real CDN <script>.
 let scriptLoader = defaultScriptLoader
@@ -50,6 +60,12 @@ export function __setScriptLoaderForTest(fn) {
 /** TEST ONLY: override the boot timeout (ms). */
 export function __setBootTimeoutForTest(ms) {
   bootTimeoutMs = ms
+}
+
+/** TEST ONLY: override the package-load and code-execution timeouts (ms). */
+export function __setExecTimeoutsForTest({ packageMs, execMs } = {}) {
+  if (packageMs != null) packageTimeoutMs = packageMs
+  if (execMs != null) execTimeoutMs = execMs
 }
 
 /** Reject if `promise` doesn't settle within `ms`; always clears its timer. */
@@ -100,10 +116,26 @@ export async function runCell(code, { packages = [] } = {}) {
   pyodide.setStdout({ batched: (s) => (out += s) })
   pyodide.setStderr({ batched: (s) => (out += s) })
   try {
-    // Load packages two ways: explicit list from the lesson, plus auto-detected imports.
-    if (packages.length) await pyodide.loadPackage(packages)
-    await pyodide.loadPackagesFromImports(code)
-    await pyodide.runPythonAsync(code)
+    // Load packages two ways: explicit list from the lesson, plus auto-detected
+    // imports. Bounded so a stalled package download can't hang the Run button.
+    if (packages.length) {
+      await withTimeout(
+        pyodide.loadPackage(packages),
+        packageTimeoutMs,
+        'Loading the required Python packages took too long. Check your connection and run again.',
+      )
+    }
+    await withTimeout(
+      pyodide.loadPackagesFromImports(code),
+      packageTimeoutMs,
+      'Loading the required Python packages took too long. Check your connection and run again.',
+    )
+    // Bound execution too, so an accidental infinite loop fails fast.
+    await withTimeout(
+      pyodide.runPythonAsync(code),
+      execTimeoutMs,
+      'Your code took too long to run (it may have an infinite loop). Edit it and run again.',
+    )
     return { ok: true, stdout: out, error: null }
   } catch (err) {
     return { ok: false, stdout: out, error: cleanError(err) }
@@ -117,7 +149,11 @@ export async function runCell(code, { packages = [] } = {}) {
 export async function runTests(testCode) {
   const pyodide = await ensureLoaded()
   try {
-    await pyodide.runPythonAsync(testCode)
+    await withTimeout(
+      pyodide.runPythonAsync(testCode),
+      execTimeoutMs,
+      'Checking your answer took too long. Run again.',
+    )
     return { passed: true, message: '' }
   } catch (err) {
     return { passed: false, message: cleanError(err) }

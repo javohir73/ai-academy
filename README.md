@@ -1,253 +1,192 @@
 # AI Academy
 
-A clean, self‑paced course that teaches AI and Machine Learning **by doing**. Every lesson pairs a
-plain‑English idea with a hands‑on, interactive challenge — no lectures, no walls of text, and (almost)
-no plain multiple‑choice quizzes.
+AI Academy is a browser-based learning platform for students who want to learn
+AI and Machine Learning from scratch. It is built as a concept-first course:
+students start with friendly explanations and interactive practice, then move
+into real Python only when they are ready.
 
-It runs entirely in the browser with **no backend**. All lesson content lives inside the project, and
-progress is saved to `localStorage`.
+The app currently ships **22 interactive lessons** across curriculum Levels 0,
+1, 2, 3, and 5. Levels 0 and 1 are code-free. Code lessons begin in Level 2 and
+run directly in the browser with Pyodide, so there is no backend setup for the
+learner.
 
-The course has two tracks:
+## Current Curriculum
 
-| Track | Title | For |
-|-------|-------|-----|
-| **Beginner** | AI & Machine Learning Foundations | Anyone new to AI. 10 lessons from “what is AI?” to ethics. |
-| **Intermediate** | LLMs in Practice — AI Model Evaluation & Responsible AI | Learners who finished the beginner track. 8 modules that train you like a real AI model evaluator. |
+| Level | Title | Status |
+|-------|-------|--------|
+| L0 | Foundations | What data is and why examples matter |
+| L1 | Fundamentals of AI | AI basics and responsible AI |
+| L2 | Introduction to Machine Learning | ML concepts plus first Python models |
+| L3 | Problem Solving & Search | BFS maze search in Python |
+| L4 | Computer Vision | Coming soon |
+| L5 | LLMs in Practice - Evaluation & Responsible AI | AI model evaluation practice |
 
-The Intermediate track unlocks automatically once the Beginner track is complete.
+The full curriculum files live in `curriculum/`. The running app uses the lesson
+data in `src/data/`.
 
----
+## Learning Model
 
-## Tech stack
+Each lesson follows the same beginner-friendly rhythm:
 
-- **React 18** + **Vite 5**
-- Plain **CSS** (one stylesheet, design‑token based — no CSS framework)
-- **JavaScript** (no TypeScript)
-- **lucide-react** for icons, **Inter** for type
-- No backend, no database — progress persists in `localStorage`
+1. **I do** - plain-English concept, everyday example, and worked example.
+2. **We do** - guided practice with hints.
+3. **You do** - an interactive mastery check with feedback and stars.
 
----
+This keeps the experience closer to Khan Academy or Coursera than a raw coding
+notebook. Students earn their way into code instead of being dropped into it on
+day one.
 
-## Running locally
+## Features
 
-You need **Node.js 18+** and npm.
+- Responsive React app with sidebar navigation and mobile drawer.
+- Chained lesson unlocks, progress tracking, stars, and streaks.
+- Code badges for Python lessons.
+- In-browser Python powered by Pyodide.
+- Notebook-style activities with starter code, hidden tests, hints, retry, and
+  reset.
+- Concept activities including sorting, matching, dataset choice, prediction
+  sliders, bias spotting, overfitting comparison, neural-network building, and
+  AI-evaluation tasks.
+- Progress saved locally in `localStorage`; no account or backend required.
+
+## Tech Stack
+
+- React 18 + Vite 5
+- JavaScript
+- Plain CSS in `src/styles/global.css`
+- `lucide-react` icons
+- Pyodide loaded lazily from a pinned CDN at runtime
+- Vitest + Testing Library
+
+## Running Locally
+
+You need Node.js 18+ and npm.
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Start the dev server (hot reload)
 npm run dev
-# → open the printed URL, e.g. http://localhost:5173
+```
 
-# 3. Build for production
+Open the URL printed by Vite, usually:
+
+```text
+http://localhost:5173
+```
+
+Useful commands:
+
+```bash
+npm test
 npm run build
-
-# 4. Preview the production build locally
 npm run preview
 ```
 
-The production build outputs static files to `dist/` that can be hosted on any static host
-(GitHub Pages, Netlify, Vercel, S3, …). The Vite `base` is set to `./` so it also works from a
-sub‑folder or opened relative to a static server.
+## Project Structure
 
----
-
-## Project structure
-
-```
-ai-academy/
-├── index.html                 # App shell + Inter font
-├── vite.config.js
-├── package.json
-└── src/
-    ├── main.jsx               # React entry point
-    ├── App.jsx                # Layout shell: sidebar + content + mobile drawer; view state machine
-    ├── styles/
-    │   └── global.css         # The whole design system + every component's styles
-    ├── data/
-    │   ├── levels.js          # BEGINNER_LEVELS — all 10 beginner lessons (content + activity config)
-    │   ├── intermediate.js    # INTERMEDIATE_LEVELS — all 8 evaluator modules
-    │   └── tracks.js          # Composes the tracks; exports TRACKS, LEVELS (flat), MAX_STARS
-    ├── hooks/
-    │   └── useProgress.js     # localStorage progress: stars, completion, unlock rule
-    ├── utils/
-    │   └── shuffle.js         # Fisher–Yates shuffle (randomizes answer order)
-    └── components/
-        ├── Sidebar.jsx        # Track-grouped lesson navigation
-        ├── Overview.jsx       # Course home (hero + module cards per track)
-        ├── LevelView.jsx      # One lesson: Concept → Watch → Example → Practice
-        ├── ActivityShell.jsx  # Wraps every challenge: feedback, stars, retry, continue
-        ├── Feedback.jsx       # The correct / try-again banner
-        ├── VideoCard.jsx      # Placeholder (or real) lesson video
-        ├── ProgressBar.jsx, Stars.jsx
-        ├── levelIcons.js      # Maps each lesson id → a Lucide icon
-        └── activities/
-            ├── index.js       # REGISTRY: activity `type` string → component
-            ├── SortGame.jsx            (drag-and-drop sorting)
-            ├── PipelineGame.jsx        (order an ML pipeline diagram)
-            ├── PickDatasetGame.jsx     (choose the best/fair dataset)
-            ├── MatchGame.jsx           (match clues to answers)
-            ├── ClassifyGame.jsx        (classify by clues)
-            ├── PredictGame.jsx         (slider prediction simulator)
-            ├── BiasGridGame.jsx        (spot the missing group)
-            ├── OverfitCompareGame.jsx  (compare two model diagrams)
-            ├── NeuralGame.jsx          (connect neurons to build a network)
-            ├── EthicsGame.jsx          (scenario decisions)
-            ├── ReviewQueueGame.jsx     (decide what needs human review)
-            ├── RateResponseGame.jsx    (score answers 1–5)
-            ├── CompareAnswersGame.jsx  (rank two answers)
-            ├── HighlightErrorGame.jsx  (highlight hallucinations)
-            ├── LabelIssuesGame.jsx     (drag issue labels onto answers)
-            ├── RewriteGame.jsx         (rewrite a weak answer to 5/5)
-            └── CapstoneGame.jsx        (multi-step evaluation packet)
+```text
+src/
+  App.jsx                         layout shell and view state
+  data/
+    foundations.js                Level 0 lesson data
+    levels.js                     Levels 1-3 lesson data
+    intermediate.js               Level 5 evaluator lesson data
+    tracks.js                     track composition and flat lesson order
+  hooks/
+    useProgress.js                localStorage progress and unlock rules
+  utils/
+    pyodideService.js             singleton Pyodide runtime owner
+  components/
+    LevelView.jsx                 I-do / We-do / You-do lesson renderer
+    ActivityShell.jsx             shared grading, feedback, stars, retry
+    Overview.jsx                  course home and track cards
+    Sidebar.jsx                   course navigation
+    activities/
+      NotebookGame.jsx            runnable Python code-cell activity
+      index.js                    activity type registry
 ```
 
----
+## In-Browser Python
 
-## How the course works
+`src/utils/pyodideService.js` owns the Pyodide runtime:
 
-- **App** (`App.jsx`) is a small state machine with two views: the **Overview** (course home) and a
-  single **Lesson**. A persistent **Sidebar** lists every lesson grouped by track; on mobile it
-  collapses into a slide‑in drawer (with focus management and Escape‑to‑close).
-- **Lessons** all follow the same structure, rendered by `LevelView.jsx`:
-  1. **Concept** — the idea in plain language
-  2. **Watch** — a short video (placeholder by default)
-  3. **Everyday example**
-  4. **Practice** — the interactive challenge
-  5. **Feedback** → **Continue**
-- **Activities** are decoupled from the shell. Each activity component only:
-  1. receives `{ data, onResult }`
-  2. renders its own interaction
-  3. calls `onResult({ correct: boolean })` once the learner submits
+- lazy-loads the pinned Pyodide CDN script
+- memoizes boot so Python starts once per session
+- resets the namespace between notebook activities
+- captures stdout and stderr
+- loads requested Python packages
+- runs hidden assertion tests in the same namespace
+- applies timeouts so boot, package loading, code execution, and tests do not
+  leave the learner stuck forever
 
-  `ActivityShell.jsx` does everything else — it shows the shared feedback banner, awards **stars**
-  (3 on a first‑try win, fewer after wrong attempts), offers **Try again** / **Replay**, and a
-  **Next lesson** / **Back to overview** button.
-- **Progress & unlocking** (`useProgress.js`): completion and best star score per lesson are saved to
-  `localStorage` under `ai-academy:progress.v1`. The unlock rule is simple and **chained**: the first
-  lesson is always open, and every other lesson unlocks once the previous one (in `LEVELS` order) is
-  completed. Because the Intermediate track comes after the Beginner track in that flat list, its first
-  module only unlocks after the last beginner lesson — so the whole track is gated for free.
+Notebook activities use the same activity contract as the rest of the app:
 
-**Reset progress:** clear the site’s storage in your browser dev tools, or run
-`localStorage.removeItem('ai-academy:progress.v1')` in the console.
+```jsx
+function Activity({ data, onResult }) {
+  onResult({ correct: true })
+}
+```
 
----
+This lets code lessons plug into the existing feedback, stars, and progression
+system.
 
-## Activity types
+## Adding A Lesson
 
-The course deliberately uses a **different format for almost every lesson** so it feels like an
-interactive course, not a quiz. Each `type` below maps to a component in
-`src/components/activities/index.js`.
+1. Add the lesson object to the right data file:
+   - `src/data/foundations.js` for Level 0
+   - `src/data/levels.js` for Levels 1-3
+   - `src/data/intermediate.js` for Level 5
+2. Add the lesson id to the appropriate track in `src/data/tracks.js`.
+3. Add an icon mapping in `src/components/levelIcons.js`.
+4. Use an existing activity type from `src/components/activities/index.js`, or
+   create and register a new one.
 
-**Beginner**
+Code lessons should use:
 
-| Lesson | `type` | What you do |
-|--------|--------|-------------|
-| What Is AI? | `sort` | Drag (or tap) cards into AI / Not AI |
-| What Is ML? | `pipeline` | Put the ML pipeline stages in order; tap to learn each |
-| Training Data | `pick-dataset` | Choose the best training set |
-| Features & Labels | `match` | Match features (clues) to labels (answers) |
-| Classification | `classify` | Classify items from their clues |
-| Prediction | `predict` | Move sliders and watch the prediction change |
-| Bias In Data | `bias-grid` | Spot the group missing from a dataset |
-| Overfitting | `overfit-compare` | Compare two model diagrams; pick the one that generalizes |
-| Neural Networks | `neural` | Connect input → hidden → output neurons |
-| AI Ethics | `ethics` | Choose the most responsible action |
+```js
+{
+  kind: 'code',
+  activity: {
+    type: 'notebook',
+    data: {
+      packages: ['scikit-learn'],
+      starter: '...',
+      tests: '...',
+      hints: ['...']
+    }
+  }
+}
+```
 
-**Intermediate (AI model evaluation)**
+## Progress Storage
 
-| Module | `type` | What you do |
-|--------|--------|-------------|
-| What Is AI Evaluation? | `review-queue` | Decide which AI answers need human review |
-| Evaluation Rubrics | `match` | Match each rubric criterion to what it checks |
-| Rating AI Responses | `rate` | Score answers 1–5 with a slider |
-| Ranking Two Answers | `compare` | Pick the better of two answers |
-| Hallucination Detection | `highlight` | Highlight the false sentences |
-| Helpful, Honest & Harmless | `label-issues` | Drag issue labels onto answers |
-| Rewrite to 5/5 | `rewrite` | Rewrite a weak answer in a text box |
-| Capstone | `capstone` | A 5‑task evaluation packet with a progress checklist |
+Progress is stored under:
 
----
+```text
+ai-academy:progress.v1
+```
 
-## Adding a new lesson
+To reset progress in the browser console:
 
-1. Open the right data file (`src/data/levels.js` for the beginner track, or
-   `src/data/intermediate.js` for the intermediate track) and append a level object:
+```js
+localStorage.removeItem('ai-academy:progress.v1')
+```
 
-   ```js
-   {
-     id: 'my-new-lesson',              // unique across ALL tracks
-     title: 'My New Lesson',
-     concept: 'One-line summary',
-     explanation: 'One or two simple sentences.',
-     example: { text: 'An everyday example.' },
-     video: {                          // optional — omit to hide the Watch section
-       title: 'Video title',
-       description: 'Short description.',
-       duration: '2:30',
-       // src: 'https://…/clip.mp4',   // add a URL to enable real playback
-     },
-     activity: {
-       type: 'match',                  // must exist in activities/index.js
-       prompt: 'Instruction shown above the challenge.',
-       data: { /* shape depends on the activity type */ },
-       feedback: { correct: '…', incorrect: '…' },
-     },
-   }
-   ```
+## Roadmap
 
-2. Give it an icon in `src/components/levelIcons.js`:
+- Add more Level 3 neural-network lessons.
+- Add Level 4 Computer Vision.
+- Add richer projects and portfolio artifacts.
+- Move Pyodide execution into a Web Worker before heavy public use, so long or
+  infinite Python code cannot block the main UI thread.
+- Add real lesson videos or short animations to replace placeholders.
 
-   ```js
-   import { Rocket } from 'lucide-react'
-   export const LEVEL_ICONS = { /* … */ 'my-new-lesson': Rocket }
-   ```
+## Current Verification
 
-That’s it — the sidebar, overview, progress bar, stars, and unlock chain all update automatically.
+The expected local quality gate is:
 
-## Adding a new activity type
+```bash
+npm test
+npm run build
+```
 
-1. Create `src/components/activities/MyGame.jsx`. It must accept `{ data, onResult }` and call
-   `onResult({ correct: true | false })` when the learner submits:
-
-   ```jsx
-   export default function MyGame({ data, onResult }) {
-     // …render your interaction using the existing CSS classes…
-     // when the learner submits:
-     onResult({ correct: true })
-   }
-   ```
-
-2. Register it in `src/components/activities/index.js`:
-
-   ```js
-   import MyGame from './MyGame.jsx'
-   export const ACTIVITIES = { /* … */ 'my-game': MyGame }
-   ```
-
-3. Reference `type: 'my-game'` in a lesson’s `activity`.
-
-## Adding a new track
-
-Append another object to `TRACKS` in `src/data/tracks.js` with its own `levels` array (and import that
-array from a new data file). The flat `LEVELS` list and the chained unlock rule pick it up
-automatically; it will unlock after the track before it.
-
----
-
-## Accessibility & responsiveness
-
-- Mobile‑first; the layout collapses to a single column with a focus‑managed drawer below 900px.
-- All interactions are keyboard‑operable. Drag‑and‑drop games also offer a tap‑to‑place fallback.
-- Color contrast targets WCAG AA; motion respects `prefers-reduced-motion`.
-- Real Lucide icons and a neutral palette — no emoji, no decorative gradients.
-
----
-
-## Notes on the videos
-
-Lesson videos are **placeholders** by default — a clean card with a play button, title, and duration.
-To enable real playback, add a `src` (a video URL) to a lesson’s `video` object in the data file; the
-`VideoCard` will render an inline `<video>` player instead of the placeholder.
+Both should pass before shipping changes.

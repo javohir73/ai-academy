@@ -59,9 +59,12 @@ export const TRACKS = [
   {
     id: 'level-3',
     tag: 'Level 3',
-    title: 'Neural Networks & Problem Solving',
+    title: 'Problem Solving & Search',
     blurb:
-      'The bridge from rules to learning. Start hands-on with search — an agent that finds the shortest path in code — the skeleton smarter algorithms build on.',
+      'How an agent reaches a goal in code: breadth-first search finds the shortest path through a maze — the skeleton that smarter algorithms (Dijkstra, A*) build on.',
+    // L3 currently ships one hands-on search lesson; deep learning (backprop,
+    // PyTorch) and L4 Computer Vision are on the roadmap — see comingSoon.
+    comingSoon: 'More Level 3 (neural networks) and Level 4 (Computer Vision) lessons are in development.',
     levels: pick('code-bfs-maze'),
   },
   {
@@ -71,6 +74,9 @@ export const TRACKS = [
     title: 'LLMs in Practice — Evaluation & Responsible AI',
     blurb:
       'Train like a real AI model evaluator: score outputs, rank answers, catch hallucinations, and improve weak responses against a rubric.',
+    // Level 4 (Computer Vision) sits between L3 and L5 in the full curriculum and
+    // is not built yet; flag the gap so the jump from L3 to L5 isn't confusing.
+    comingSoon: 'Level 4 (Computer Vision) is coming between Levels 3 and 5.',
     levels: pick(
       'eval-intro',
       'eval-rubrics',
