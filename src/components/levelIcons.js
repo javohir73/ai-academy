@@ -4,10 +4,12 @@
  * makes it obvious where to add an icon when you add a level.
  */
 import {
+  // Foundations track
+  // (Database is reused below for the "What is data?" foundations lesson.)
   // Beginner track
   Sparkles, // What AI is
   Brain, // Machine learning
-  Database, // Training data
+  Database, // Training data / What is data?
   Tags, // Features & labels
   Layers, // Classification
   TrendingUp, // Prediction
@@ -15,6 +17,10 @@ import {
   Target, // Overfitting
   Network, // Neural networks
   ShieldCheck, // Ethics
+  // Hands-on code (Pyodide) lessons
+  Code2, // First classifier
+  GitBranch, // Metrics & overfitting
+  Route, // BFS maze search
   // Intermediate track (AI model evaluation)
   ClipboardCheck, // What is evaluation
   ListChecks, // Rubrics
@@ -28,6 +34,8 @@ import {
 } from 'lucide-react'
 
 export const LEVEL_ICONS = {
+  // Foundations
+  'what-is-data': Database,
   // Beginner
   'what-ai': Sparkles,
   'what-ml': Brain,
@@ -39,6 +47,10 @@ export const LEVEL_ICONS = {
   overfitting: Target,
   'neural-networks': Network,
   'ai-ethics': ShieldCheck,
+  // Hands-on code (Pyodide)
+  'code-first-classifier': Code2,
+  'code-metrics-overfitting': GitBranch,
+  'code-bfs-maze': Route,
   // Intermediate
   'eval-intro': ClipboardCheck,
   'eval-rubrics': ListChecks,

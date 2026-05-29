@@ -566,4 +566,291 @@ export const BEGINNER_LEVELS = [
       },
     },
   },
+  /* ----------------------- L2 hands-on: sklearn ---------------------- */
+  {
+    id: 'code-first-classifier',
+    kind: 'code',
+    title: 'Train Your First Classifier',
+    concept: 'Fit a model and measure its accuracy — in real Python',
+    explanation:
+      'You have seen what classification is. Now you will actually train a model. We use scikit-learn on the classic Iris flowers dataset: fit a model on training data, predict on data it has never seen, and measure how often it is right.',
+    example: {
+      text: 'Remember the spine: model = parameters + loss + optimization. scikit-learn runs that whole loop for you behind a single .fit() call — your job is to wire it up and judge the result.',
+    },
+    workedExample: {
+      intro:
+        'Watch the shape of every scikit-learn program: load data → split into train/test → fit on train → predict on test → score. The key idea: we ALWAYS test on data the model did not train on.',
+      steps: [
+        'Load Iris and split it: X_train/y_train teach the model; X_test/y_test are held back to grade it honestly.',
+        'Create a model (KNeighborsClassifier) and call model.fit(X_train, y_train). That is the whole training step.',
+        'Predict with model.predict(X_test), then compare to y_test with accuracy_score. Testing on unseen data is how we catch memorization.',
+      ],
+      takeaway: 'Every sklearn model is the same five beats: load → split → fit → predict → score.',
+    },
+    guided: {
+      prompt:
+        'Before the full exercise: which data should you call .fit() on?\n\nX_train / y_train  —  or  —  X_test / y_test ?',
+      hints: [
+        'The test set exists to grade the model. If the model trained on it, the grade would be a lie.',
+        'We fit (teach) on the training split, then keep the test split untouched until scoring.',
+      ],
+      answer: 'Fit on X_train, y_train.',
+      explanation:
+        'You always train on the training split and reserve the test split to measure honest, unseen-data performance.',
+    },
+    goDeeper: {
+      title: 'Why hold out a test set at all?',
+      body: 'A model can score 100% by memorizing the training rows and still fail on anything new — that is overfitting. The held-out test set is the only honest measure of generalization: performance on data the model has never seen. From here on, every model you build will be judged this way.',
+    },
+    video: {
+      title: 'Your first scikit-learn model',
+      description: 'The five-beat shape of every sklearn program, from load to score.',
+      duration: '4:00',
+    },
+    activity: {
+      type: 'notebook',
+      prompt:
+        'Finish the two missing lines (fit the model, then predict on the test set) so the classifier reaches at least 90% accuracy.',
+      data: {
+        packages: ['scikit-learn'],
+        starter: `from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=0
+)
+
+model = KNeighborsClassifier(n_neighbors=3)
+# 1) Train the model on the TRAINING data:
+# model.fit(...)
+
+# 2) Predict on the TEST data:
+# preds = model.predict(...)
+
+preds = model.predict(X_test)  # remove or keep — must end with predictions in \`preds\`
+acc = accuracy_score(y_test, preds)
+print("accuracy:", round(acc, 3))`,
+        tests: `assert 'model' in dir(), "Create and fit a model named 'model'."
+assert 'preds' in dir(), "Store predictions in a variable named 'preds'."
+from sklearn.metrics import accuracy_score
+_acc = accuracy_score(y_test, preds)
+assert _acc >= 0.9, f"Accuracy is {_acc:.2f} — fit on the training data and predict on X_test to reach 0.90."`,
+        hints: [
+          'Call model.fit(X_train, y_train) before predicting — an unfit model cannot classify.',
+          'Predict on the held-out set: preds = model.predict(X_test).',
+          'Full shape: model.fit(X_train, y_train) then preds = model.predict(X_test). Then accuracy_score(y_test, preds) ≥ 0.90.',
+        ],
+      },
+      feedback: {
+        correct:
+          'That is a trained, working classifier — fit on training data, judged on unseen data, over 90% accurate. You just ran the whole model = parameters + loss + optimization loop.',
+        incorrect:
+          'Not yet. Make sure you fit on the TRAINING data and predict on the TEST data — read the hint and try again.',
+      },
+    },
+  },
+  /* ----------------- L2 hands-on: metrics & overfitting ------------- */
+  {
+    id: 'code-metrics-overfitting',
+    kind: 'code',
+    title: 'Spot Overfitting With Metrics',
+    concept: 'Compare train vs test accuracy to catch a model that memorized',
+    explanation:
+      'A model that scores far better on training data than on test data has memorized instead of learned. You will train a deliberately over-complex model, measure both scores, and compute the gap that proves it overfit.',
+    example: {
+      text: 'Remember overfitting from the intuition lesson? Here you will measure it: a big train-vs-test gap is overfitting made numeric.',
+    },
+    workedExample: {
+      intro:
+        'The tool: score the SAME model on both splits. A healthy model scores similarly on train and test. An overfit one aces train and stumbles on test.',
+      steps: [
+        'Train a decision tree with no depth limit — it can memorize the training set.',
+        'Score it on the training data (likely ~1.0) and on the test data (lower).',
+        'The gap = train_acc − test_acc. A large gap is the signature of overfitting.',
+      ],
+      takeaway: 'Overfitting is not a vibe — it is the measurable gap between train and test performance.',
+    },
+    guided: {
+      prompt:
+        'A model scores 1.00 on training data and 0.72 on test data. What is going on?',
+      hints: [
+        'Compare the two numbers. Near-perfect on data it has seen, much worse on data it has not.',
+        'That gap means it memorized the training rows rather than learning a general rule.',
+      ],
+      answer: 'It is overfitting.',
+      explanation:
+        'A high train score with a much lower test score is the classic overfitting signature — the model generalizes poorly.',
+    },
+    goDeeper: {
+      title: 'Why does an unlimited-depth tree overfit?',
+      body: 'A decision tree with no max_depth keeps splitting until each training point sits in its own leaf — effectively a lookup table of the training set. It fits the noise, not just the signal, so it nails training data and fails on anything new. Limiting depth (or pruning) trades a little training accuracy for much better generalization.',
+    },
+    video: {
+      title: 'Measuring overfitting',
+      description: 'Train vs test scores and the gap that reveals memorization.',
+      duration: '3:30',
+    },
+    activity: {
+      type: 'notebook',
+      prompt:
+        'Compute train_acc and test_acc for the tree, then set gap = train_acc - test_acc. The hidden check confirms you have found a real overfitting gap.',
+      data: {
+        packages: ['scikit-learn'],
+        starter: `from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+X, y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=0
+)
+
+# An unlimited-depth tree can memorize the training data.
+model = DecisionTreeClassifier(random_state=0)
+model.fit(X_train, y_train)
+
+# TODO: score the model on BOTH splits, then compute the gap.
+# train_acc = accuracy_score(y_train, model.predict(X_train))
+# test_acc  = accuracy_score(y_test,  model.predict(X_test))
+# gap = train_acc - test_acc
+
+print("train:", train_acc, "test:", test_acc, "gap:", round(gap, 3))`,
+        tests: `assert 'train_acc' in dir() and 'test_acc' in dir(), "Define train_acc and test_acc."
+assert 'gap' in dir(), "Define gap = train_acc - test_acc."
+assert train_acc >= 0.99, "An unlimited-depth tree should score ~1.0 on the training data."
+assert gap > 0.02, f"Expected a positive train-vs-test gap; got {gap:.3f}. Score on both splits."`,
+        hints: [
+          'Score training accuracy: train_acc = accuracy_score(y_train, model.predict(X_train)).',
+          'Score test accuracy the same way but with y_test and X_test.',
+          'Then gap = train_acc - test_acc — it should be clearly positive, exposing the overfit.',
+        ],
+      },
+      feedback: {
+        correct:
+          'You measured overfitting directly: near-perfect on training, lower on test, with a real positive gap. That gap is the thing every honest evaluation watches for.',
+        incorrect:
+          'Not yet — make sure you score the model on BOTH the training and test splits, then subtract. Check the hint.',
+      },
+    },
+  },
+  /* --------------------- L3 hands-on: BFS maze ---------------------- */
+  {
+    id: 'code-bfs-maze',
+    kind: 'code',
+    title: 'Solve a Maze With Search',
+    concept: 'Find the shortest path with breadth-first search — pure Python',
+    explanation:
+      'Before a network can learn, an agent has to be able to search. Breadth-first search (BFS) explores a maze level by level, so the first time it reaches the goal it has found the SHORTEST path. You will complete the search loop.',
+    example: {
+      text: 'Spine callback: in L1 a model was a decision-maker that searches. BFS is that idea in code — systematically trying options until it reaches the goal, shortest route first.',
+    },
+    workedExample: {
+      intro:
+        'BFS uses a queue (first-in, first-out). The FIFO order is what guarantees the shortest path: we exhaust everything 1 step away before anything 2 steps away.',
+      steps: [
+        'Start with the start cell in the queue and mark it visited.',
+        'Pop the front cell; if it is the goal, reconstruct the path. Otherwise add its unvisited neighbours to the BACK of the queue.',
+        'Because we always expand the closest cells first, the goal is reached by the shortest route.',
+      ],
+      takeaway: 'A FIFO queue is what makes BFS find the shortest path, not just any path.',
+    },
+    guided: {
+      prompt:
+        'Why does BFS find the SHORTEST path while depth-first search might not?',
+      hints: [
+        'Think about the ORDER each explores in: BFS spreads out evenly, DFS dives deep down one branch first.',
+        'BFS finishes all cells at distance 1, then distance 2, and so on — so the goal is first reached at its true minimum distance.',
+      ],
+      answer: 'Because BFS explores in order of distance (FIFO queue), so it reaches the goal by the shortest route first.',
+      explanation:
+        'BFS expands nodes nearest the start before farther ones, so the first time it reaches the goal it has used the fewest steps. DFS can plunge down a long branch and find a longer route first.',
+    },
+    goDeeper: {
+      title: 'BFS vs Dijkstra vs A*',
+      body: 'BFS finds the shortest path when every step costs the same. When steps have different costs, you need Dijkstra (a priority queue by total cost). A* adds a heuristic that steers the search toward the goal, expanding fewer nodes. They are all the same skeleton — a frontier of cells to expand — with smarter ordering.',
+    },
+    video: {
+      title: 'Breadth-first search, visually',
+      description: 'Why a FIFO queue guarantees the shortest path in an unweighted maze.',
+      duration: '3:45',
+    },
+    activity: {
+      type: 'notebook',
+      prompt:
+        'Complete the BFS loop: add each unvisited neighbour to the queue and record how you reached it, so the function returns the shortest path from S to G.',
+      data: {
+        packages: [],
+        starter: `from collections import deque
+
+# '#' = wall, '.' = open, 'S' = start, 'G' = goal
+maze = [
+    "S....",
+    ".###.",
+    ".#...",
+    ".#.#.",
+    "...#G",
+]
+
+def neighbours(r, c):
+    for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):
+        nr, nc = r+dr, c+dc
+        if 0 <= nr < len(maze) and 0 <= nc < len(maze[0]) and maze[nr][nc] != '#':
+            yield nr, nc
+
+def find(ch):
+    for r, row in enumerate(maze):
+        for c, v in enumerate(row):
+            if v == ch:
+                return (r, c)
+
+start, goal = find('S'), find('G')
+
+def bfs():
+    queue = deque([start])
+    came_from = {start: None}
+    while queue:
+        cur = queue.popleft()
+        if cur == goal:
+            break
+        for nb in neighbours(*cur):
+            # TODO: if nb is unvisited, record came_from[nb] = cur and queue it
+            pass
+    # reconstruct path from goal back to start
+    if goal not in came_from:
+        return None
+    path = []
+    node = goal
+    while node is not None:
+        path.append(node)
+        node = came_from[node]
+    return path[::-1]
+
+path = bfs()
+print("path length:", len(path) if path else None)`,
+        tests: `assert path is not None, "Your BFS returned no path — make sure you enqueue unvisited neighbours."
+assert path[0] == start, "Path must start at S."
+assert path[-1] == goal, "Path must end at G."
+# steps must be adjacent and on open cells
+for (r1, c1), (r2, c2) in zip(path, path[1:]):
+    assert abs(r1 - r2) + abs(c1 - c2) == 1, "Path steps must be to adjacent cells."
+    assert maze[r2][c2] != '#', "Path runs through a wall."
+assert len(path) == 9, f"Shortest path is 9 cells; yours is {len(path)}. BFS (FIFO) guarantees shortest."`,
+        hints: [
+          'Inside the neighbour loop: check `if nb not in came_from:` so you do not revisit cells.',
+          'When a neighbour is new, set came_from[nb] = cur and queue.append(nb).',
+          'Full body: `if nb not in came_from: came_from[nb] = cur; queue.append(nb)`. The FIFO order gives the shortest path.',
+        ],
+      },
+      feedback: {
+        correct:
+          'Your agent searched the maze and found the shortest route — BFS done right. That frontier-of-cells skeleton is the same one Dijkstra and A* build on.',
+        incorrect:
+          'Not quite. Enqueue only UNVISITED neighbours and record how you reached each one, so you can rebuild the path. Read the hint.',
+      },
+    },
+  },
 ]

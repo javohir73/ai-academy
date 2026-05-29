@@ -27,6 +27,7 @@ import HighlightErrorGame from './HighlightErrorGame.jsx'
 import LabelIssuesGame from './LabelIssuesGame.jsx'
 import RewriteGame from './RewriteGame.jsx'
 import CapstoneGame from './CapstoneGame.jsx'
+import NotebookGame from './NotebookGame.jsx'
 
 export const ACTIVITIES = {
   // Beginner
@@ -48,4 +49,6 @@ export const ACTIVITIES = {
   'label-issues': LabelIssuesGame,
   rewrite: RewriteGame,
   capstone: CapstoneGame,
+  // Hands-on code (Pyodide)
+  notebook: NotebookGame,
 }

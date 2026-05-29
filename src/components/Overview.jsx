@@ -21,12 +21,13 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
         <p className="eyebrow">Self-paced course</p>
         <h1>Learn AI &amp; Machine Learning by doing</h1>
         <p className="lead">
-          A hands-on concept course of {total} interactive lessons — from the fundamentals of AI,
-          through how machine learning works, to evaluating AI models responsibly. Each lesson pairs a
-          plain-English idea with a challenge you actually do.
+          A hands-on course of {total} interactive lessons — from the fundamentals of AI, through
+          how machine learning works (with real Python you run in the browser), to evaluating AI
+          models responsibly. Each lesson pairs a plain-English idea with something you actually do.
         </p>
         <p className="muted" style={{ marginTop: 'var(--s2)' }}>
-          Levels 1, 2 &amp; 5 of the AI Academy curriculum. More levels are in development.
+          Levels 0, 1, 2, 3 &amp; 5 of the AI Academy curriculum. Code lessons (badged{' '}
+          <span className="code-badge">Code</span>) start at Level 2. More levels are in development.
         </p>
         <div className="btn-row" style={{ marginTop: 'var(--s5)' }}>
           {allDone ? (
@@ -92,7 +93,10 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
                     </span>
                     <span className="module-card__body">
                       <span className="module-card__index">Lesson {index + 1}</span>
-                      <span className="module-card__title">{level.title}</span>
+                      <span className="module-card__title">
+                        {level.title}
+                        {level.kind === 'code' && <span className="code-badge">Code</span>}
+                      </span>
                       <span className="module-card__concept">{level.concept}</span>
                     </span>
                     <span className="module-card__status">
