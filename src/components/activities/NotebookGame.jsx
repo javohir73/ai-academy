@@ -27,7 +27,6 @@ export default function NotebookGame({ data, onResult }) {
   const [bootMsg, setBootMsg] = useState('Booting your Python environment…')
   const [output, setOutput] = useState('')
   const [hintLevel, setHintLevel] = useState(0) // how many hints to reveal
-  const wrong = useRef(0)
   // A single boot promise shared by mount + Run, so a click before boot
   // finishes simply awaits the same load instead of racing it.
   const bootPromise = useRef(null)
@@ -36,7 +35,6 @@ export default function NotebookGame({ data, onResult }) {
     setBoot('booting')
     bootPromise.current = ensureLoaded(setBootMsg)
       .then(() => resetNamespace())
-      .then(() => 'ready')
       .catch((err) => {
         bootPromise.current = null // allow Retry to start a fresh load
         throw err
@@ -86,7 +84,6 @@ export default function NotebookGame({ data, onResult }) {
     setOutput(combined)
 
     if (!cell.ok) {
-      wrong.current += 1
       setHintLevel((n) => Math.min(data.hints?.length ?? 0, n + 1))
       setRunning(false)
       onResult({ correct: false })
@@ -98,7 +95,6 @@ export default function NotebookGame({ data, onResult }) {
     if (verdict.passed) {
       onResult({ correct: true })
     } else {
-      wrong.current += 1
       setHintLevel((n) => Math.min(data.hints?.length ?? 0, n + 1))
       if (verdict.message) {
         setOutput((o) => (o ? o + '\n' : '') + verdict.message)

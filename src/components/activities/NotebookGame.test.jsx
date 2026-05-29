@@ -73,4 +73,33 @@ describe('NotebookGame', () => {
     )
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument()
   })
+
+  it('resets the Python namespace on mount so lessons do not leak state', async () => {
+    svc.runCell.mockResolvedValue({ ok: true, stdout: '', error: null })
+    svc.runTests.mockResolvedValue({ passed: true, message: '' })
+    render(<NotebookGame data={baseData} onResult={() => {}} />)
+    await waitFor(() => expect(svc.resetNamespace).toHaveBeenCalled())
+  })
+
+  it('waits for boot before running when Run is clicked during boot', async () => {
+    // ensureLoaded stays pending until we resolve it, simulating a slow boot.
+    let resolveBoot
+    svc.ensureLoaded.mockReturnValue(
+      new Promise((res) => {
+        resolveBoot = res
+      }),
+    )
+    svc.runCell.mockResolvedValue({ ok: true, stdout: '', error: null })
+    svc.runTests.mockResolvedValue({ passed: true, message: '' })
+    const onResult = vi.fn()
+    render(<NotebookGame data={baseData} onResult={onResult} />)
+
+    // Click Run while boot is still pending — it must NOT run code yet.
+    fireEvent.click(screen.getByRole('button', { name: /run/i }))
+    expect(svc.runCell).not.toHaveBeenCalled()
+
+    // Now boot finishes; the queued run should proceed and grade.
+    resolveBoot({})
+    await waitFor(() => expect(onResult).toHaveBeenCalledWith({ correct: true }))
+  })
 })
