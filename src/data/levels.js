@@ -652,4 +652,89 @@ assert _acc >= 0.9, f"Accuracy is {_acc:.2f} — fit on the training data and pr
       },
     },
   },
+  /* ----------------- L2 hands-on: metrics & overfitting ------------- */
+  {
+    id: 'code-metrics-overfitting',
+    kind: 'code',
+    title: 'Spot Overfitting With Metrics',
+    concept: 'Compare train vs test accuracy to catch a model that memorized',
+    explanation:
+      'A model that scores far better on training data than on test data has memorized instead of learned. You will train a deliberately over-complex model, measure both scores, and compute the gap that proves it overfit.',
+    example: {
+      text: 'Remember overfitting from the intuition lesson? Here you will measure it: a big train-vs-test gap is overfitting made numeric.',
+    },
+    workedExample: {
+      intro:
+        'The tool: score the SAME model on both splits. A healthy model scores similarly on train and test. An overfit one aces train and stumbles on test.',
+      steps: [
+        'Train a decision tree with no depth limit — it can memorize the training set.',
+        'Score it on the training data (likely ~1.0) and on the test data (lower).',
+        'The gap = train_acc − test_acc. A large gap is the signature of overfitting.',
+      ],
+      takeaway: 'Overfitting is not a vibe — it is the measurable gap between train and test performance.',
+    },
+    guided: {
+      prompt:
+        'A model scores 1.00 on training data and 0.72 on test data. What is going on?',
+      hints: [
+        'Compare the two numbers. Near-perfect on data it has seen, much worse on data it has not.',
+        'That gap means it memorized the training rows rather than learning a general rule.',
+      ],
+      answer: 'It is overfitting.',
+      explanation:
+        'A high train score with a much lower test score is the classic overfitting signature — the model generalizes poorly.',
+    },
+    goDeeper: {
+      title: 'Why does an unlimited-depth tree overfit?',
+      body: 'A decision tree with no max_depth keeps splitting until each training point sits in its own leaf — effectively a lookup table of the training set. It fits the noise, not just the signal, so it nails training data and fails on anything new. Limiting depth (or pruning) trades a little training accuracy for much better generalization.',
+    },
+    video: {
+      title: 'Measuring overfitting',
+      description: 'Train vs test scores and the gap that reveals memorization.',
+      duration: '3:30',
+    },
+    activity: {
+      type: 'notebook',
+      prompt:
+        'Compute train_acc and test_acc for the tree, then set gap = train_acc - test_acc. The hidden check confirms you have found a real overfitting gap.',
+      data: {
+        packages: ['scikit-learn'],
+        starter: `from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+X, y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=0
+)
+
+# An unlimited-depth tree can memorize the training data.
+model = DecisionTreeClassifier(random_state=0)
+model.fit(X_train, y_train)
+
+# TODO: score the model on BOTH splits, then compute the gap.
+# train_acc = accuracy_score(y_train, model.predict(X_train))
+# test_acc  = accuracy_score(y_test,  model.predict(X_test))
+# gap = train_acc - test_acc
+
+print("train:", train_acc, "test:", test_acc, "gap:", round(gap, 3))`,
+        tests: `assert 'train_acc' in dir() and 'test_acc' in dir(), "Define train_acc and test_acc."
+assert 'gap' in dir(), "Define gap = train_acc - test_acc."
+assert train_acc >= 0.99, "An unlimited-depth tree should score ~1.0 on the training data."
+assert gap > 0.02, f"Expected a positive train-vs-test gap; got {gap:.3f}. Score on both splits."`,
+        hints: [
+          'Score training accuracy: train_acc = accuracy_score(y_train, model.predict(X_train)).',
+          'Score test accuracy the same way but with y_test and X_test.',
+          'Then gap = train_acc - test_acc — it should be clearly positive, exposing the overfit.',
+        ],
+      },
+      feedback: {
+        correct:
+          'You measured overfitting directly: near-perfect on training, lower on test, with a real positive gap. That gap is the thing every honest evaluation watches for.',
+        incorrect:
+          'Not yet — make sure you score the model on BOTH the training and test splits, then subtract. Check the hint.',
+      },
+    },
+  },
 ]
