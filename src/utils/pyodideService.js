@@ -14,7 +14,12 @@
 const PYODIDE_VERSION = '0.26.4'
 const CDN_BASE = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`
 
+// Finite cap on the boot so a stalled CDN/WASM fetch rejects instead of hanging
+// forever (60s — generous for a large WASM + sklearn download on a slow link).
+const BOOT_TIMEOUT_MS = 60000
+
 let pyodidePromise = null
+let bootTimeoutMs = BOOT_TIMEOUT_MS
 
 // Injectable for tests; production injects the real CDN <script>.
 let scriptLoader = defaultScriptLoader
@@ -42,6 +47,20 @@ export function __setScriptLoaderForTest(fn) {
   scriptLoader = fn
 }
 
+/** TEST ONLY: override the boot timeout (ms). */
+export function __setBootTimeoutForTest(ms) {
+  bootTimeoutMs = ms
+}
+
+/** Reject if `promise` doesn't settle within `ms`; always clears its timer. */
+function withTimeout(promise, ms, message) {
+  let timer
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms)
+  })
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer))
+}
+
 /**
  * Ensure Pyodide is downloaded and booted. Memoized: the heavy work happens
  * once per session; later calls resolve instantly.
@@ -54,7 +73,7 @@ export function ensureLoaded(onProgress) {
     await scriptLoader()
     if (!globalThis.loadPyodide) throw new Error('pyodide-global-missing')
     onProgress?.('Booting Python…')
-    const pyodide = await globalThis.loadPyodide({ indexURL: CDN_BASE })
+    const pyodide = await withTimeout(globalThis.loadPyodide({ indexURL: CDN_BASE }), bootTimeoutMs, 'pyodide-boot-timeout')
     onProgress?.('Ready')
     return pyodide
   })().catch((err) => {

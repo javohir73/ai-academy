@@ -53,6 +53,22 @@ describe('pyodideService.ensureLoaded', () => {
     await expect(svc.ensureLoaded()).rejects.toThrow('pyodide-script-failed')
     await expect(svc.ensureLoaded()).resolves.toBeDefined() // retry works
   })
+
+  it('rejects (and clears the memo) if booting hangs past the timeout', async () => {
+    const svc = await freshService()
+    svc.__setBootTimeoutForTest(20) // 20ms so the test is fast
+    svc.__setScriptLoaderForTest(async () => {
+      // Script "loads" and defines the global, but loadPyodide never resolves (a hang).
+      globalThis.loadPyodide = () => new Promise(() => {})
+    })
+    await expect(svc.ensureLoaded()).rejects.toThrow('pyodide-boot-timeout')
+
+    // Memo cleared → a subsequent successful attempt can proceed.
+    svc.__setScriptLoaderForTest(async () => {
+      globalThis.loadPyodide = () => Promise.resolve(fakePyodide())
+    })
+    await expect(svc.ensureLoaded()).resolves.toBeDefined()
+  })
 })
 
 describe('pyodideService.runCell', () => {
