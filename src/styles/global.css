@@ -2485,3 +2485,88 @@ input[type='range'] {
   color: var(--text-3);
   font-size: 0.76rem;
 }
+
+/* ---- Hands-on code (notebook) activity ---------------------------- */
+.code-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  background: var(--accent, #6366f1);
+  color: #fff;
+  vertical-align: middle;
+}
+
+.notebook {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3, 12px);
+}
+
+.notebook--booting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--s5, 24px);
+  color: var(--muted, #64748b);
+  justify-content: center;
+}
+
+.notebook__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted, #64748b);
+}
+
+.code-cell {
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  tab-size: 4;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: #0f172a;
+  color: #e2e8f0;
+  resize: vertical;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.code-output {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #0f172a;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.notebook__boot {
+  margin: 0;
+}
+
+.notebook__hints .hint {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--muted, #475569);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

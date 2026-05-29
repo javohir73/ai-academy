@@ -123,7 +123,10 @@ export default function Sidebar({
                         )}
                       </span>
                       <span className="nav__body">
-                        <span className="nav__title">{level.title}</span>
+                        <span className="nav__title">
+                          {level.title}
+                          {level.kind === 'code' && <span className="code-badge">Code</span>}
+                        </span>
                         <span className="nav__concept">{level.concept}</span>
                       </span>
                       {status === 'done' && (
