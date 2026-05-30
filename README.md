@@ -79,6 +79,7 @@ Useful commands:
 npm test
 npm run build
 npm run preview
+npm run security
 ```
 
 ## Deploying Online
@@ -142,6 +143,26 @@ every push to `main` and publishes `dist/` to Pages. One-time setup:
 
 Manual alternative (no Actions): `npm run build`, then publish `dist/` with
 `npx gh-pages -d dist`.
+
+## Security
+
+Before deploying, run:
+
+```bash
+npm run security
+npm test
+npm run build
+```
+
+Security tooling included in this repo:
+
+- `npm run security:audit` checks dependency advisories.
+- `npm run security:secrets` scans the repo for high-confidence secrets.
+- `.github/workflows/security.yml` runs security checks, tests, and build on
+  pushes and pull requests to `main`.
+- `.github/dependabot.yml` asks GitHub to open weekly dependency update PRs.
+- `vercel.json` and `netlify.toml` set security headers for static hosting.
+- `SECURITY.md` documents data storage, Pyodide limitations, and reporting.
 
 ## Project Structure
 

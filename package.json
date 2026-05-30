@@ -9,7 +9,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:secrets": "node scripts/security-scan.mjs",
+    "security": "npm run security:audit && npm run security:secrets"
   },
   "dependencies": {
     "lucide-react": "^1.17.0",
@@ -21,7 +24,7 @@
     "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^25.0.1",
-    "vite": "^5.4.11",
-    "vitest": "^2.1.9"
+    "vite": "^6.4.2",
+    "vitest": "^3.2.4"
   }
 }
