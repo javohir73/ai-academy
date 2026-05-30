@@ -16,6 +16,7 @@ export default function Sidebar({
   activeIndex,
   currentIndex,
   open,
+  onHome,
   onOverview,
   onSelectLevel,
   onClose,
@@ -34,10 +35,12 @@ export default function Sidebar({
       aria-label="Course navigation"
     >
       <div className="brand">
-        <span className="brand__mark" aria-hidden="true">
-          <GraduationCap size={20} />
-        </span>
-        <span>AI Academy</span>
+        <button className="brand__home" onClick={onHome} aria-label="Go to AI Academy home">
+          <span className="brand__mark" aria-hidden="true">
+            <GraduationCap size={20} />
+          </span>
+          <span>AI Academy</span>
+        </button>
         <button
           className="icon-btn"
           onClick={onClose}

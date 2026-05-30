@@ -66,7 +66,7 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
             </div>
 
             <div className="module-list">
-              {track.levels.map(({ level, index }) => {
+              {track.levels.map(({ level, index }, mapIndex) => {
                 const Icon = iconForLevel(level.id)
                 const locked = !progress.isUnlocked(index)
                 const completed = Boolean(progress.completed[level.id])
@@ -81,6 +81,7 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
                   <button
                     key={level.id}
                     className={cls}
+                    style={{ '--i': mapIndex }}
                     disabled={locked}
                     onClick={() => onOpenLevel(index)}
                     aria-label={
