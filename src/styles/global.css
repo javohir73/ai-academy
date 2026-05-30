@@ -135,7 +135,7 @@ h3 {
   margin: 0;
   font-weight: 700;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--text);
 }
 h1 {
@@ -226,7 +226,7 @@ a {
 }
 .topbar__brand {
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .backdrop {
   display: none;
@@ -268,7 +268,7 @@ a {
   padding: var(--s2) var(--s3) var(--s5);
   font-weight: 700;
   font-size: 1.05rem;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .brand__mark {
   width: 34px;
@@ -539,7 +539,7 @@ a {
   display: block;
   font-weight: 600;
   font-size: 1.02rem;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   margin: 1px 0;
 }
 .module-card__concept {
@@ -935,7 +935,7 @@ a {
 .predict-readout__value {
   font-size: 2.6rem;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   color: var(--text);
   line-height: 1.1;
   margin: var(--s2) 0;
@@ -2785,7 +2785,7 @@ body::before {
   border-radius: var(--r-sm);
   font: inherit;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: inherit;
   cursor: pointer;
   transition: background var(--dur-fast) var(--ease-out);
@@ -2799,7 +2799,7 @@ body::before {
   border: none;
   font: inherit;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: inherit;
   cursor: pointer;
   padding: 4px 8px;
@@ -2996,13 +2996,13 @@ body::before {
   margin: 0 auto;
 }
 .hero-x h1 {
-  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-size: 4rem;
   line-height: 1.05;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   margin: var(--s4) 0 var(--s3);
 }
 .hero-x__lead {
-  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  font-size: 1.25rem;
   color: var(--text-2);
   max-width: 620px;
   margin: 0 auto var(--s6);
@@ -3022,8 +3022,8 @@ body::before {
   margin: 0 auto var(--s7);
 }
 .home-section__head h2 {
-  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-  letter-spacing: -0.02em;
+  font-size: 2.2rem;
+  letter-spacing: 0;
   margin: var(--s3) 0;
 }
 .home-section__head p {
@@ -3138,8 +3138,8 @@ body::before {
   padding: clamp(var(--s6), 5vw, var(--s8));
 }
 .home-cta h2 {
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
-  letter-spacing: -0.02em;
+  font-size: 2.4rem;
+  letter-spacing: 0;
   margin-bottom: var(--s3);
 }
 .home-cta p {
@@ -3196,5 +3196,36 @@ body::before {
   .module-card:not(.module-card--locked):hover,
   .btn--primary:not(:disabled):hover {
     transform: none !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .home__nav {
+    gap: var(--s2);
+    padding: var(--s3);
+  }
+  .home__nav .brand {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 0.95rem;
+  }
+  .home__nav .btn {
+    padding: 10px 12px;
+    min-height: 42px;
+  }
+  .home__nav .btn--ghost {
+    display: none;
+  }
+  .hero-x h1 {
+    font-size: 2.6rem;
+  }
+  .hero-x__lead {
+    font-size: 1.08rem;
+  }
+  .home-section__head h2 {
+    font-size: 1.7rem;
+  }
+  .home-cta h2 {
+    font-size: 1.8rem;
   }
 }
