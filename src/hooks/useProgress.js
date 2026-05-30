@@ -1,19 +1,25 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { LEVELS } from '../data/tracks.js'
+import * as cloud from '../utils/cloudProgressService.js'
+import { mergeProgress } from '../utils/mergeProgress.js'
 
 /*
- * useProgress — owns everything we save about the learner and persists it to
- * localStorage so progress survives a page refresh. No backend required.
+ * useProgress — owns everything we save about the learner.
+ *
+ * localStorage is ALWAYS the source of truth on this device (so the app works
+ * fully offline / for anonymous users — the original behaviour is unchanged).
+ *
+ * Optionally, when a signed-in `user` is passed, progress also syncs to the
+ * cloud (Supabase) via cloudProgressService:
+ *   - on sign-in: cloud + local are MERGED (mergeProgress) so nothing is lost;
+ *   - thereafter: changes are debounced-pushed to the cloud.
+ * `syncState` reports 'idle' | 'syncing' | 'saved' | 'offline' | 'error'.
+ *
+ * Backward compatible: useProgress() with no argument behaves exactly as before
+ * (pure local, syncState 'idle').
  *
  * Stored shape:
- *   {
- *     onboarded: boolean,             // has the learner passed the welcome screen?
- *     completed: { [levelId]: stars } // best star score (1-3) per finished level
- *     streak:    { current, longest, lastDay }  // daily-practice streak (retention)
- *   }
- *
- * Unlock rule: the first level is always unlocked; every other level unlocks
- * once the level before it is completed.
+ *   { onboarded, completed: { [levelId]: stars }, streak: { current, longest, lastDay } }
  */
 
 const STORAGE_KEY = 'ai-academy:progress.v1'
@@ -55,10 +61,15 @@ function loadInitial() {
   }
 }
 
-export function useProgress() {
+export function useProgress(user = null) {
   const [state, setState] = useState(loadInitial)
+  const [syncState, setSyncState] = useState('idle') // idle|syncing|saved|offline|error
+  const userId = user?.id ?? null
+  const mergedForUser = useRef(null) // which userId we've already merged for this session
+  const saveTimer = useRef(null)
+  const skipNextPush = useRef(false) // don't immediately re-push a cloud-sourced merge's own write
 
-  // Persist on every change.
+  // Persist to localStorage on every change (always — the offline source of truth).
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -66,6 +77,64 @@ export function useProgress() {
       /* storage might be full or blocked; the app still works in-memory */
     }
   }, [state])
+
+  // On sign-in: merge cloud progress into local once, then mark synced.
+  useEffect(() => {
+    if (!userId || !cloud.isConfigured()) {
+      if (!userId) setSyncState('idle')
+      return
+    }
+    if (mergedForUser.current === userId) return
+    mergedForUser.current = userId
+    let active = true
+    setSyncState('syncing')
+    ;(async () => {
+      try {
+        const cloudSnap = await cloud.fetchProgress(userId)
+        if (!active) return
+        setState((local) => {
+          const merged = mergeProgress({ ...local, updatedAt: null }, cloudSnap)
+          // strip helper field that local state doesn't carry
+          const next = { onboarded: merged.onboarded, completed: merged.completed, streak: merged.streak }
+          // push the merged result up so cloud reflects the union too
+          cloud
+            .saveProgress(userId, { ...next, updatedAt: new Date().toISOString() })
+            .then(() => active && setSyncState('saved'))
+            .catch(() => active && setSyncState('error'))
+          skipNextPush.current = true // the line above is our push; don't double-send
+          return next
+        })
+      } catch {
+        if (active) setSyncState('error')
+      }
+    })()
+    return () => {
+      active = false
+    }
+  }, [userId])
+
+  // Reset the "merged" guard when the user logs out, so a later login re-merges.
+  useEffect(() => {
+    if (!userId) mergedForUser.current = null
+  }, [userId])
+
+  // Debounced push to cloud whenever state changes while signed in.
+  useEffect(() => {
+    if (!userId || !cloud.isConfigured()) return
+    if (skipNextPush.current) {
+      skipNextPush.current = false
+      return
+    }
+    setSyncState('syncing')
+    clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => {
+      cloud
+        .saveProgress(userId, { ...state, updatedAt: new Date().toISOString() })
+        .then(() => setSyncState('saved'))
+        .catch(() => setSyncState('error'))
+    }, 800)
+    return () => clearTimeout(saveTimer.current)
+  }, [state, userId])
 
   const setOnboarded = useCallback(() => {
     setState((s) => (s.onboarded ? s : { ...s, onboarded: true }))
@@ -135,5 +204,6 @@ export function useProgress() {
     totalStars,
     completedCount,
     streak,
+    syncState: userId ? syncState : 'idle',
   }
 }

@@ -100,7 +100,7 @@ function CurriculumPreview() {
   )
 }
 
-export default function HomePage({ onStart, onExplore }) {
+export default function HomePage({ onStart, onExplore, accountSlot }) {
   const lessonCount = LEVELS.length
 
   return (
@@ -114,9 +114,10 @@ export default function HomePage({ onStart, onExplore }) {
           AI Academy
         </span>
         <span className="home__nav-spacer" />
-        <button className="btn btn--ghost" onClick={onExplore}>
+        <button className="btn btn--ghost home__nav-curriculum" onClick={onExplore}>
           Curriculum
         </button>
+        {accountSlot}
         <button className="btn btn--primary" onClick={onStart}>
           Start learning <ArrowRight size={18} />
         </button>
