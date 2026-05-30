@@ -5,15 +5,20 @@ import { useProgress } from './hooks/useProgress.js'
 import Sidebar from './components/Sidebar.jsx'
 import Overview from './components/Overview.jsx'
 import LevelView from './components/LevelView.jsx'
+import HomePage from './components/HomePage.jsx'
 
 /*
- * App is the layout shell: a persistent sidebar (course navigation) plus a
- * content panel that shows either the course Overview or a single lesson.
- * On mobile the sidebar becomes a slide-in drawer toggled from the top bar.
+ * App is the layout shell. It has three views, tracked in `view`:
+ *   'home'     — the marketing/landing page (HomePage), shown first
+ *   'overview' — the course home (lesson grid)
+ *   'lesson'   — a single lesson
+ * Home is a full-bleed page with no sidebar; the course views keep the
+ * persistent sidebar (a slide-in drawer on mobile). Using view state instead
+ * of a router keeps deployment a plain static build (no SPA rewrites needed).
  */
 export default function App() {
   const progress = useProgress()
-  const [view, setView] = useState('overview') // 'overview' | 'lesson'
+  const [view, setView] = useState('home') // 'home' | 'overview' | 'lesson'
   const [levelIndex, setLevelIndex] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -83,7 +88,40 @@ export default function App() {
     window.scrollTo({ top: 0 })
   }
 
+  function goHome() {
+    setView('home')
+    setSidebarOpen(false)
+    window.scrollTo({ top: 0 })
+  }
+
+  // "Start learning" from Home: go straight to the next unlocked-but-unfinished
+  // lesson if there is one, otherwise the course overview.
+  function enterCourse() {
+    progress.setOnboarded()
+    if (currentIndex >= 0 && progress.isUnlocked(currentIndex)) {
+      openLevel(currentIndex)
+    } else {
+      goOverview()
+    }
+  }
+
+  // "Explore curriculum" from Home: smooth-scroll to the curriculum section on
+  // the Home page itself (falls back to no-op if the section isn't present).
+  function exploreCurriculum() {
+    const el = document.getElementById('curriculum')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const isLastLevel = levelIndex >= LEVELS.length - 1
+
+  // Home is a standalone full-bleed page (no sidebar chrome).
+  if (view === 'home') {
+    return (
+      <main className="fade-in">
+        <HomePage onStart={enterCourse} onExplore={exploreCurriculum} />
+      </main>
+    )
+  }
 
   return (
     <div className="layout">
@@ -94,6 +132,7 @@ export default function App() {
         activeIndex={levelIndex}
         currentIndex={currentIndex}
         open={sidebarOpen}
+        onHome={goHome}
         onOverview={goOverview}
         onSelectLevel={openLevel}
         onClose={() => setSidebarOpen(false)}
@@ -114,7 +153,9 @@ export default function App() {
           >
             <Menu size={20} />
           </button>
-          <span className="topbar__brand">AI Academy</span>
+          <button className="topbar__brand" onClick={goHome}>
+            AI Academy
+          </button>
         </div>
 
         <main className="content fade-in" key={view === 'lesson' ? LEVELS[levelIndex].id : 'overview'}>
