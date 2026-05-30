@@ -20,6 +20,7 @@ export default function Sidebar({
   onOverview,
   onSelectLevel,
   onClose,
+  accountSlot,
 }) {
   function statusFor(level, index) {
     if (!progress.isUnlocked(index)) return 'locked'
@@ -69,6 +70,7 @@ export default function Sidebar({
             {!progress.streak.activeToday && <span className="streak__hint">— finish a lesson to keep it</span>}
           </div>
         )}
+        {accountSlot && <div className="side-account">{accountSlot}</div>}
       </div>
 
       <button

@@ -2,10 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { Menu } from 'lucide-react'
 import { LEVELS } from './data/tracks.js'
 import { useProgress } from './hooks/useProgress.js'
+import { useAuth } from './hooks/useAuth.js'
 import Sidebar from './components/Sidebar.jsx'
 import Overview from './components/Overview.jsx'
 import LevelView from './components/LevelView.jsx'
 import HomePage from './components/HomePage.jsx'
+import AuthModal from './components/AuthModal.jsx'
+import AccountMenu from './components/AccountMenu.jsx'
+import AccountPrompt from './components/AccountPrompt.jsx'
 
 /*
  * App is the layout shell. It has three views, tracked in `view`:
@@ -17,10 +21,13 @@ import HomePage from './components/HomePage.jsx'
  * of a router keeps deployment a plain static build (no SPA rewrites needed).
  */
 export default function App() {
-  const progress = useProgress()
+  const auth = useAuth()
+  const progress = useProgress(auth.user)
   const [view, setView] = useState('home') // 'home' | 'overview' | 'lesson'
   const [levelIndex, setLevelIndex] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [authMode, setAuthMode] = useState('signin')
 
   const menuBtnRef = useRef(null)
   const sidebarRef = useRef(null)
@@ -94,6 +101,46 @@ export default function App() {
     window.scrollTo({ top: 0 })
   }
 
+  async function handleSignOut() {
+    await auth.signOut()
+  }
+
+  function openAuth(mode = 'signin') {
+    setAuthMode(mode)
+    setAuthOpen(true)
+  }
+
+  // The auth dialog + the deferred "save your progress" prompt are mounted on
+  // every view, so they overlay Home and the course alike.
+  const authChrome = (
+    <>
+      <AuthModal
+        open={authOpen}
+        initialMode={authMode}
+        onClose={() => setAuthOpen(false)}
+        onSignIn={auth.signIn}
+        onSignUp={auth.signUp}
+        onReset={auth.resetPassword}
+      />
+      <AccountPrompt
+        configured={auth.configured}
+        user={auth.user}
+        completedCount={progress.completedCount}
+        onSignUpClick={() => openAuth('signup')}
+      />
+    </>
+  )
+
+  const accountMenu = (
+    <AccountMenu
+      configured={auth.configured}
+      user={auth.user}
+      syncState={progress.syncState}
+      onSignInClick={() => openAuth('signin')}
+      onSignOut={handleSignOut}
+    />
+  )
+
   // "Start learning" from Home: go straight to the next unlocked-but-unfinished
   // lesson if there is one, otherwise the course overview.
   function enterCourse() {
@@ -118,7 +165,8 @@ export default function App() {
   if (view === 'home') {
     return (
       <main className="fade-in">
-        <HomePage onStart={enterCourse} onExplore={exploreCurriculum} />
+        <HomePage onStart={enterCourse} onExplore={exploreCurriculum} accountSlot={accountMenu} />
+        {authChrome}
       </main>
     )
   }
@@ -136,6 +184,7 @@ export default function App() {
         onOverview={goOverview}
         onSelectLevel={openLevel}
         onClose={() => setSidebarOpen(false)}
+        accountSlot={accountMenu}
       />
 
       <div
@@ -156,6 +205,8 @@ export default function App() {
           <button className="topbar__brand" onClick={goHome}>
             AI Academy
           </button>
+          <span className="topbar__spacer" />
+          {accountMenu}
         </div>
 
         <main className="content fade-in" key={view === 'lesson' ? LEVELS[levelIndex].id : 'overview'}>
@@ -173,6 +224,8 @@ export default function App() {
           )}
         </main>
       </div>
+
+      {authChrome}
     </div>
   )
 }

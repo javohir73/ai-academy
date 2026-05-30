@@ -242,17 +242,83 @@ Code lessons should use:
 
 ## Progress Storage
 
-Progress is stored under:
+Progress (completed lessons, stars, streak, onboarded state) is **always** saved
+locally in the browser under:
 
 ```text
 ai-academy:progress.v1
 ```
 
-To reset progress in the browser console:
+To reset local progress in the browser console:
 
 ```js
 localStorage.removeItem('ai-academy:progress.v1')
 ```
+
+If Supabase is configured (see below), a signed-in user's progress **also** syncs
+to the cloud. localStorage stays the source of truth on each device, so the app
+works fully offline and for anonymous users regardless.
+
+## Accounts & Cloud Sync (Supabase)
+
+Accounts are **optional**. With no Supabase env vars set, the app runs in
+**local-only mode** — anonymous, browser-saved progress, no sign-in UI, no
+network calls. Add the env vars to enable email/password accounts and
+cross-device cloud sync. (Anonymous learners are gently invited to create an
+account only after completing 3 lessons.)
+
+**Architecture:** all Supabase access lives behind `src/utils/cloudProgressService.js`
+(the only file that imports the SDK). `src/utils/mergeProgress.js` is the pure,
+unit-tested merge used on sign-in so neither local nor cloud progress is ever
+lost (union of completed lessons, higher star score per lesson, carefully merged
+streak). `useProgress(user)` stays backward compatible — called with no user it
+behaves exactly as the original local-only hook.
+
+### 1. Create a Supabase project
+
+Sign up at [supabase.com](https://supabase.com) (free tier is enough) and create
+a project.
+
+### 2. Apply the database schema
+
+Supabase Dashboard → **SQL Editor** → paste [`supabase/schema.sql`](supabase/schema.sql)
+→ **Run**. This creates a `progress` table with **Row Level Security** enabled and
+owner-only policies (`auth.uid() = user_id`), so each user can read/write only
+their own row and progress is never publicly readable.
+
+### 3. (Optional) Email settings
+
+Auth → Providers → Email is on by default. For the smoothest first run you can
+disable "Confirm email" while testing; for production, leave confirmation on.
+Password reset works out of the box (the app calls `resetPasswordForEmail` and
+redirects back to the site origin).
+
+### 4. Configure environment variables
+
+Copy `.env.example` to `.env` and fill in the two **public** values from
+Supabase Dashboard → **Project Settings → API**:
+
+```bash
+VITE_SUPABASE_URL=https://<your-project>.supabase.co
+VITE_SUPABASE_ANON_KEY=<your-anon-public-key>
+```
+
+> **Security:** only the **anon / public** key goes in the app. RLS protects the
+> data. **Never** put the `service_role` (secret) key in frontend env or commit
+> any real key — `.env*` is gitignored, and `npm run security:secrets` scans for
+> leaked keys.
+
+### 5. Add the same vars on Vercel
+
+Vercel Dashboard → your project → **Settings → Environment Variables** → add
+`VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (Production, Preview, and
+Development as you like) → **redeploy**. (Netlify: Site settings → Environment
+variables — same two keys.)
+
+> **Content-Security-Policy note:** the CSP in `vercel.json` and `netlify.toml`
+> already allows `https://*.supabase.co` and `wss://*.supabase.co` in
+> `connect-src`, so auth and sync work once the env vars are set — no header
+> changes needed.
 
 ## Roadmap
 
