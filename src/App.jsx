@@ -27,6 +27,7 @@ export default function App() {
   const [levelIndex, setLevelIndex] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
+  const [authMode, setAuthMode] = useState('signin')
 
   const menuBtnRef = useRef(null)
   const sidebarRef = useRef(null)
@@ -104,12 +105,18 @@ export default function App() {
     await auth.signOut()
   }
 
+  function openAuth(mode = 'signin') {
+    setAuthMode(mode)
+    setAuthOpen(true)
+  }
+
   // The auth dialog + the deferred "save your progress" prompt are mounted on
   // every view, so they overlay Home and the course alike.
   const authChrome = (
     <>
       <AuthModal
         open={authOpen}
+        initialMode={authMode}
         onClose={() => setAuthOpen(false)}
         onSignIn={auth.signIn}
         onSignUp={auth.signUp}
@@ -119,7 +126,7 @@ export default function App() {
         configured={auth.configured}
         user={auth.user}
         completedCount={progress.completedCount}
-        onSignUpClick={() => setAuthOpen(true)}
+        onSignUpClick={() => openAuth('signup')}
       />
     </>
   )
@@ -129,7 +136,7 @@ export default function App() {
       configured={auth.configured}
       user={auth.user}
       syncState={progress.syncState}
-      onSignInClick={() => setAuthOpen(true)}
+      onSignInClick={() => openAuth('signin')}
       onSignOut={handleSignOut}
     />
   )

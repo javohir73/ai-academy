@@ -11,8 +11,8 @@ import { X, Mail, Lock, Loader2, GraduationCap, CheckCircle2 } from 'lucide-reac
  * Accessibility: role="dialog" + aria-modal, Escape to close, focus moves to
  * the first field on open, backdrop click closes.
  */
-export default function AuthModal({ open, onClose, onSignIn, onSignUp, onReset }) {
-  const [mode, setMode] = useState('signin')
+export default function AuthModal({ open, initialMode = 'signin', onClose, onSignIn, onSignUp, onReset }) {
+  const [mode, setMode] = useState(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -23,11 +23,12 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, onReset }
 
   useEffect(() => {
     if (open) {
+      setMode(initialMode)
       setError('')
       setNotice('')
       setTimeout(() => firstFieldRef.current?.focus(), 0)
     }
-  }, [open, mode])
+  }, [open, initialMode])
 
   useEffect(() => {
     if (!open) return
