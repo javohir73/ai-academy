@@ -28,6 +28,16 @@ import LabelIssuesGame from './LabelIssuesGame.jsx'
 import RewriteGame from './RewriteGame.jsx'
 import CapstoneGame from './CapstoneGame.jsx'
 import NotebookGame from './NotebookGame.jsx'
+// Advanced track (vision / transfer learning judgment)
+import ScenarioGame from './ScenarioGame.jsx'
+// Vision track (CNN intuition)
+import Convolve from './Convolve.jsx'
+import PixelGrid from './PixelGrid.jsx'
+import ShapeCalc from './ShapeCalc.jsx'
+import CNNBuilder from './CNNBuilder.jsx'
+import FeatureMap from './FeatureMap.jsx'
+// GPU track (free-notebook launcher — no in-browser execution)
+import ColabLaunch from './ColabLaunch.jsx'
 
 export const ACTIVITIES = {
   // Beginner
@@ -51,4 +61,14 @@ export const ACTIVITIES = {
   capstone: CapstoneGame,
   // Hands-on code (Pyodide)
   notebook: NotebookGame,
+  // Advanced (judgment + reasoning)
+  scenario: ScenarioGame,
+  // Vision (CNN intuition)
+  convolve: Convolve,
+  'pixel-grid': PixelGrid,
+  calc: ShapeCalc,
+  builder: CNNBuilder,
+  featuremap: FeatureMap,
+  // GPU lessons (free Colab/Kaggle notebook launcher + self-check)
+  colab: ColabLaunch,
 }

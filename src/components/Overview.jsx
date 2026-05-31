@@ -26,8 +26,9 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
           models responsibly. Each lesson pairs a plain-English idea with something you actually do.
         </p>
         <p className="muted" style={{ marginTop: 'var(--s2)' }}>
-          Levels 0, 1, 2, 3 &amp; 5 of the AI Academy curriculum. Code lessons (badged{' '}
-          <span className="code-badge">Code</span>) start at Level 2. More levels are in development.
+          Levels 0 through 5 of the AI Academy curriculum — foundations, machine learning, search,
+          computer vision, and AI evaluation. Code lessons (badged{' '}
+          <span className="code-badge">Code</span>) start at Level 2.
         </p>
         <div className="btn-row" style={{ marginTop: 'var(--s5)' }}>
           {allDone ? (

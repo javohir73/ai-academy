@@ -138,67 +138,42 @@ function levelVars(n) {
 }
 
 /* Premium vertical timeline for the curriculum. A gradient spine threads
-   glowing, color-coded level nodes (L0..L5). The curriculum data jumps
-   from Level 3 to Level 5 (Computer Vision isn't built yet), so we render
-   a dashed "ghost" Level 4 step in that gap to keep the journey legible.
+   glowing, color-coded level nodes (L0..L5), one per real track in TRACKS.
    Pure CSS/HTML — no three here. */
 function LearningPath() {
-  // Build the ordered step list, inserting the L4 ghost where the gap is.
-  const steps = []
-  TRACKS.forEach((track) => {
-    const num = Number(track.tag.replace('Level ', ''))
-    if (num === 5 && !steps.some((s) => s.ghost)) {
-      steps.push({ ghost: true, num: 4 })
-    }
-    steps.push({
-      id: track.id,
-      num,
-      title: track.title,
-      blurb: track.blurb,
-      pro: track.pro,
-      count: track.levels.length,
-      // The dashed L4 ghost step owns the Computer-Vision message, so we
-      // drop L5's comingSoon (which repeats it) but keep L3's roadmap note.
-      comingSoon: track.tag === 'Level 5' ? null : track.comingSoon,
-    })
-  })
+  const steps = TRACKS.map((track) => ({
+    id: track.id,
+    num: Number(track.tag.replace('Level ', '')),
+    title: track.title,
+    blurb: track.blurb,
+    pro: track.pro,
+    count: track.levels.length,
+    comingSoon: track.comingSoon,
+  }))
 
   return (
     <ol className="learn-path">
-      {steps.map((step, i) =>
-        step.ghost ? (
-          <li className="path-step path-step--ghost" key="ghost-l4" style={{ '--i': i }}>
-            <div className="path-step__node" aria-hidden="true">
-              <span>L</span>4
-            </div>
-            <div className="path-step__card">
-              <span className="path-step__tag">Level 4 · Coming soon</span>
-              <h3>Computer Vision</h3>
-              <p>How machines see — image classification and visual models. In development between Levels 3 and 5.</p>
-            </div>
-          </li>
-        ) : (
-          <li className="path-step" key={step.id} style={{ '--i': i, ...levelVars(step.num) }}>
-            <div className="path-step__node" aria-hidden="true">
-              <span>L</span>
-              {step.num}
-            </div>
-            <div className="path-step__card">
-              <span className="path-step__tag">
-                Level {step.num}
-                {step.pro && <span className="path-step__pro">PRO</span>}
-              </span>
-              <h3>{step.title}</h3>
-              <p>{step.blurb}</p>
-              <span className="path-step__lessons">
-                <Layers size={14} aria-hidden="true" />
-                {step.count} {step.count === 1 ? 'lesson' : 'lessons'}
-              </span>
-              {step.comingSoon && <span className="path-step__soon">{step.comingSoon}</span>}
-            </div>
-          </li>
-        ),
-      )}
+      {steps.map((step, i) => (
+        <li className="path-step" key={step.id} style={{ '--i': i, ...levelVars(step.num) }}>
+          <div className="path-step__node" aria-hidden="true">
+            <span>L</span>
+            {step.num}
+          </div>
+          <div className="path-step__card">
+            <span className="path-step__tag">
+              Level {step.num}
+              {step.pro && <span className="path-step__pro">PRO</span>}
+            </span>
+            <h3>{step.title}</h3>
+            <p>{step.blurb}</p>
+            <span className="path-step__lessons">
+              <Layers size={14} aria-hidden="true" />
+              {step.count} {step.count === 1 ? 'lesson' : 'lessons'}
+            </span>
+            {step.comingSoon && <span className="path-step__soon">{step.comingSoon}</span>}
+          </div>
+        </li>
+      ))}
     </ol>
   )
 }

@@ -1209,6 +1209,19 @@ input[type='range'] {
   margin-top: 2px;
 }
 
+/* Scenario activity ('scenario' type): label + optional multi-select box */
+.scenario-choice__label {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  min-width: 0; /* allow long labels to wrap instead of overflowing */
+}
+.scenario-choice__label svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
 /* --------------------------- 10. Animations ------------------------- */
 @keyframes fade-in {
   from {
