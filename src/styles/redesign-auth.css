@@ -1,0 +1,505 @@
+/* =====================================================================
+   AI ACADEMY — Redesign · AREA D: AUTH / ACCOUNT / SYNC (Phase 2)
+   ---------------------------------------------------------------------
+   Premium LIGHT-futuristic polish for the auth surfaces. PURELY VISUAL.
+   No behavior, props, or handlers change — this file only restyles the
+   classes already emitted by:
+     - AuthModal.jsx     (.auth-overlay/.auth-modal/.auth-field/…)
+     - AccountMenu.jsx   (.account-avatar/.account-dropdown/.sync-badge/…)
+     - AccountPrompt.jsx (.account-prompt/…)
+
+   LOAD ORDER: imported AFTER global.css, so these rules layer on top of
+   the base auth block without rewriting it. We avoid !important except
+   where we must guarantee a single (non-doubled) focus ring and where we
+   must keep motion inert under prefers-reduced-motion.
+
+   TOKENS: consumes Phase-1 tokens from redesign-tokens.css (--glass-2/3,
+   --glass-blur-strong, --glass-border-cool, --elev-3/4, --grad-aurora,
+   --emerald*, --cyan*, --indigo*) plus existing global tokens. No new
+   :root tokens are defined here — Phase 1 already covers this area.
+
+   REDUCED MOTION: every decorative animation below is also explicitly
+   gated in the @media (prefers-reduced-motion: reduce) block at the end,
+   as defense-in-depth on top of global.css's universal neutralizer.
+
+   MOBILE: the modal uses fluid widths/padding and a dvh max-height with
+   internal scroll so it can never overflow or clip on small screens.
+   ===================================================================== */
+
+/* =====================================================================
+   1. AUTH MODAL
+   ===================================================================== */
+
+/* Deeper, cooler scrim so the glass card reads as "floating in light". */
+.auth-overlay {
+  background: radial-gradient(
+      120% 120% at 50% 0%,
+      rgba(79, 70, 229, 0.28) 0%,
+      rgba(15, 23, 42, 0.34) 55%,
+      rgba(15, 23, 42, 0.42) 100%
+    );
+  -webkit-backdrop-filter: blur(7px) saturate(115%);
+  backdrop-filter: blur(7px) saturate(115%);
+  /* allow the card to scroll on short viewports instead of clipping */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Premium glass card: layered translucency + 3D elevation + a faint
+   gradient hairline. The hairline is drawn with a masked ::after so it
+   never tints the content behind it. */
+.auth-overlay .auth-modal.glass-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 38%),
+    var(--glass-3);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(125%);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(125%);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-4);
+  overflow: hidden;
+  /* never exceed the viewport; scroll internally if a small screen needs it */
+  max-height: min(92dvh, 720px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Gradient hairline ring (masked so only the 1px border shows color). */
+.auth-overlay .auth-modal.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    140deg,
+    rgba(6, 182, 212, 0.55),
+    rgba(99, 102, 241, 0.4) 45%,
+    rgba(236, 72, 153, 0.4) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* A soft aurora glow blooming from behind the brand mark — depth, no clutter. */
+.auth-modal__brand {
+  position: relative;
+}
+.auth-modal__brand::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  width: 180px;
+  height: 120px;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    60% 60% at 50% 40%,
+    rgba(99, 102, 241, 0.25) 0%,
+    rgba(6, 182, 212, 0.16) 45%,
+    rgba(255, 255, 255, 0) 75%
+  );
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(2px);
+}
+
+/* Brand mark: glowing gradient tile that gently breathes (motion-gated). */
+.auth-modal__brand .brand__mark {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--r);
+  background: var(--grad-aurora);
+  background-size: 160% 160%;
+  color: #fff;
+  box-shadow:
+    0 6px 18px -6px rgba(79, 70, 229, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset,
+    0 0 22px -8px rgba(6, 182, 212, 0.7);
+  animation: auth-brand-breathe 6s var(--ease-in-out, ease-in-out) infinite;
+}
+
+@keyframes auth-brand-breathe {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Keep title/sub above the decorative layers + tighten hierarchy. */
+.auth-modal__title,
+.auth-modal__sub,
+.auth-form,
+.auth-switch {
+  position: relative;
+  z-index: 1;
+}
+.auth-modal__title {
+  letter-spacing: -0.01em;
+}
+
+/* Refined close button: glassy chip that lifts on hover. */
+.auth-modal__close.icon-btn {
+  z-index: 2;
+  background: var(--glass-1);
+  border: 1px solid var(--glass-border-cool);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--text-2);
+  border-radius: var(--r-pill);
+  transition: background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+.auth-modal__close.icon-btn:hover {
+  background: #fff;
+  color: var(--text);
+  transform: translateY(-1px);
+  box-shadow: var(--elev-2);
+}
+
+/* ---- Fields -------------------------------------------------------- */
+/* Cooler, glassier field wells. The leading icon stays muted until focus. */
+.auth-form .auth-field__wrap {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) inset;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+.auth-form .auth-field__wrap:hover {
+  border-color: var(--electric-soft);
+}
+
+/* SINGLE clean focus ring on the WRAPPER (focus-within). We deliberately
+   keep the ring on the wrapper only and suppress it on the inner input so
+   the two never nest into the doubled-box artifact the base file fixed. */
+.auth-form .auth-field__wrap:focus-within {
+  border-color: var(--electric);
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.22),
+    0 0 0 1px var(--electric) inset,
+    0 6px 16px -10px rgba(59, 130, 246, 0.55);
+  color: var(--indigo);
+  background: #ffffff;
+}
+
+/* Defensive re-assertion of the base fix: the inner input must NEVER draw
+   its own ring (otherwise the global :focus-visible rule + the wrapper ring
+   double up). This mirrors the existing global.css fix; do not remove. */
+.auth-form .auth-field__wrap input:focus-visible,
+.auth-form .auth-field__wrap input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.auth-field__label {
+  letter-spacing: 0.01em;
+}
+
+/* ---- Messages: soft tinted pills instead of bare text -------------- */
+.auth-form .auth-msg {
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-sm);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.auth-form .auth-msg--error {
+  color: var(--danger);
+  background: rgba(180, 35, 24, 0.08);
+  border: 1px solid rgba(180, 35, 24, 0.18);
+}
+.auth-form .auth-msg--ok {
+  color: var(--emerald-strong);
+  background: var(--emerald-soft);
+  border: 1px solid var(--emerald-tint);
+}
+
+/* ---- Primary submit ------------------------------------------------ */
+/* .btn--primary already carries the gradient + glow from global.css; we
+   only add a faint top sheen for extra depth without changing its color. */
+.auth-form .btn--primary.btn--block {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r);
+}
+.auth-form .btn--primary.btn--block::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+
+/* ---- Mode-switch links: tidy underline-on-hover -------------------- */
+.auth-switch .link-btn {
+  border-radius: var(--r-sm);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.auth-switch .link-btn:hover {
+  color: var(--indigo-strong);
+}
+
+/* =====================================================================
+   2. ACCOUNT MENU
+   ===================================================================== */
+
+/* Local-only chip ("Saved on this device"): a calm glassy pill. */
+.account-local {
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--glass-1);
+  border: 1px solid var(--glass-border-cool);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--text-2);
+  font-weight: 500;
+}
+.account-local svg {
+  color: var(--indigo);
+  opacity: 0.85;
+}
+
+/* Sign-in button keeps its secondary base; just round it a touch more. */
+.account-signin.btn--secondary {
+  border-radius: var(--r-pill);
+}
+
+/* ---- Avatar -------------------------------------------------------- */
+.account-avatar {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.account-avatar:hover {
+  transform: translateY(-1px);
+}
+.account-avatar__circle {
+  background: var(--grad-aurora);
+  background-size: 150% 150%;
+  box-shadow:
+    0 2px 10px -2px rgba(79, 70, 229, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.45) inset;
+  letter-spacing: 0.01em;
+}
+/* A crisp ring appears around the avatar on hover/focus for affordance. */
+.account-avatar:hover .account-avatar__circle,
+.account-avatar:focus-visible .account-avatar__circle {
+  box-shadow:
+    0 4px 16px -3px rgba(79, 70, 229, 0.7),
+    0 0 0 3px rgba(99, 102, 241, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+}
+.account-avatar__circle--lg {
+  box-shadow:
+    0 4px 14px -3px rgba(79, 70, 229, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+/* ---- Dropdown ------------------------------------------------------ */
+.account-dropdown.glass-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 40%),
+    var(--glass-3);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(120%);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(120%);
+  border: 1px solid var(--glass-border-strong);
+  box-shadow: var(--elev-3);
+}
+/* Hairline accent at the top edge of the dropdown header. */
+.account-dropdown__head {
+  position: relative;
+  border-radius: var(--r-sm);
+}
+.account-dropdown__head::after {
+  content: '';
+  position: absolute;
+  left: var(--s2);
+  right: var(--s2);
+  bottom: -2px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0) 0%, rgba(99, 102, 241, 0.28) 50%, rgba(99, 102, 241, 0) 100%);
+}
+.account-dropdown__email {
+  letter-spacing: -0.005em;
+}
+/* Sign-out item: soft danger affordance on hover (still calm). */
+.account-dropdown__item {
+  transition: background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+.account-dropdown__item:hover {
+  background: rgba(180, 35, 24, 0.07);
+  color: var(--danger);
+}
+.account-dropdown__item:hover svg {
+  color: var(--danger);
+}
+
+/* =====================================================================
+   3. SYNC BADGE — premium per-state pills (small + tasteful)
+   ===================================================================== */
+.sync-badge {
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  line-height: 1;
+}
+
+/* Saved → emerald */
+.sync-badge.sync--ok {
+  color: var(--emerald-strong);
+  background: var(--emerald-soft);
+  border-color: var(--emerald-tint);
+}
+
+/* Syncing → cyan, with a subtle animated halo (reduced-motion safe). */
+.sync-badge.sync--busy {
+  color: var(--cyan-strong);
+  background: var(--cyan-soft);
+  border-color: var(--cyan-tint);
+  animation: sync-busy-pulse 1.8s var(--ease-in-out, ease-in-out) infinite;
+}
+@keyframes sync-busy-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.14); }
+}
+/* The spinning loader icon already uses global .spin; just match the hue. */
+.sync-badge.sync--busy svg {
+  color: var(--cyan-strong);
+}
+
+/* Error → danger */
+.sync-badge.sync--err {
+  color: var(--danger);
+  background: rgba(180, 35, 24, 0.08);
+  border-color: rgba(180, 35, 24, 0.18);
+}
+
+/* Offline / local / idle → neutral glass */
+.sync-badge.sync--muted {
+  color: var(--text-3);
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+/* =====================================================================
+   4. ACCOUNT PROMPT — premium slide-in card
+   ===================================================================== */
+.account-prompt.glass-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 42%),
+    var(--glass-3);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(120%);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(120%);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-4);
+  overflow: hidden;
+}
+/* Gradient hairline ring (masked) to match the modal language. */
+.account-prompt.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    140deg,
+    rgba(6, 182, 212, 0.5),
+    rgba(99, 102, 241, 0.38) 50%,
+    rgba(236, 72, 153, 0.38) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.65;
+  pointer-events: none;
+}
+/* Keep content above the hairline layer. */
+.account-prompt__close,
+.account-prompt__icon,
+.account-prompt__body {
+  position: relative;
+  z-index: 1;
+}
+
+/* Icon tile: gradient + glow instead of flat soft fill. */
+.account-prompt__icon {
+  background: var(--grad-cool);
+  color: #fff;
+  box-shadow:
+    0 4px 14px -4px rgba(6, 182, 212, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+}
+.account-prompt__title {
+  letter-spacing: -0.005em;
+}
+.account-prompt__title svg {
+  color: var(--pink);
+}
+.account-prompt__close {
+  border-radius: var(--r-pill);
+  transition: background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+/* =====================================================================
+   5. MOBILE — no horizontal overflow, nothing clipped
+   ===================================================================== */
+@media (max-width: 480px) {
+  .auth-overlay {
+    padding: var(--s3);
+    /* pin the card toward the top so the on-screen keyboard never clips it */
+    place-items: start center;
+    padding-top: max(var(--s4), env(safe-area-inset-top));
+  }
+  .auth-overlay .auth-modal.glass-card {
+    max-width: 100%;
+    max-height: calc(100dvh - 2 * var(--s3));
+    padding: clamp(var(--s4), 6vw, var(--s5));
+  }
+  .auth-modal__title {
+    font-size: 1.25rem;
+  }
+  .auth-switch {
+    gap: var(--s2) var(--s4);
+  }
+  /* Dropdown should never run off-screen on small viewports. */
+  .account-dropdown.glass-card {
+    width: min(248px, calc(100vw - 2 * var(--s3)));
+  }
+}
+
+/* =====================================================================
+   6. REDUCED MOTION — defense-in-depth
+   global.css already neutralizes @keyframes globally; we additionally
+   hard-stop every decorative animation/transition introduced here so a
+   reduced-motion user gets a calm, static premium surface.
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .auth-modal__brand .brand__mark,
+  .sync-badge.sync--busy {
+    animation: none !important;
+  }
+  .auth-modal__close.icon-btn,
+  .auth-form .auth-field__wrap,
+  .account-avatar,
+  .account-dropdown__item,
+  .auth-switch .link-btn,
+  .account-prompt__close {
+    transition: none !important;
+  }
+  .auth-modal__close.icon-btn:hover,
+  .account-avatar:hover {
+    transform: none !important;
+  }
+}

@@ -1,3 +1,8 @@
+/* Phase 1 — premium vibrant design tokens (must precede all style rules) */
+@import './redesign-tokens.css';
+/* Phase 2 — Area A: premium 3D hero (canvas/scrim/fallback styling) */
+@import './redesign-hero.css';
+
 /* =====================================================================
    AI ACADEMY — Global stylesheet
    ---------------------------------------------------------------------

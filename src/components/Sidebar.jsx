@@ -89,8 +89,16 @@ export default function Sidebar({
       {TRACKS_WITH_OFFSETS.map((track, ti) => {
         const locked = !progress.isUnlocked(track.levels[0].index)
         const prevTrack = TRACKS_WITH_OFFSETS[ti - 1]
+        // Per-level accent index (0..5) parsed from the track tag — presentational only.
+        const lvl = Math.min(5, Math.max(0, parseInt(String(track.tag).replace(/\D/g, ''), 10) || ti))
         return (
-          <nav key={track.id} className="nav-track" aria-label={`${track.tag}: ${track.title}`}>
+          <nav
+            key={track.id}
+            className="nav-track"
+            data-lvl={lvl}
+            style={{ '--lvl-accent': `var(--lvl-${lvl})`, '--lvl-grad': `var(--lvl-${lvl}-grad)`, '--lvl-soft': `var(--lvl-${lvl}-soft)` }}
+            aria-label={`${track.tag}: ${track.title}`}
+          >
             <p className="track-label">
               <span className={`track-label__tag${track.pro ? ' track-label__tag--pro' : ''}`}>
                 {track.tag}

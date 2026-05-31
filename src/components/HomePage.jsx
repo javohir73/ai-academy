@@ -10,8 +10,12 @@ import {
   Clock,
   Wifi,
   GraduationCap,
+  Layers,
+  Code2,
+  CloudCheck,
+  Sprout,
 } from 'lucide-react'
-import NeuralBackground from './NeuralBackground.jsx'
+import Hero3D from './Hero3D.jsx'
 import { TRACKS, LEVELS } from '../data/tracks.js'
 
 /*
@@ -21,32 +25,48 @@ import { TRACKS, LEVELS } from '../data/tracks.js'
  *   - "Explore curriculum"  → onExplore (scrolls to the curriculum preview)
  *
  * Everything is local CSS + Lucide icons (no external assets/CDNs), so it adds
- * no new CSP origins. FeatureGrid / CurriculumPreview are kept inline as small
- * presentational pieces (used only here) rather than over-split into files.
+ * no new CSP origins. FeatureGrid / LearningPath / StatsStrip are kept inline
+ * as small presentational pieces (used only here) rather than split into files.
  */
 
+/* Feature cards rotate through four accent families (cyan → violet →
+   emerald → orange). The accent only colors the icon tile, top bar, and
+   hover glow — never the body copy (which stays calm + AA). Styling reads
+   these via CSS custom props set inline in FeatureGrid. */
 const FEATURES = [
   {
     Icon: BookOpenCheck,
     title: 'Concept-first lessons',
     body: 'Start with plain-English ideas and everyday examples — the intuition comes before any math or code.',
+    accent: 'cyan',
   },
   {
     Icon: MousePointerClick,
     title: 'Interactive challenges',
     body: 'Learn by doing: sort, match, predict, and build. Almost every lesson is a hands-on challenge, not a quiz.',
+    accent: 'violet',
   },
   {
     Icon: TerminalSquare,
     title: 'Real Python in the browser',
     body: 'Write and run real scikit-learn code in an in-browser notebook — no installs, no setup, graded instantly.',
+    accent: 'emerald',
   },
   {
     Icon: ShieldCheck,
     title: 'Responsible AI & LLM evaluation',
     body: 'Finish by thinking like an AI model evaluator: score answers, catch hallucinations, and judge AI responsibly.',
+    accent: 'orange',
   },
 ]
+
+/* Maps a feature accent name → the Phase-1 token trio the CSS consumes. */
+const ACCENTS = {
+  cyan: { '--accent': 'var(--cyan)', '--accent-soft': 'var(--cyan-soft)', '--accent-grad': 'var(--grad-cool)' },
+  violet: { '--accent': 'var(--violet)', '--accent-soft': 'var(--violet-soft)', '--accent-grad': 'var(--violet-grad)' },
+  emerald: { '--accent': 'var(--emerald)', '--accent-soft': 'var(--emerald-soft)', '--accent-grad': 'var(--grad-emerald)' },
+  orange: { '--accent': 'var(--orange)', '--accent-soft': 'var(--orange-soft)', '--accent-grad': 'var(--orange-grad)' },
+}
 
 const TRUST = [
   {
@@ -69,8 +89,12 @@ const TRUST = [
 function FeatureGrid() {
   return (
     <div className="feature-grid">
-      {FEATURES.map(({ Icon, title, body }, i) => (
-        <div className="feature-card glow-card" key={title} style={{ '--i': i }}>
+      {FEATURES.map(({ Icon, title, body, accent }, i) => (
+        <div
+          className="feature-card"
+          key={title}
+          style={{ '--i': i, ...ACCENTS[accent] }}
+        >
           <div className="feature-card__icon">
             <Icon size={24} aria-hidden="true" />
           </div>
@@ -82,18 +106,108 @@ function FeatureGrid() {
   )
 }
 
-function CurriculumPreview() {
+/* Per-level node color/gradient/tint, keyed by the numeric level (0..5).
+   Consumes the Phase-1 --lvl-* map so the spine + nodes stay consistent
+   with the sidebar / path elsewhere in the app. */
+function levelVars(n) {
+  return {
+    '--node-color': `var(--lvl-${n})`,
+    '--node-grad': `var(--lvl-${n}-grad)`,
+    '--node-shadow': `color-mix(in srgb, var(--lvl-${n}) 55%, transparent)`,
+    '--card-tint': `color-mix(in srgb, var(--lvl-${n}) 7%, transparent)`,
+  }
+}
+
+/* Premium vertical timeline for the curriculum. A gradient spine threads
+   glowing, color-coded level nodes (L0..L5). The curriculum data jumps
+   from Level 3 to Level 5 (Computer Vision isn't built yet), so we render
+   a dashed "ghost" Level 4 step in that gap to keep the journey legible.
+   Pure CSS/HTML — no three here. */
+function LearningPath() {
+  // Build the ordered step list, inserting the L4 ghost where the gap is.
+  const steps = []
+  TRACKS.forEach((track) => {
+    const num = Number(track.tag.replace('Level ', ''))
+    if (num === 5 && !steps.some((s) => s.ghost)) {
+      steps.push({ ghost: true, num: 4 })
+    }
+    steps.push({
+      id: track.id,
+      num,
+      title: track.title,
+      blurb: track.blurb,
+      pro: track.pro,
+      count: track.levels.length,
+      // The dashed L4 ghost step owns the Computer-Vision message, so we
+      // drop L5's comingSoon (which repeats it) but keep L3's roadmap note.
+      comingSoon: track.tag === 'Level 5' ? null : track.comingSoon,
+    })
+  })
+
   return (
-    <div className="curriculum-rail">
-      {TRACKS.map((track, i) => (
-        <div className="level-card glow-card" key={track.id} style={{ '--i': i }}>
-          <div className="level-card__num">
-            {track.tag.replace('Level ', 'LEVEL ')}
-            <span className="gradient-text">{track.tag.replace('Level ', '')}</span>
-          </div>
-          <h3>{track.title}</h3>
-          <p>{track.blurb}</p>
-          {track.comingSoon && <p className="level-card__soon">{track.comingSoon}</p>}
+    <ol className="learn-path">
+      {steps.map((step, i) =>
+        step.ghost ? (
+          <li className="path-step path-step--ghost" key="ghost-l4" style={{ '--i': i }}>
+            <div className="path-step__node" aria-hidden="true">
+              <span>L</span>4
+            </div>
+            <div className="path-step__card">
+              <span className="path-step__tag">Level 4 · Coming soon</span>
+              <h3>Computer Vision</h3>
+              <p>How machines see — image classification and visual models. In development between Levels 3 and 5.</p>
+            </div>
+          </li>
+        ) : (
+          <li className="path-step" key={step.id} style={{ '--i': i, ...levelVars(step.num) }}>
+            <div className="path-step__node" aria-hidden="true">
+              <span>L</span>
+              {step.num}
+            </div>
+            <div className="path-step__card">
+              <span className="path-step__tag">
+                Level {step.num}
+                {step.pro && <span className="path-step__pro">PRO</span>}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.blurb}</p>
+              <span className="path-step__lessons">
+                <Layers size={14} aria-hidden="true" />
+                {step.count} {step.count === 1 ? 'lesson' : 'lessons'}
+              </span>
+              {step.comingSoon && <span className="path-step__soon">{step.comingSoon}</span>}
+            </div>
+          </li>
+        ),
+      )}
+    </ol>
+  )
+}
+
+/* Concise proof points shown as glassy chips. The lesson count is derived
+   from the real curriculum so it never drifts. */
+function StatsStrip({ lessonCount }) {
+  const stats = [
+    { Icon: Layers, value: `${lessonCount} lessons`, label: 'Hands-on, concept-first', accent: 'cyan' },
+    { Icon: Code2, value: 'Real Python', label: 'scikit-learn in your browser', accent: 'emerald' },
+    { Icon: CloudCheck, value: 'Cloud progress', label: 'Synced across devices', accent: 'electric' },
+    { Icon: Sprout, value: 'Beginner-first', label: 'No prior code or math', accent: 'orange' },
+  ]
+  return (
+    <div className="stats-strip">
+      {stats.map(({ Icon, value, label, accent }) => (
+        <div
+          className="stat-chip"
+          key={value}
+          style={{ '--accent': `var(--${accent})`, '--accent-soft': `var(--${accent}-soft)` }}
+        >
+          <span className="stat-chip__icon">
+            <Icon size={20} aria-hidden="true" />
+          </span>
+          <span className="stat-chip__body">
+            <span className="stat-chip__value">{value}</span>
+            <span className="stat-chip__label">{label}</span>
+          </span>
         </div>
       ))}
     </div>
@@ -125,7 +239,7 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
 
       {/* Hero */}
       <header className="hero-x">
-        <NeuralBackground />
+        <Hero3D />
         <div className="hero-x__inner">
           <span className="chip-grad">
             <Sparkles size={13} aria-hidden="true" /> Learn AI &amp; ML from scratch
@@ -159,6 +273,11 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
         <FeatureGrid />
       </section>
 
+      {/* Stats / benefit strip */}
+      <section className="home-section home-section--stats" aria-label="At a glance">
+        <StatsStrip lessonCount={lessonCount} />
+      </section>
+
       {/* Curriculum preview */}
       <section className="home-section" id="curriculum" aria-labelledby="curriculum-h">
         <div className="home-section__head">
@@ -169,7 +288,7 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
             journey always feels achievable.
           </p>
         </div>
-        <CurriculumPreview />
+        <LearningPath />
       </section>
 
       {/* Trust / benefits */}
