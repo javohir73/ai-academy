@@ -3323,6 +3323,13 @@ body::before {
   padding: 12px 0;
   min-width: 0;
 }
+/* The wrapper already shows focus via :focus-within, so suppress the global
+ * focus ring on the inner input — otherwise both draw a rounded ring and they
+ * nest into a doubled-box artifact. */
+.auth-field__wrap input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
 .auth-msg {
   margin: 0;
   font-size: 0.85rem;
