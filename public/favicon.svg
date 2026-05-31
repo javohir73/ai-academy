@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI Academy favicon">
+  <!-- Theme-aware: the "AI" monogram is dark ink on light tab bars and light
+       ink on dark tab bars, so it stays visible in both OS/browser themes.
+       The blue accent dot reads on either background. -->
+  <style>
+    .ink { fill: #18181b; }
+    @media (prefers-color-scheme: dark) {
+      .ink { fill: #f7f8fa; }
+    }
+  </style>
+  <path class="ink" d="M12 49 25.4 15h6.2L18.2 49H12Z"/>
+  <path class="ink" d="M25.8 49 39.2 15h6.2L32 49h-6.2Z"/>
+  <path class="ink" d="M45.8 49 34.6 21.2 37.8 13 52 49h-6.2Z"/>
+  <path class="ink" d="M21.6 39h23.1l2.2 5.8H19.3l2.3-5.8Z"/>
+  <circle cx="32" cy="15" r="3.2" fill="#3b82f6"/>
+</svg>
