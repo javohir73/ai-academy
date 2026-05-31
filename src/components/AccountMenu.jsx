@@ -57,11 +57,17 @@ export default function AccountMenu({ configured, user, syncState, onSignInClick
     )
   }
 
-  // Anonymous: invite sign-in.
+  // Anonymous: invite sign-in. (On mobile the label is visually hidden via CSS
+  // and the icon stands alone — aria-label keeps it accessible either way.)
   if (!user) {
     return (
-      <button className="btn btn--secondary account-signin" onClick={onSignInClick}>
-        <User size={16} /> Sign in
+      <button
+        className="btn btn--secondary account-signin"
+        onClick={onSignInClick}
+        aria-label="Sign in"
+      >
+        <User size={16} aria-hidden="true" />
+        <span className="account-signin__label">Sign in</span>
       </button>
     )
   }

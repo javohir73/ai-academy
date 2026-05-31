@@ -3217,9 +3217,32 @@ body::before {
   .home__nav .btn {
     padding: 10px 12px;
     min-height: 42px;
+    white-space: nowrap; /* never let CTA text wrap to a second line */
   }
   .home__nav .btn--ghost {
     display: none;
+  }
+  /* Mobile header polish: the "Sign in" control becomes icon-only (the label is
+     visually hidden; aria-label on the button keeps it accessible) so the row
+     stays uncramped — logo + compact Sign in + primary Start learning. The
+     signed-in avatar is already compact, so this only affects the anon state. */
+  .home__nav .account-signin {
+    padding: 0;
+    width: 42px;
+    min-width: 42px;
+    justify-content: center;
+  }
+  .home__nav .account-signin .account-signin__label {
+    /* visually-hidden (kept in the a11y tree as a fallback alongside aria-label) */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
   .hero-x h1 {
     font-size: 2.6rem;
