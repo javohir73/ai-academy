@@ -32,6 +32,10 @@ import NotebookGame from './NotebookGame.jsx'
 import ScenarioGame from './ScenarioGame.jsx'
 // Vision track (CNN intuition)
 import Convolve from './Convolve.jsx'
+import PixelGrid from './PixelGrid.jsx'
+import ShapeCalc from './ShapeCalc.jsx'
+import CNNBuilder from './CNNBuilder.jsx'
+import FeatureMap from './FeatureMap.jsx'
 // GPU track (free-notebook launcher — no in-browser execution)
 import ColabLaunch from './ColabLaunch.jsx'
 
@@ -61,6 +65,10 @@ export const ACTIVITIES = {
   scenario: ScenarioGame,
   // Vision (CNN intuition)
   convolve: Convolve,
+  'pixel-grid': PixelGrid,
+  calc: ShapeCalc,
+  builder: CNNBuilder,
+  featuremap: FeatureMap,
   // GPU lessons (free Colab/Kaggle notebook launcher + self-check)
   colab: ColabLaunch,
 }

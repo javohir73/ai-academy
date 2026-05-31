@@ -260,3 +260,433 @@
     flex-basis: 100%;
   }
 }
+
+/* =====================================================================
+   PixelGrid — Pixel Inspector ('pixel-grid' type)
+   ---------------------------------------------------------------------
+   A small RGB image rendered as colored swatches, channel toggles, and a
+   clicked-pixel read-out. All selectors namespaced under .pixel-.
+   ===================================================================== */
+.pixel-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.pixel-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.pixel-toggle.is-on {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.pixel-toggle__dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  border: 2px solid;
+  flex: 0 0 auto;
+}
+
+.pixel-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s3);
+}
+.pixel-grid {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  max-width: 240px;
+  padding: 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.pixel-cell {
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.pixel-cell.is-selected {
+  box-shadow: 0 0 0 3px var(--accent);
+  transform: scale(1.04);
+  z-index: 1;
+}
+.pixel-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  min-height: 1.5rem;
+  font-size: 0.9rem;
+}
+.pixel-readout__label {
+  font-weight: 700;
+  color: var(--text);
+}
+.pixel-readout__vals {
+  display: inline-flex;
+  gap: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.pixel-readout__hint {
+  color: var(--text-3, var(--text-2));
+}
+.pixel-check {
+  padding-top: 0.25rem;
+}
+.pixel-check .scenario {
+  margin-bottom: 0.5rem;
+}
+
+/* =====================================================================
+   ShapeCalc — CNN-sizing mini-calculator ('calc' type)
+   ---------------------------------------------------------------------
+   Given values, a formula line, a numeric entry, and a worked result.
+   ===================================================================== */
+.calc-givens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.calc-given {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  min-width: 4.5rem;
+}
+.calc-given__k {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3, var(--text-2));
+}
+.calc-given__v {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.calc-formula {
+  text-align: center;
+  margin: 0;
+}
+.calc-formula code {
+  font-size: 0.95rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-soft);
+  color: var(--accent-strong, var(--accent));
+  border: 1px solid var(--accent-soft);
+}
+.calc-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.calc-entry__field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.calc-input {
+  width: 7rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+.calc-input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.calc-input:disabled {
+  opacity: 0.55;
+}
+.calc-entry__unit {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  font-weight: 600;
+}
+.calc-invalid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.calc-invalid.is-on {
+  color: var(--danger);
+  font-weight: 600;
+}
+.calc-invalid svg {
+  flex: 0 0 auto;
+}
+.calc-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--r-sm);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.calc-result.is-correct {
+  background: var(--success-soft, rgba(34, 197, 94, 0.1));
+  color: var(--text);
+}
+.calc-result.is-wrong {
+  background: var(--danger-soft, rgba(239, 68, 68, 0.08));
+  color: var(--text);
+}
+.calc-result svg {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+}
+
+/* =====================================================================
+   CNNBuilder — drag/tap-to-order architecture builder ('builder' type)
+   ===================================================================== */
+.builder-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.builder-tile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px dashed var(--accent);
+  border-radius: var(--r-sm);
+  background: var(--accent-soft);
+  color: var(--accent-strong, var(--accent));
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.builder-tile:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--elev-1, 0 1px 2px rgba(16, 24, 40, 0.06));
+}
+.builder-tile__note {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.builder-pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  min-height: 3.25rem;
+}
+.builder-pipeline__head,
+.builder-pipeline__tail {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-3, var(--text-2));
+}
+.builder-pipeline__empty {
+  color: var(--text-3, var(--text-2));
+  font-size: 0.85rem;
+}
+.builder-step__wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.builder-arrow {
+  color: var(--text-3, var(--text-2));
+  flex: 0 0 auto;
+}
+.builder-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.builder-step--ok {
+  border-color: var(--success, #22c55e);
+  background: var(--success-soft, rgba(34, 197, 94, 0.1));
+}
+.builder-step--wrong {
+  border-color: var(--danger, #ef4444);
+  background: var(--danger-soft, rgba(239, 68, 68, 0.08));
+}
+
+/* =====================================================================
+   FeatureMap — activation visualizer ('featuremap' type)
+   depth explorer (tabs + heat grid) and adversarial perturbation slider
+   ===================================================================== */
+.fmap-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+.fmap-tab {
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.fmap-tab.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong, var(--accent));
+}
+.fmap-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s3);
+}
+.fmap-grid {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  max-width: 240px;
+  padding: 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.fmap-cell {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: clamp(0.7rem, 3vw, 0.9rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.fmap-caption {
+  margin: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.fmap-adv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.fmap-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.fmap-slider input[type='range'] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.fmap-pred {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+}
+.fmap-pred.is-flipped {
+  border-color: var(--danger, #ef4444);
+  background: var(--danger-soft, rgba(239, 68, 68, 0.08));
+}
+.fmap-pred__label {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.fmap-pred__bar {
+  display: block;
+  width: 100%;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.fmap-pred__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+.fmap-pred.is-flipped .fmap-pred__fill {
+  background: var(--danger, #ef4444);
+}
+.fmap-pred__conf {
+  font-size: 0.8rem;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.fmap-check {
+  padding-top: 0.25rem;
+}
+.fmap-check .scenario {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 380px) {
+  .pixel-grid,
+  .fmap-grid {
+    max-width: 200px;
+  }
+}

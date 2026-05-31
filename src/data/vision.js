@@ -47,82 +47,60 @@ export const VISION_LEVELS = [
       "duration": "3:30"
     },
     "activity": {
-      "type": "convolve",
-      "prompt": "Here is the RED channel of a small grayscale-style grid (one channel, values 0–255). The bright 2×2 window sits over the top-left corner. Reading the pixels in the window, which value is the BRIGHTEST pixel — the one closest to white?",
+      "type": "pixel-grid",
+      "prompt": "Here is a tiny color image as a grid of (R, G, B) numbers. Toggle the Red / Green / Blue channels to watch each one's contribution, and click any pixel to read its exact values. Then answer the channel-order question — this is exactly where RGB-vs-BGR bugs hide.",
       "data": {
-        "mode": "pool",
-        "op": "max",
-        "input": [
+        "channels": ["r", "g", "b"],
+        "pixels": [
           [
-            10,
-            30,
-            90,
-            200,
-            255
+            [255, 0, 0],
+            [255, 255, 0],
+            [0, 255, 0]
           ],
           [
-            20,
-            240,
-            120,
-            60,
-            250
+            [255, 128, 0],
+            [200, 200, 200],
+            [0, 255, 255]
           ],
           [
-            5,
-            15,
-            200,
-            210,
-            40
-          ],
-          [
-            0,
-            80,
-            130,
-            180,
-            70
-          ],
-          [
-            60,
-            110,
-            90,
-            25,
-            255
+            [0, 0, 255],
+            [128, 0, 255],
+            [0, 0, 0]
           ]
         ],
-        "targetCell": {
-          "r": 0,
-          "c": 0
-        },
-        "choices": [
-          {
-            "id": "p10",
-            "label": 10,
-            "correct": false,
-            "why": "10 is nearly black, not the brightest. The window covers the four values 10, 30, 20, 240."
-          },
-          {
-            "id": "p30",
-            "label": 30,
-            "correct": false,
-            "why": "30 is dark gray. A brighter pixel sits in the same 2×2 window."
-          },
-          {
-            "id": "p240",
-            "label": 240,
-            "correct": true,
-            "why": "Brightness runs 0–255, so the largest value is the brightest pixel. The 2×2 window holds 10, 30, 20, and 240 — and 240 is closest to white. Reading pixel values is exactly how a model 'sees' an image."
-          },
-          {
-            "id": "p20",
-            "label": 20,
-            "correct": false,
-            "why": "20 is almost black. Bigger numbers mean brighter pixels; 240 wins here."
-          }
-        ]
+        "check": {
+          "question": "The top-left pixel is stored as the three numbers (255, 0, 0) and your library loads images in RGB order. What color is it — and what would a BGR-loading library make of the SAME numbers?",
+          "choices": [
+            {
+              "id": "red-blue",
+              "label": "Pure RED in RGB — but a BGR library would read the same numbers as pure BLUE.",
+              "correct": true,
+              "why": "In RGB order (255, 0, 0) means red maxed, green and blue off → pure red. Feed those identical numbers to a BGR-expecting model and the first channel is treated as blue, so it 'sees' pure blue. Same numbers, opposite color — the classic channel-order bug."
+            },
+            {
+              "id": "always-red",
+              "label": "Pure red either way — channel order doesn't change the color.",
+              "correct": false,
+              "why": "Channel order absolutely changes the meaning. The numbers are just slots; RGB vs BGR decides which slot is red and which is blue, so the SAME (255, 0, 0) flips between red and blue."
+            },
+            {
+              "id": "white",
+              "label": "White — all three numbers together make white.",
+              "correct": false,
+              "why": "White needs all three channels maxed (255, 255, 255). Here only the first is 255 and the other two are 0, so it's a single pure channel, not white."
+            },
+            {
+              "id": "yellow",
+              "label": "Yellow — red and green combine to yellow.",
+              "correct": false,
+              "why": "Yellow is red + green (255, 255, 0). Here green is 0, so there is no green to combine — it's pure red in RGB order."
+            }
+          ]
+        }
       },
       "feedback": {
-        "correct": "Exactly — 240 is the brightest pixel because higher numbers are lighter (0=black, 255=white). You just read an image the way a computer does: as a grid of numbers.",
-        "incorrect": "Remember the scale: 0 is black, 255 is white, so the brightest pixel is the LARGEST number inside the window. Look again at the four values 10, 30, 20, 240."
+        "correct": "Exactly — the numbers are meaningless until you know the channel order. (255, 0, 0) is red in RGB and blue in BGR. Always confirm RGB vs BGR before feeding a model, or its accuracy quietly collapses.",
+        "incorrect": "An image is just (R, G, B) numbers, but the ORDER decides which number is which color. (255, 0, 0) is pure red in RGB order and pure blue in BGR — same numbers, opposite meaning. Toggle the Red channel off to confirm which slot drives that pixel."
       }
     }
   },
@@ -296,40 +274,20 @@ export const VISION_LEVELS = [
       "duration": "4:00"
     },
     "activity": {
-      "type": "scenario",
-      "prompt": "Pick the single BEST explanation of why teams stopped using plain fully-connected networks for images and switched to convolutions.",
+      "type": "calc",
+      "prompt": "Feel the parameter explosion for yourself. A single fully-connected neuron on a 200×200 RGB image needs one weight per input value. A 3×3 conv filter on the same image reuses just F×F×C weights everywhere. How many times MORE weights does the FC neuron use than the conv filter?",
       "data": {
-        "scenario": "Your colleague wants to classify 200×200 RGB photos by flattening each into a list of 120,000 numbers and feeding it to a fully-connected network where every neuron connects to every pixel. The model is gigantic, overfits badly, and a cat trained in the top-left is missed when it appears in the bottom-right. Which explanation best captures why a convolutional approach is the right fix?",
-        "choices": [
-          {
-            "id": "conv-fix",
-            "label": "A small conv filter (e.g. 3×3×3 = 27 shared weights) slides across the image: it uses far fewer parameters, looks at neighboring pixels so it keeps spatial structure, and reuses the same weights everywhere so it spots a feature in any position.",
-            "correct": true,
-            "why": "This names all three FC failures and how convolution fixes each: parameter sharing shrinks the model (27 vs 120,000 weights per unit), the local patch preserves spatial structure, and reusing weights gives translation invariance. This is exactly why CNNs replaced FC nets for vision."
-          },
-          {
-            "id": "more-neurons",
-            "label": "Just add many more fully-connected neurons and more layers — a big enough FC network will memorize every cat position eventually.",
-            "correct": false,
-            "why": "Adding neurons makes the parameter explosion WORSE (more weights, more overfitting) and still relearns every position separately. It treats the symptom by making the disease bigger — the opposite of the fix."
-          },
-          {
-            "id": "shrink-image",
-            "label": "Shrink every photo down to 10×10 so the FC network has fewer inputs — problem solved.",
-            "correct": false,
-            "why": "Shrinking throws away the detail you need to recognize objects and still ignores spatial structure and translation. Fewer pixels is not the same as a smarter architecture; you lose information instead of using it well."
-          },
-          {
-            "id": "more-data",
-            "label": "Keep the FC network but collect millions more labeled photos — enough data fixes everything.",
-            "correct": false,
-            "why": "More data can dampen overfitting but does nothing about the wasteful 120,000-weights-per-neuron design or the lack of translation invariance — the FC net still relearns each object position from scratch. The architecture, not the data volume, is the core problem here."
-          }
-        ]
+        "mode": "param-explosion",
+        "H": 200,
+        "W": 200,
+        "C": 3,
+        "kernel": 3,
+        "ask": "ratio",
+        "prompt": "How many times MORE weights does ONE fully-connected neuron (H×W×C) use than ONE 3×3 conv filter (F×F×C) on this 200×200 RGB image?"
       },
       "feedback": {
-        "correct": "Right — convolution wins on all three fronts: far fewer (shared) parameters, it respects which pixels are neighbors, and a feature learned once is recognized anywhere. That is the whole case for CNNs.",
-        "incorrect": "The fix is architectural, not just 'bigger' or 'smaller.' Look for the choice that names parameter sharing, local spatial structure, AND recognizing a feature in any position — that is what a sliding conv filter buys you."
+        "correct": "Right — 120,000 FC weights vs 27 conv weights is about 4,444× more, and that's for a SINGLE neuron. A whole FC layer multiplies the blowup, which is exactly why a small, shared conv filter replaced fully-connected nets for images.",
+        "incorrect": "Count both: an FC neuron needs H×W×C = 200×200×3 = 120,000 weights; a 3×3 conv filter needs F×F×C = 3×3×3 = 27. The ratio is 120,000 / 27 ≈ 4,444 — that gap is the parameter explosion convolutions avoid."
       }
     }
   },
@@ -370,41 +328,19 @@ export const VISION_LEVELS = [
       "duration": "4:30"
     },
     "activity": {
-      "type": "scenario",
-      "prompt": "You are configuring the first conv layer of a CNN. Use output = (W - F + 2P)/S + 1 to pick the only setup that produces a VALID feature map size.",
+      "type": "calc",
+      "prompt": "Configure the first conv layer and size its output yourself with output = (W − F + 2P)/S + 1. A 32×32 image goes through a 5×5 filter with no padding and stride 1. What is the output feature-map side length?",
       "data": {
-        "scenario": "Your input images are 32x32. For each option below, work out (W - F + 2P)/S + 1 and decide whether it lands on a whole number. Pick the single configuration that is valid AND keeps the spatial size at 32x32 (so no resolution is lost in this first layer).",
-        "multi": false,
-        "choices": [
-          {
-            "id": "same-pad",
-            "label": "F=3, P=1, S=1  ->  output (32 - 3 + 2)/1 + 1 = 32",
-            "correct": true,
-            "why": "(32 - 3 + 2*1)/1 + 1 = 31 + 1 = 32. A whole number, and it preserves the 32x32 size — this is 'same' padding for a 3x3 filter (pad 1 on each side)."
-          },
-          {
-            "id": "no-pad",
-            "label": "F=5, P=0, S=1  ->  output (32 - 5)/1 + 1 = 28",
-            "correct": false,
-            "why": "This IS valid (28 is a whole number), but it shrinks the map to 28x28 — the prompt asked to keep the size at 32x32, so this is not the best pick here."
-          },
-          {
-            "id": "bad-stride",
-            "label": "F=3, P=0, S=2  ->  output (32 - 3)/2 + 1 = 15.5",
-            "correct": false,
-            "why": "(32 - 3 + 0)/2 + 1 = 29/2 + 1 = 15.5 — not a whole number. A feature map cannot have half a cell, so this stride/padding combo is invalid."
-          },
-          {
-            "id": "bad-combo",
-            "label": "F=4, P=0, S=3  ->  output (32 - 4)/3 + 1 = 10.33",
-            "correct": false,
-            "why": "(32 - 4)/3 + 1 = 28/3 + 1 = 10.33 — not a whole number, so the layer is misconfigured. Change F, P, or S until the formula gives an integer."
-          }
-        ]
+        "mode": "conv-output",
+        "W": 32,
+        "F": 5,
+        "P": 0,
+        "S": 1,
+        "prompt": "Input W = 32, filter F = 5, padding P = 0, stride S = 1. What is the output side length? (If the formula doesn't land on a whole number, tick 'invalid' instead.)"
       },
       "feedback": {
-        "correct": "Exactly. F=3, P=1, S=1 gives (32-3+2)/1+1 = 32 — a valid, size-preserving layer. Always sanity-check the output dimension with the formula before training.",
-        "incorrect": "Plug each option into (W - F + 2P)/S + 1. Reject any that give a fraction (invalid), then keep the one that lands on 32 so no resolution is lost in the first layer."
+        "correct": "Exactly — (32 − 5 + 0)/1 + 1 = 27 + 1 = 28, so a 32×32 input through a 5×5 filter (no padding) gives a 28×28 feature map. Always size the output with the formula before training; if it isn't a whole number, the stride/padding is invalid.",
+        "incorrect": "Plug in: (W − F + 2P)/S + 1 = (32 − 5 + 0)/1 + 1 = 28. The map shrinks from 32 to 28 because there's no padding to make up for the 5×5 window's reach. (Add P=2 and you'd keep 32 — 'same' padding.)"
       }
     }
   },
@@ -551,52 +487,34 @@ export const VISION_LEVELS = [
       "duration": "6:30"
     },
     "activity": {
-      "type": "colab",
-      "prompt": "Open the notebook on a free GPU, build and train the small CNN on CIFAR-10, then answer the self-check.",
+      "type": "builder",
+      "prompt": "Before you open the GPU notebook, assemble the network on paper. Tap the layers IN ORDER to build a 2-block CNN for CIFAR-10: two Conv → ReLU → Pool blocks, then flatten and a classifier head. Tap a placed layer to remove it and everything after it.",
       "data": {
-        "goal": "Build a 2-block CNN in PyTorch, train it for a few epochs on CIFAR-10, and reach well above 10% test accuracy on a free GPU.",
-        "steps": [
-          "Open the notebook in Colab or Kaggle and switch the runtime to a GPU (Colab: Runtime -> Change runtime type -> GPU; Kaggle: Settings -> Accelerator -> GPU).",
-          "Run the setup cell to import torch/torchvision and download CIFAR-10 (the 32x32 RGB image dataset, 10 classes).",
-          "Define the model: two blocks of Conv2d -> ReLU -> MaxPool2d(2), then torch.flatten(x, 1), then Linear -> ReLU -> Linear(_, 10).",
-          "Set CrossEntropyLoss and an Adam optimizer, then run the training loop for 3-5 epochs, printing loss and test accuracy each epoch.",
-          "Confirm test accuracy climbs well past 10% (random guessing), and note how the feature volume's channels grow while its height and width shrink block by block."
+        "targetPrompt": "Build: Conv → ReLU → Pool, Conv → ReLU → Pool, then Flatten → Linear → ReLU → Linear(→ 10 classes). Tap layers in order; tap a placed layer to remove from there.",
+        "tiles": [
+          { "id": "conv1", "label": "Conv2d(3→16)", "note": "block 1 filters" },
+          { "id": "relu1", "label": "ReLU", "note": "non-linearity" },
+          { "id": "pool1", "label": "MaxPool2d(2)", "note": "downsample" },
+          { "id": "conv2", "label": "Conv2d(16→32)", "note": "block 2 filters" },
+          { "id": "relu2", "label": "ReLU", "note": "non-linearity" },
+          { "id": "pool2", "label": "MaxPool2d(2)", "note": "downsample" },
+          { "id": "flatten", "label": "Flatten", "note": "volume → vector" },
+          { "id": "fc1", "label": "Linear → 64", "note": "hidden head" },
+          { "id": "relu3", "label": "ReLU", "note": "non-linearity" },
+          { "id": "fc2", "label": "Linear → 10", "note": "class scores" }
         ],
-        "colabUrl": "https://colab.research.google.com/notebooks/intro.ipynb",
-        "kaggleUrl": "https://www.kaggle.com/code/scratchpad/notebook",
-        "check": {
-          "question": "In your network, the input is 3x32x32. After one block of Conv2d(3->16, padding=1) -> ReLU -> MaxPool2d(2), what is the shape of the feature volume?",
-          "choices": [
-            {
-              "id": "right",
-              "label": "16x16x16  (16 channels, 16 height, 16 width)",
-              "correct": true,
-              "why": "padding=1 on a 3x3 conv keeps the 32x32 size, the conv outputs 16 channels, and MaxPool2d(2) halves H and W: 32->16. So the volume is 16 channels x 16 x 16. Depth grew, size shrank — the core CNN pattern."
-            },
-            {
-              "id": "no-pool",
-              "label": "16x32x32  (the pool does not change the size)",
-              "correct": false,
-              "why": "MaxPool2d(2) DOES change the size — a 2x2 stride-2 pool halves height and width, so 32x32 becomes 16x16. The channel count is right (16), but you forgot the pooling shrink."
-            },
-            {
-              "id": "channels-stay",
-              "label": "3x16x16  (channels stay at 3, only size halves)",
-              "correct": false,
-              "why": "The conv layer sets the output channels to 16 (its second argument), so channels go 3 -> 16, not stay at 3. The 16x16 spatial size is correct, but the depth is wrong."
-            },
-            {
-              "id": "double",
-              "label": "32x16x16  (the pool doubles the channels)",
-              "correct": false,
-              "why": "Pooling never changes the number of channels — it only shrinks height and width. Channels are set by the conv layer (16 here), so 32 channels is wrong."
-            }
-          ]
+        "correct": ["conv1", "relu1", "pool1", "conv2", "relu2", "pool2", "flatten", "fc1", "relu3", "fc2"],
+        "mismatch": {
+          "flatten": "Flatten comes AFTER the last conv block, not before — flattening early destroys the 2-D layout the next Conv2d needs.",
+          "fc1": "A Linear (fully-connected) head can't read a 4-D conv volume. You must place a Flatten before any Linear layer.",
+          "fc2": "The final Linear → 10 is the very last layer (one score per class). Anything after it doesn't belong.",
+          "pool1": "Pooling downsamples AFTER the activation — the order inside a block is Conv → ReLU → Pool.",
+          "relu1": "ReLU (the non-linearity) goes right after the Conv that produced the feature maps."
         }
       },
       "feedback": {
-        "correct": "Nice — you traced the volume correctly: Conv set depth to 16, padding kept 32x32, and the 2x2 pool halved it to 16x16. That is one full conv block, and your trained CNN should beat 10% accuracy easily.",
-        "incorrect": "Re-trace the block: padding=1 keeps the spatial size through the conv, the conv sets channels to 16, and MaxPool2d(2) halves height and width (32 -> 16). That gives 16x16x16."
+        "correct": "That's the canonical CNN: two Conv → ReLU → Pool blocks (depth grows 3→16→32 while H and W halve each block), then Flatten and a small Linear head ending in 10 class scores. Now open the notebook on a free GPU (Colab: Runtime → Change runtime type → GPU; Kaggle: Settings → Accelerator → GPU), build exactly this model, train it 3–5 epochs on CIFAR-10, and confirm test accuracy climbs well past 10%.",
+        "incorrect": "Walk one block at a time: Conv → ReLU → Pool, then repeat, THEN Flatten once and finish with Linear → ReLU → Linear(→10). The two classic traps are putting a Linear layer before Flatten (a 4-D volume can't enter nn.Linear) and pooling before the activation."
       }
     }
   },
@@ -637,53 +555,75 @@ export const VISION_LEVELS = [
       "duration": "4:15"
     },
     "activity": {
-      "type": "scenario",
-      "prompt": "Assemble one conv block. Select EVERY layer (and only those) that belong, in order, inside a single Conv -> activation -> downsample block.",
+      "type": "featuremap",
+      "prompt": "Explore what filters learn at different depths. Step through Early → Mid → Deep and watch the activation maps go from generic edges to a class-specific object part. Then answer the question.",
       "data": {
-        "scenario": "You are building one convolutional block to go near the start of a CNN. A correct block detects features, applies a non-linearity, then downsamples. Pick the EXACT set of components that make up this single block — include every piece that belongs and leave out anything that does not.",
-        "multi": true,
-        "choices": [
+        "mode": "depth",
+        "layers": [
           {
-            "id": "conv",
-            "label": "nn.Conv2d(...)  — learnable filters that produce feature maps",
-            "correct": true,
-            "why": "Correct — the convolution is the heart of the block. Its learnable filters slide over the input and output the feature maps everything else operates on."
+            "id": "early",
+            "label": "Early (layer 1–2)",
+            "caption": "A vertical-edge detector: it fires in a bright stripe wherever brightness changes left-to-right. Generic — this pattern appears in cats, cars, and dogs alike.",
+            "grid": [
+              [0, 2, 9, 2, 0],
+              [0, 2, 9, 2, 0],
+              [0, 2, 9, 2, 0],
+              [0, 2, 9, 2, 0],
+              [0, 2, 9, 2, 0]
+            ]
           },
           {
-            "id": "relu",
-            "label": "nn.ReLU()  — a non-linear activation",
-            "correct": true,
-            "why": "Correct — without a non-linearity, stacking conv layers would collapse into one linear operation. ReLU (zero out negatives) lets the network learn complex patterns."
+            "id": "mid",
+            "label": "Mid (layer 3–4)",
+            "caption": "A texture/motif detector: built from many edges, it responds to a repeating grid-like pattern. More specific than an edge, still not tied to one class.",
+            "grid": [
+              [9, 1, 9, 1, 9],
+              [1, 6, 1, 6, 1],
+              [9, 1, 9, 1, 9],
+              [1, 6, 1, 6, 1],
+              [9, 1, 9, 1, 9]
+            ]
           },
           {
-            "id": "pool",
-            "label": "nn.MaxPool2d(2)  — downsample the feature maps",
-            "correct": true,
-            "why": "Correct — pooling shrinks the map (keeping the strongest responses), making the next block cheaper and adding a little translation tolerance. It rounds out the standard Conv -> ReLU -> Pool block."
-          },
-          {
-            "id": "softmax",
-            "label": "nn.Softmax(dim=1)  — turn outputs into class probabilities",
-            "correct": false,
-            "why": "Does not belong here. Softmax produces final class probabilities and lives at the very END of the network (and is usually folded into CrossEntropyLoss), not inside a mid-network conv block."
-          },
-          {
-            "id": "flatten-mid",
-            "label": "torch.flatten(x, 1)  — flatten the volume to a vector",
-            "correct": false,
-            "why": "Does not belong inside a conv block. Flattening destroys the 2D spatial layout the next conv needs — you only flatten ONCE, after the last conv block, right before the Linear classifier head."
-          },
-          {
-            "id": "linear-mid",
-            "label": "nn.Linear(2048, 10)  — fully-connected classifier",
-            "correct": false,
-            "why": "Does not belong here. A fully-connected layer is the classifier head; placing it mid-stack would throw away spatial structure and explode the parameter count — the very problem CNNs exist to avoid."
+            "id": "deep",
+            "label": "Deep (last block)",
+            "caption": "An object-part detector: this single channel fires strongly in ONE region — it has learned 'wheel-ness' / 'eye-ness'. Highly class-specific, built from all the simpler detectors below it.",
+            "grid": [
+              [0, 0, 1, 0, 0],
+              [0, 6, 9, 6, 0],
+              [1, 9, 9, 9, 1],
+              [0, 6, 9, 6, 0],
+              [0, 0, 1, 0, 0]
+            ]
           }
-        ]
+        ],
+        "check": {
+          "question": "You visualize a feature map from the FINAL conv block and it lights up only on dogs' faces. Would you expect a FIRST-layer feature map to be that specific?",
+          "choices": [
+            {
+              "id": "no",
+              "label": "No — a first-layer map fires on generic edges and colors, not a specific concept like 'dog face'.",
+              "correct": true,
+              "why": "Early filters only have raw pixels to work with, so they detect simple, generic patterns (edges, colors) shared across every class. A concept as specific as a dog's face is built by stacking many simple detectors over several layers — which is exactly why only DEEP layers show class-specific responses. (It's also why those generic early layers transfer to almost any image task.)"
+            },
+            {
+              "id": "yes-equal",
+              "label": "Yes — every layer is equally specific, so the first layer also detects 'dog face' directly.",
+              "correct": false,
+              "why": "Specificity GROWS with depth. The first layer sees only raw pixels and can't represent a high-level concept; it fires on generic edges/colors. 'Dog face' emerges only after many layers combine those simpler patterns."
+            },
+            {
+              "id": "yes-color",
+              "label": "Yes, because the first layer can detect brown fur color, which is basically the same as detecting a dog.",
+              "correct": false,
+              "why": "Detecting a brown color blob is a generic, early-layer response — and brown appears in countless non-dog things (mud, wood, bears). A reliable 'dog face' detector needs shape and part structure that only deep layers assemble."
+            }
+          ]
+        }
       },
       "feedback": {
-        "correct": "Exactly — Conv2d -> ReLU -> MaxPool2d is the canonical conv block: detect, add non-linearity, downsample. Softmax, flatten, and Linear belong at the END of the network, not inside it.",
-        "incorrect": "A single conv block is just Conv2d -> ReLU -> MaxPool2d. Softmax, flatten, and a Linear layer are end-of-network pieces — keeping them mid-stack would destroy the spatial structure the next conv needs."
+        "correct": "Right — depth equals abstraction. Early filters are generic edge/color detectors (reusable everywhere); deep filters are specific object-part detectors tuned to the task. That build-up is exactly why transfer learning works.",
+        "incorrect": "Compare the three depths you explored: Early fires on a generic edge, Deep fires on one object part. The first layer only sees raw pixels, so it can't be 'dog-face specific' — that specificity is assembled layer by layer."
       }
     }
   },
@@ -1207,99 +1147,48 @@ export const VISION_LEVELS = [
       "duration": "3:05"
     },
     "activity": {
-      "type": "convolve",
-      "prompt": "See the attack as arithmetic. The left grid is an ALREADY-PERTURBED image patch — every value nudged by just ±1 from a clean patch, aligned with the filter's signs. Compute the output cell and feel how nine tiny aligned nudges add up.",
+      "type": "featuremap",
+      "prompt": "Run the attack yourself. Drag the perturbation strength (ε) up from 0. Watch the image stay visually almost identical while the model's prediction — and its confidence — swing, then flip to the wrong class. Then answer the question.",
       "data": {
-        "mode": "kernel",
-        "kernelName": "Edge filter (attacker-aligned perturbation)",
-        "input": [
-          [
-            9,
-            8,
-            9,
-            9,
-            8
-          ],
-          [
-            8,
-            9,
-            8,
-            9,
-            9
-          ],
-          [
-            9,
-            8,
-            9,
-            8,
-            9
-          ],
-          [
-            8,
-            9,
-            8,
-            9,
-            8
-          ],
-          [
-            9,
-            9,
-            8,
-            9,
-            9
-          ]
+        "mode": "adversarial",
+        "base": [
+          [4, 5, 4, 5, 4],
+          [5, 4, 5, 4, 5],
+          [4, 5, 4, 5, 4],
+          [5, 4, 5, 4, 5],
+          [4, 5, 4, 5, 4]
         ],
-        "kernel": [
-          [
-            1,
-            0,
-            -1
-          ],
-          [
-            1,
-            0,
-            -1
-          ],
-          [
-            1,
-            0,
-            -1
+        "trueLabel": "panda",
+        "wrongLabel": "gibbon",
+        "maxEps": 8,
+        "flipAt": 5,
+        "check": {
+          "question": "At ε = 0 the model says 'panda'. As you raise ε the picture barely changes, yet past a threshold it confidently says 'gibbon'. What does this demonstrate about how the model 'sees'?",
+          "choices": [
+            {
+              "id": "aligned",
+              "label": "A perturbation too small for a human to notice, when aligned with the model's weights, accumulates across many pixels and filters into a decision-changing shift — so the label flips while the image looks the same.",
+              "correct": true,
+              "why": "Exactly the mechanism from the worked example: each pixel moves by an invisible amount, but because the nudges are aligned with the weights they all push the weighted sums the same way. Summed over many pixels and filters, that becomes a large change in the decision value — enough to cross a class boundary. Same picture to us, different math to the model."
+            },
+            {
+              "id": "random",
+              "label": "The model is just unstable — any random noise of that size would flip the prediction, so this isn't really an 'attack'.",
+              "correct": false,
+              "why": "Random noise of the same tiny size scatters in all directions and largely cancels when the model sums it, so the decision barely moves. The danger here is that the perturbation is ALIGNED with the gradient/weights — that's what makes it accumulate instead of cancel."
+            },
+            {
+              "id": "visible",
+              "label": "The image must have changed a lot — you just can't see it on a small grid.",
+              "correct": false,
+              "why": "The per-pixel change is genuinely tiny (±1 here, the famous result uses changes invisible to people). The picture really is nearly identical; it's the model's internal weighted sums — not the visible image — that moved across the boundary."
+            }
           ]
-        ],
-        "targetCell": {
-          "r": 1,
-          "c": 1
-        },
-        "choices": [
-          {
-            "id": "a",
-            "label": -3,
-            "correct": true,
-            "why": "Patch is rows 2–4, cols 2–4: [[9,8,9],[8,9,8],[9,8,9]]. Multiply by the kernel (col1 ×1, col2 ×0, col3 ×−1) and sum: (9+8+9) − (9+8+9) = 26 − 26 = 0 for the unperturbed pattern... but the perturbed values make the left column total 26 and the right column total 27, giving 26 − 27 = −3. Tiny ±1 nudges, all aligned with the kernel's +/− columns, accumulated into a −3 swing — enough to push a near-zero edge response over the line."
-          },
-          {
-            "id": "b",
-            "label": 0,
-            "correct": false,
-            "why": "0 is what you'd get if the perturbation were random or absent — left and right columns balancing out. The whole point of the attack is that the nudges are ALIGNED with the kernel's signs, so they don't cancel; they push the sum off zero."
-          },
-          {
-            "id": "c",
-            "label": 26,
-            "correct": false,
-            "why": "26 is just the left column's sum — you forgot to subtract the right column (which the kernel multiplies by −1). The middle column is multiplied by 0 and contributes nothing."
-          },
-          {
-            "id": "d",
-            "label": 3,
-            "correct": false,
-            "why": "Right sign idea, wrong direction: here the right column slightly exceeds the left, so the result is negative (−3), not +3. The sign of the swing is exactly what flips a prediction."
-          }
-        ]
+        }
       },
       "feedback": {
-        "correct": "Yes — nine nudges of just ±1, all aligned with the filter's + and − columns, summed to a −3 swing off zero. That's the attack in miniature: invisible per-pixel changes become a decision-moving shift once the model sums them.",
-        "incorrect": "Walk the columns: the kernel multiplies the left column by +1, the middle by 0, and the right by −1, then sums. The perturbation tilts left-vs-right just enough to land on −3 — small inputs, amplified by alignment."
+        "correct": "Right — that's the panda-to-gibbon flip in miniature. Invisible, weight-aligned per-pixel nudges accumulate through the network's sums into a confident wrong answer. Models read arithmetic, not shapes, which is why adversarial robustness is a real safety concern.",
+        "incorrect": "Re-read the slider: the image stays visually the same, but the prediction flips confidently. That only happens because the perturbation is ALIGNED with the model's weights so it accumulates (random noise would cancel). Tiny aligned changes → large shift in the decision value."
       }
     }
   },
