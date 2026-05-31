@@ -13,10 +13,14 @@
 import { FOUNDATIONS_LEVELS } from './foundations.js'
 import { BEGINNER_LEVELS } from './levels.js'
 import { INTERMEDIATE_LEVELS } from './intermediate.js'
+import { VISION_LEVELS } from './vision.js'
 
 // Index every lesson by id so tracks can be composed by curriculum level.
 const BY_ID = Object.fromEntries(
-  [...FOUNDATIONS_LEVELS, ...BEGINNER_LEVELS, ...INTERMEDIATE_LEVELS].map((l) => [l.id, l]),
+  [...FOUNDATIONS_LEVELS, ...BEGINNER_LEVELS, ...INTERMEDIATE_LEVELS, ...VISION_LEVELS].map((l) => [
+    l.id,
+    l,
+  ]),
 )
 const pick = (...ids) => ids.map((id) => BY_ID[id])
 
@@ -62,10 +66,34 @@ export const TRACKS = [
     title: 'Problem Solving & Search',
     blurb:
       'How an agent reaches a goal in code: breadth-first search finds the shortest path through a maze — the skeleton that smarter algorithms (Dijkstra, A*) build on.',
-    // L3 currently ships one hands-on search lesson; deep learning (backprop,
-    // PyTorch) and L4 Computer Vision are on the roadmap — see comingSoon.
-    comingSoon: 'More Level 3 (neural networks) and Level 4 (Computer Vision) lessons are in development.',
+    // L3 currently ships one hands-on search lesson; more deep-learning (backprop,
+    // PyTorch) lessons are on the roadmap.
+    comingSoon: 'More Level 3 (neural networks) lessons are in development.',
     levels: pick('code-bfs-maze'),
+  },
+  {
+    id: 'level-4',
+    tag: 'Level 4',
+    title: 'Computer Vision',
+    blurb:
+      'Deep learning pointed at images — and you can see what the model learns. Inspect pixels and convolution, build CNNs, use transfer learning, then run a "break-it" study on how vision models fail. Heavy training runs in free GPU notebooks (Colab/Kaggle).',
+    levels: pick(
+      'cv-pixels',
+      'cv-conv-by-hand',
+      'cv-why-fc-fails',
+      'cv-conv-layer',
+      'cv-pooling',
+      'cv-build-cnn',
+      'cv-feature-maps',
+      'cv-architectures',
+      'cv-residual',
+      'cv-transfer',
+      'cv-augmentation',
+      'cv-detect-segment',
+      'cv-failures',
+      'cv-adversarial',
+      'cv-project',
+    ),
   },
   {
     id: 'level-5',
@@ -74,9 +102,6 @@ export const TRACKS = [
     title: 'LLMs in Practice — Evaluation & Responsible AI',
     blurb:
       'Train like a real AI model evaluator: score outputs, rank answers, catch hallucinations, and improve weak responses against a rubric.',
-    // Level 4 (Computer Vision) sits between L3 and L5 in the full curriculum and
-    // is not built yet; flag the gap so the jump from L3 to L5 isn't confusing.
-    comingSoon: 'Level 4 (Computer Vision) is coming between Levels 3 and 5.',
     levels: pick(
       'eval-intro',
       'eval-rubrics',

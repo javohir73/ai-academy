@@ -1,0 +1,262 @@
+/* =====================================================================
+   AI ACADEMY — Vision / CNN activity styles (Phase 1)
+   ---------------------------------------------------------------------
+   Scoped styles for the 'convolve' activity engine (Convolve.jsx): a
+   numeric input grid with a bright sliding window, an optional kernel
+   grid, and the numeric answer chips. Light-futuristic, calm, and
+   mobile-safe (everything fits within the activity column; no
+   horizontal overflow — grids shrink with the container).
+
+   Reuses shared tokens from redesign-tokens.css + global.css
+   (--accent, --surface, --border, spacing, radius). No new CDNs.
+   ===================================================================== */
+
+/* Stage holds the input grid + (optionally) the kernel grid side by side,
+   wrapping to a column on narrow screens so nothing overflows. */
+.conv-stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--s5);
+  justify-content: center;
+}
+
+.conv-panel {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s2);
+  min-width: 0; /* allow shrink inside flex — prevents overflow */
+}
+
+.conv-panel__cap {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* The numeric grid. Cells are square via aspect-ratio and size to the
+   available width so a 5x5 grid never overflows a phone. */
+.conv-grid {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  max-width: 264px;
+  background: var(--surface-2);
+  padding: 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+}
+
+.conv-grid--kernel {
+  max-width: 168px;
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.conv-cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: clamp(0.78rem, 3.4vw, 1rem);
+  color: var(--text);
+  border: 1px solid var(--border);
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Cells under the sliding window glow with the accent tint. */
+.conv-cell--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  z-index: 1;
+  box-shadow: inset 0 0 0 1px rgba(79, 70, 229, 0.25);
+}
+
+/* Draw one continuous bright outline around the whole window by
+   thickening only the outer edges of the corner/edge cells. */
+.conv-cell.is-wtop { border-top-color: var(--accent); border-top-width: 2px; }
+.conv-cell.is-wbottom { border-bottom-color: var(--accent); border-bottom-width: 2px; }
+.conv-cell.is-wleft { border-left-color: var(--accent); border-left-width: 2px; }
+.conv-cell.is-wright { border-right-color: var(--accent); border-right-width: 2px; }
+
+.conv-cell--kernel {
+  background: transparent;
+  color: var(--accent-strong, var(--accent));
+  border-color: transparent;
+}
+
+/* Plain-language formula line under the stage. */
+.conv-formula {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  margin: 0;
+  text-align: center;
+}
+
+/* Numeric answer chips — center the big number; keep the option chrome
+   from global.css but tighten layout for short numeric labels. */
+.conv-option {
+  justify-content: center;
+  text-align: center;
+}
+.conv-option__num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 380px) {
+  .conv-grid { max-width: 220px; }
+}
+
+/* =====================================================================
+   GPU lesson launcher — ColabLaunch.jsx ('colab' activity type)
+   ---------------------------------------------------------------------
+   No in-browser execution: states the goal, lists notebook steps, offers
+   Open in Colab / Open in Kaggle, and an in-app self-check. All selectors
+   namespaced under .colab__ so nothing leaks into other activities. Reuses
+   shared tokens (--accent, --surface, --border, --radius, glass, elev).
+   ===================================================================== */
+
+/* "Runs on a GPU notebook, not the browser" notice */
+.colab__runs-on {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--accent-soft, #eef1fe);
+  background: var(--accent-grad-soft, var(--accent-soft, #eef1fe));
+  border-radius: var(--r-sm, 12px);
+  color: var(--text-2, #52525b);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.colab__runs-on svg {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  color: var(--accent, #4f46e5);
+}
+.colab__runs-on strong {
+  color: var(--text, #18181b);
+}
+
+/* Small uppercase section label */
+.colab__eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3, #6b7280);
+  margin: 0 0 0.35rem;
+}
+.colab__eyebrow--row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.colab__eyebrow--row svg {
+  color: var(--accent, #4f46e5);
+}
+
+/* Goal card */
+.colab__goal {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border, #e6e7eb);
+  background: var(--glass-3, var(--surface, #fff));
+  border-radius: var(--r-sm, 12px);
+  box-shadow: var(--elev-1, 0 1px 2px rgba(16, 24, 40, 0.06));
+}
+.colab__goal-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  color: var(--accent, #4f46e5);
+  background: var(--accent-soft, #eef1fe);
+}
+.colab__goal-text {
+  margin: 0;
+  color: var(--text, #18181b);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Numbered steps */
+.colab__steps {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border, #e6e7eb);
+  background: var(--surface, #fff);
+  border-radius: var(--r-sm, 12px);
+}
+.colab__step-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.colab__step {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  color: var(--text, #18181b);
+  line-height: 1.5;
+}
+.colab__step-num {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.05rem;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent, #4f46e5);
+}
+
+/* Launch buttons */
+.colab__launchers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.colab__launch {
+  flex: 1 1 12rem;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* Self-check block */
+.colab__check {
+  padding-top: 0.25rem;
+}
+.colab__check .scenario {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .colab__launch {
+    flex-basis: 100%;
+  }
+}
