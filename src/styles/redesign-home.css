@@ -1,0 +1,646 @@
+/* =====================================================================
+   AI ACADEMY — Redesign · AREA B: HOME PAGE SECTIONS (non-hero)
+   ---------------------------------------------------------------------
+   Premium light-futuristic upgrade for the marketing sections BELOW the
+   hero in src/components/HomePage.jsx:
+     1. Feature cards   — 3D depth, per-card color accent, hover tilt + sheen
+     2. Learning path   — vertical timeline w/ glowing per-level nodes (L0..L5)
+     3. Stats strip     — glassy benefit chips with lucide icons
+
+   Consumes Phase-1 tokens from redesign-tokens.css (--elev-*, --glass-*,
+   --lvl-*, --*-soft/-tint/-grad, keyframes float-soft / sheen-sweep /
+   pulse-glow) and core tokens from global.css. Does NOT touch the hero
+   background (Area A) or any global.css rules.
+
+   MOTION POLICY: every decorative/transform motion below is wrapped in
+   `@media (prefers-reduced-motion: no-preference)` so it is OFF by default
+   for users who opt out — static, high-contrast states are the baseline.
+   Reading text stays calm + AA; color/glow is accent-only.
+
+   Selectors are scoped under `.home` (and occasionally doubled) so they win
+   over the matching base rules in global.css regardless of import order.
+   ===================================================================== */
+
+/* =====================================================================
+   1. FEATURE CARDS — layered glass, per-card color accent, hover tilt
+   ---------------------------------------------------------------------
+   Each card carries a --accent / --accent-soft / --accent-grad set from
+   the JSX (rotating cyan → violet → emerald → orange). The base glass +
+   elevation is calm; color shows up in the icon tile, the top accent bar,
+   the hover border glow, and the sheen sweep.
+   ===================================================================== */
+
+.home .feature-grid {
+  grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+  gap: clamp(var(--s4), 2vw, var(--s5));
+  /* keep grid centered if a single card wraps onto its own row */
+  perspective: 1200px;
+}
+
+/* Card shell. We override the shared .glow-card look with a richer glass
+   surface + 3D elevation. Hover tilt lives on the inner transform so the
+   sheen + border can layer cleanly. */
+.home .feature-card {
+  --accent: var(--electric);
+  --accent-soft: var(--electric-soft);
+  --accent-grad: var(--grad-cool);
+  position: relative;
+  padding: clamp(var(--s5), 2.4vw, var(--s6));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0)) ,
+    var(--glass-2);
+  border: 1px solid var(--glass-border-cool);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-2);
+  overflow: hidden;
+  isolation: isolate;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition:
+    transform var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+
+/* Top accent bar — the per-card color signature, reads instantly. */
+.home .feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--accent-grad);
+  opacity: 0.85;
+  transition: opacity var(--dur) var(--ease-out);
+  z-index: 2;
+}
+
+/* Sheen overlay (diagonal light sweep on hover). Idle = invisible. */
+.home .feature-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 38%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0) 62%,
+    transparent 100%
+  );
+  transform: translateX(-130%) skewX(-18deg);
+  opacity: 0;
+}
+
+/* Neutralize the inherited .glow-card::after gradient hairline so it does
+   not fight our sheen layer (we reuse ::after for the sheen instead). */
+.home .feature-card.glow-card:hover {
+  transform: none; /* base translate handled by our own hover rule below */
+  border-color: var(--glass-border-cool);
+}
+
+.home .feature-card__icon {
+  position: relative;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 6px 14px -8px color-mix(in srgb, var(--accent) 60%, transparent);
+  margin-bottom: var(--s4);
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+
+.home .feature-card h3,
+.home .feature-card p {
+  position: relative;
+  z-index: 2;
+}
+.home .feature-card h3 {
+  font-size: 1.12rem;
+  margin: 0 0 var(--s2);
+  color: var(--text-1);
+}
+.home .feature-card p {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ---- Feature card MOTION (opt-in only) ---------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .home .feature-card {
+    transition:
+      transform var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out),
+      border-color var(--dur) var(--ease-out);
+  }
+  /* Subtle 3D tilt + lift toward the viewer on hover/focus. Small + tasteful. */
+  .home .feature-card:hover,
+  .home .feature-card:focus-within {
+    transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) translateY(-6px);
+    box-shadow: var(--elev-hover);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .home .feature-card:hover::before,
+  .home .feature-card:focus-within::before {
+    opacity: 1;
+  }
+  .home .feature-card:hover::after,
+  .home .feature-card:focus-within::after {
+    animation: sheen-sweep 0.9s var(--ease-out) forwards;
+  }
+  .home .feature-card:hover .feature-card__icon,
+  .home .feature-card:focus-within .feature-card__icon {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      0 10px 20px -8px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+}
+
+/* Static (reduced-motion / no-hover) still gets a clear hover affordance
+   via color, just no transform/animation. */
+@media (prefers-reduced-motion: reduce) {
+  .home .feature-card:hover,
+  .home .feature-card:focus-within {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: var(--elev-3);
+  }
+}
+
+/* =====================================================================
+   2. LEARNING PATH — vertical timeline w/ glowing per-level nodes
+   ---------------------------------------------------------------------
+   Replaces the flat curriculum-rail with an intentional journey: a
+   gradient spine connects glowing, color-coded level nodes (L0..L5). Each
+   row pairs a node (number badge) with a level card tinted by --lvl-N.
+   The "Level 4 coming soon" gap is shown as a dashed ghost step so the
+   L3→L5 jump is never confusing.
+   ===================================================================== */
+
+.home .learn-path {
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+  padding-left: 0;
+  list-style: none;
+}
+
+/* The connecting spine: a soft aurora gradient line running through the
+   nodes. Positioned to sit under the node centers (node = 56px wide). */
+.home .learn-path::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  bottom: 28px;
+  left: 27px;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    var(--lvl-0) 0%,
+    var(--lvl-1) 22%,
+    var(--lvl-2) 42%,
+    var(--lvl-3) 60%,
+    var(--lvl-4) 80%,
+    var(--lvl-5) 100%
+  );
+  opacity: 0.5;
+}
+
+.home .path-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: var(--s4);
+  align-items: start;
+  padding: 0 0 var(--s5) 0;
+}
+.home .path-step:last-child {
+  padding-bottom: 0;
+}
+
+/* Glowing node: a color-coded gradient disc with the level number. */
+.home .path-step__node {
+  position: relative;
+  z-index: 2;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: var(--node-grad, var(--grad-cool));
+  border: 3px solid var(--surface);
+  box-shadow:
+    0 4px 12px -4px var(--node-shadow, rgba(59, 130, 246, 0.5)),
+    0 0 0 1px color-mix(in srgb, var(--node-color, var(--electric)) 30%, transparent);
+}
+.home .path-step__node span {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  margin-right: 1px;
+}
+
+/* Level card body. Calm white-glass surface, with a thin left edge + soft
+   tinted wash keyed to the level color so each step is distinct. */
+.home .path-step__card {
+  position: relative;
+  background:
+    linear-gradient(120deg, var(--card-tint, rgba(59, 130, 246, 0.06)), rgba(255, 255, 255, 0) 60%),
+    var(--glass-3);
+  border: 1px solid var(--glass-border-cool);
+  border-left: 3px solid var(--node-color, var(--electric));
+  border-radius: var(--r-lg);
+  padding: clamp(var(--s4), 2vw, var(--s5));
+  box-shadow: var(--elev-2);
+  transition:
+    transform var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
+}
+
+.home .path-step__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--node-color, var(--electric));
+  margin-bottom: var(--s1);
+}
+.home .path-step__pro {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--violet-strong);
+  background: var(--violet-tint);
+  border: 1px solid color-mix(in srgb, var(--violet) 30%, transparent);
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+.home .path-step__card h3 {
+  font-size: 1.12rem;
+  margin: 0 0 var(--s2);
+  color: var(--text-1);
+}
+.home .path-step__card p {
+  color: var(--text-2);
+  font-size: 0.93rem;
+  line-height: 1.55;
+  margin: 0;
+}
+.home .path-step__lessons {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--s3);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+.home .path-step__lessons svg {
+  color: var(--node-color, var(--electric));
+}
+.home .path-step__soon {
+  display: block;
+  margin-top: var(--s3);
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+/* Ghost step — the not-yet-built Level 4 gap. Dashed + muted so the
+   L3 → L5 jump reads as intentional, not broken. */
+.home .path-step--ghost .path-step__node {
+  background: var(--surface-2);
+  color: var(--text-3);
+  border: 3px dashed var(--border);
+  box-shadow: none;
+}
+.home .path-step--ghost .path-step__card {
+  background: var(--surface-2);
+  border: 1px dashed var(--border);
+  border-left: 3px dashed var(--border);
+  box-shadow: none;
+}
+.home .path-step--ghost .path-step__tag {
+  color: var(--text-3);
+}
+.home .path-step--ghost .path-step__card h3 {
+  color: var(--text-2);
+}
+
+/* ---- Learning-path MOTION (opt-in only) --------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .home .path-step:not(.path-step--ghost) .path-step__node {
+    animation: float-soft 6s var(--ease-in-out) infinite;
+    /* stagger so the column gently breathes rather than bobbing in unison */
+    animation-delay: calc(var(--i, 0) * 0.5s);
+  }
+  .home .path-step__card:hover {
+    transform: translateX(4px);
+    box-shadow: var(--elev-3);
+  }
+}
+
+/* =====================================================================
+   3. STATS / BENEFIT STRIP — glassy chips with lucide icons
+   ---------------------------------------------------------------------
+   Four concise proof points. Each chip is a floating glass card with a
+   color-accented icon. Optional idle glow respects reduced-motion.
+   ===================================================================== */
+
+/* This band has no section head, so trim the heavy .home-section padding
+   to a tight strip that bridges Features → Curriculum. */
+.home .home-section--stats {
+  padding-top: 0;
+  padding-bottom: clamp(var(--s5), 4vw, var(--s7));
+}
+
+.home .stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: clamp(var(--s3), 1.6vw, var(--s4));
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 var(--s5);
+}
+
+.home .stat-chip {
+  --accent: var(--electric);
+  --accent-soft: var(--electric-soft);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s4) var(--s4);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)),
+    var(--glass-2);
+  border: 1px solid var(--glass-border-cool);
+  border-radius: var(--r);
+  box-shadow: var(--elev-1);
+  overflow: hidden;
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+
+.home .stat-chip__icon {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.home .stat-chip__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.home .stat-chip__value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--text-1);
+}
+.home .stat-chip__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-3);
+  line-height: 1.25;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home .stat-chip:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--elev-3);
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .home .stat-chip:hover .stat-chip__icon {
+    box-shadow: 0 0 18px -6px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home .stat-chip:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow: var(--elev-2);
+  }
+}
+
+/* =====================================================================
+   RESPONSIVE — stack cleanly, no horizontal overflow, no clipped text.
+   3D/tilt degrades gracefully (flattened) on small screens.
+   ===================================================================== */
+@media (max-width: 640px) {
+  /* Flatten 3D tilt on touch/small screens — keep only the lift. */
+  .home .feature-grid {
+    perspective: none;
+  }
+  .home .feature-card {
+    transform-style: flat;
+  }
+
+  /* Learning path: tighten node column + spine so nothing clips. */
+  .home .learn-path::before {
+    left: 21px;
+  }
+  .home .path-step {
+    grid-template-columns: 44px 1fr;
+    gap: var(--s3);
+  }
+  .home .path-step__node {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+    border-width: 2px;
+  }
+  .home .path-step__card {
+    padding: var(--s4);
+  }
+
+  /* Stats: comfortable single/two-up without overflow. */
+  .home .stats-strip {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 var(--s4);
+  }
+}
+
+@media (max-width: 400px) {
+  .home .stats-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Belt-and-suspenders: even where the no-preference blocks above are
+   somehow honored, force-disable the tilt/float for reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  .home .feature-card:hover,
+  .home .feature-card:focus-within,
+  .home .path-step__card:hover,
+  .home .stat-chip:hover {
+    transform: none !important;
+  }
+  .home .path-step__node {
+    animation: none !important;
+  }
+  .home .feature-card::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
+
+/* ====================================================================
+   PREMIUM FOOTER
+   A compact glass footer: a gradient accent hairline on top, a brand
+   area (mark + name + tagline), and founder credit with social links.
+   Light-futuristic, consistent with the redesign. Replaces the old
+   plain .home__footer text. Desktop = two columns; mobile = stacked,
+   centered, no overflow, no awkward wrapping inside the chips.
+   ==================================================================== */
+.site-footer {
+  position: relative;
+  margin-top: clamp(var(--s6), 6vw, var(--s8));
+  padding: clamp(var(--s5), 4vw, var(--s7)) clamp(var(--s4), 5vw, var(--s7));
+  background: var(--glass-2, rgba(255, 255, 255, 0.6));
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.5));
+}
+/* Gradient accent line riding the top edge. */
+.site-footer__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--grad-aurora, linear-gradient(90deg, var(--cyan), var(--indigo)));
+  opacity: 0.85;
+}
+.site-footer__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+.site-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-width: 0;
+}
+.site-footer__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.site-footer__name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.site-footer__tagline {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+.site-footer__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+.site-footer__credit {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  white-space: nowrap; /* keep "Built by Javohirbek" on one line */
+}
+.site-footer__founder {
+  font-weight: 600;
+  color: var(--text);
+}
+.site-footer__socials {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+/* Glassy icon chips with a futuristic hover (cyan→indigo wash + lift). */
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r, 12px);
+  color: var(--text-2);
+  background: var(--surface, #fff);
+  border: 1px solid var(--glass-border, rgba(0, 0, 0, 0.08));
+  box-shadow: var(--elev-1);
+  transition:
+    transform var(--dur-fast, 0.15s) var(--ease-out, ease),
+    color var(--dur-fast, 0.15s) var(--ease-out, ease),
+    box-shadow var(--dur-fast, 0.15s) var(--ease-out, ease),
+    border-color var(--dur-fast, 0.15s) var(--ease-out, ease);
+}
+.social-link:hover,
+.social-link:focus-visible {
+  color: var(--indigo);
+  border-color: color-mix(in srgb, var(--indigo) 35%, transparent);
+  box-shadow: var(--elev-hover, var(--elev-2));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .social-link:hover,
+  .social-link:focus-visible {
+    transform: translateY(-2px);
+  }
+}
+
+/* Mobile: stack + center, guarantee no overflow / no awkward wrap. */
+@media (max-width: 640px) {
+  .site-footer__inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--s4);
+  }
+  .site-footer__brand {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--s2);
+  }
+  .site-footer__brand-text {
+    align-items: center;
+  }
+  .site-footer__meta {
+    flex-direction: column;
+    gap: var(--s3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-link {
+    transition: none !important;
+    transform: none !important;
+  }
+}

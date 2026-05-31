@@ -1,0 +1,211 @@
+/* =====================================================================
+   AI ACADEMY — Redesign Token Foundation (Phase 1)
+   ---------------------------------------------------------------------
+   Premium LIGHT-futuristic design system. The shared vocabulary that
+   every redesigned surface (sidebar, path, cards, lesson, home) consumes.
+
+   Direction: Apple Vision Pro depth + Duolingo polish + Khan Academy
+   clarity + AI-lab energy. More color (cyan, electric blue, indigo,
+   violet, emerald, pink, orange) but balanced, professional, readable.
+
+   RULES BAKED IN HERE:
+     - Light theme only. Reading surfaces stay calm + high contrast.
+       Color/glow defined here is for ACCENTS only, never body text.
+     - All motion (keyframes) defined here is INERT under
+       prefers-reduced-motion. global.css already ships a universal
+       `@media (prefers-reduced-motion: reduce)` block that forces
+       animation-duration to ~0ms with !important, so every keyframe
+       below is automatically neutralized for users who opt out.
+       Consuming rules should STILL gate decorative motion behind the
+       same media query for clarity/defense-in-depth.
+
+   Sections:
+     1. Vibrant accent families
+     2. Premium multi-stop gradients
+     3. 3D elevation shadow scale
+     4. Glass layers
+     5. Per-level accent map (L0..L5)
+     6. Shared app-wide keyframes (reduced-motion safe)
+   ===================================================================== */
+
+:root {
+  /* ---------------------------------------------------------------
+     1. VIBRANT ACCENT FAMILIES
+     Each family: base + soft/tint (for fills/backgrounds) + gradient.
+     Existing cyan / electric / indigo / violet live in global.css; we
+     ADD emerald, pink, orange and richer soft/grad partners here, plus
+     soft tints for the existing cool hues so every family is uniform.
+     --------------------------------------------------------------- */
+
+  /* Emerald (growth, success, "you got it") */
+  --emerald: #10b981;
+  --emerald-strong: #059669;
+  --emerald-soft: #e7faf2;            /* pale fill — calm on white */
+  --emerald-tint: rgba(16, 185, 129, 0.12);
+  --emerald-grad: linear-gradient(135deg, #34d399 0%, #10b981 55%, #059669 100%);
+
+  /* Violet (depth, "advanced", premium) */
+  --violet: #8b5cf6;
+  --violet-strong: #7c3aed;
+  --violet-soft: #f1ecfe;
+  --violet-tint: rgba(139, 92, 246, 0.12);
+  --violet-grad: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 55%, #7c3aed 100%);
+
+  /* Pink (energy, highlights, friendly accents) */
+  --pink: #ec4899;
+  --pink-strong: #db2777;
+  --pink-soft: #fdeaf4;
+  --pink-tint: rgba(236, 72, 153, 0.12);
+  --pink-grad: linear-gradient(135deg, #f472b6 0%, #ec4899 55%, #db2777 100%);
+
+  /* Orange (warmth, momentum, streaks) */
+  --orange: #f97316;
+  --orange-strong: #ea580c;
+  --orange-soft: #fef0e6;
+  --orange-tint: rgba(249, 115, 22, 0.12);
+  --orange-grad: linear-gradient(135deg, #fb923c 0%, #f97316 55%, #ea580c 100%);
+
+  /* Soft/tint partners for the existing cool hues (bases already exist
+     in global.css: --cyan, --electric, --indigo, --violet base above). */
+  --cyan-strong: #0891b2;
+  --cyan-soft: #e3f7fb;
+  --cyan-tint: rgba(6, 182, 212, 0.12);
+
+  --electric-strong: #2563eb;
+  --electric-soft: #e8f0fe;
+  --electric-tint: rgba(59, 130, 246, 0.12);
+
+  --indigo-strong: #4338ca;
+  --indigo-soft: #ecedfd;
+  --indigo-tint: rgba(79, 70, 229, 0.12);
+
+  /* ---------------------------------------------------------------
+     2. PREMIUM MULTI-STOP GRADIENTS
+     Tasteful, professional. Used for hero accents, progress, glow
+     rings, signature surfaces — never behind body copy.
+     --------------------------------------------------------------- */
+  --grad-aurora: linear-gradient(120deg, #06b6d4 0%, #6366f1 45%, #8b5cf6 72%, #ec4899 100%);
+  --grad-aurora-soft: linear-gradient(120deg, rgba(6, 182, 212, 0.14) 0%, rgba(139, 92, 246, 0.14) 55%, rgba(236, 72, 153, 0.14) 100%);
+  --grad-cool: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #4f46e5 100%);
+  --grad-warm: linear-gradient(135deg, #f97316 0%, #f43f5e 55%, #ec4899 100%);
+  --grad-emerald: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+
+  /* A near-white "lab glass" sheen gradient for card surfaces */
+  --grad-surface-sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(244, 248, 253, 0.65) 100%);
+
+  /* ---------------------------------------------------------------
+     3. 3D ELEVATION SHADOW SCALE (light theme)
+     Each step layers a tight contact shadow + a soft ambient shadow,
+     with a faint cool colored glow at higher levels for "floating
+     glass" depth. Tuned to stay soft — never harsh on a light page.
+     --------------------------------------------------------------- */
+  --elev-1:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 2px 6px -1px rgba(15, 23, 42, 0.06);
+  --elev-2:
+    0 1px 2px rgba(15, 23, 42, 0.07),
+    0 6px 14px -3px rgba(15, 23, 42, 0.09),
+    0 0 0 1px rgba(99, 102, 241, 0.04);
+  --elev-3:
+    0 2px 4px rgba(15, 23, 42, 0.07),
+    0 12px 26px -6px rgba(15, 23, 42, 0.12),
+    0 0 24px -10px rgba(79, 70, 229, 0.22);
+  --elev-4:
+    0 4px 8px rgba(15, 23, 42, 0.08),
+    0 22px 48px -10px rgba(15, 23, 42, 0.16),
+    0 0 38px -12px rgba(99, 102, 241, 0.28);
+
+  /* Lifted card state (hover / active focus) — adds reach + a cooler glow */
+  --elev-hover:
+    0 6px 12px rgba(15, 23, 42, 0.1),
+    0 28px 56px -12px rgba(15, 23, 42, 0.2),
+    0 0 44px -12px rgba(59, 130, 246, 0.32);
+
+  /* ---------------------------------------------------------------
+     4. GLASS LAYERS
+     Three translucency tiers (lightest -> most opaque) for stacked
+     glassmorphism. Pair with --glass-blur + --glass-border. Keeps the
+     existing --glass-bg/--glass-border/--glass-blur intact; these are
+     additive layers so depth can be expressed.
+     --------------------------------------------------------------- */
+  --glass-1: rgba(255, 255, 255, 0.55);  /* lightest — floating chips/overlays */
+  --glass-2: rgba(255, 255, 255, 0.72);  /* mid — panels, cards */
+  --glass-3: rgba(255, 255, 255, 0.86);  /* most opaque — reading-adjacent surfaces */
+  --glass-border-strong: rgba(255, 255, 255, 0.95);
+  --glass-border-cool: rgba(99, 102, 241, 0.18);
+  --glass-blur-strong: 22px;
+  /* (--glass-bg, --glass-border, --glass-blur already defined in global.css) */
+
+  /* ---------------------------------------------------------------
+     5. PER-LEVEL ACCENT MAP (L0..L5)
+     Signature color per learning level so the sidebar + learning path
+     can be color-coded consistently. Vibrant, in spectrum order.
+       L0 cyan · L1 electric · L2 indigo · L3 violet · L4 emerald · L5 pink
+     Each level also exposes a soft tint + gradient for fills/badges.
+     --------------------------------------------------------------- */
+  --lvl-0: var(--cyan);
+  --lvl-1: var(--electric);
+  --lvl-2: var(--indigo);
+  --lvl-3: var(--violet);
+  --lvl-4: var(--emerald);
+  --lvl-5: var(--pink);
+
+  --lvl-0-soft: var(--cyan-soft);
+  --lvl-1-soft: var(--electric-soft);
+  --lvl-2-soft: var(--indigo-soft);
+  --lvl-3-soft: var(--violet-soft);
+  --lvl-4-soft: var(--emerald-soft);
+  --lvl-5-soft: var(--pink-soft);
+
+  --lvl-0-grad: var(--grad-cool);
+  --lvl-1-grad: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  --lvl-2-grad: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  --lvl-3-grad: var(--violet-grad);
+  --lvl-4-grad: var(--grad-emerald);
+  --lvl-5-grad: var(--pink-grad);
+}
+
+/* =====================================================================
+   6. SHARED APP-WIDE KEYFRAMES
+   ---------------------------------------------------------------------
+   Reusable motion primitives consumed across redesigned areas. These are
+   defined ONCE here so areas don't redefine them.
+
+   IMPORTANT — REDUCED MOTION:
+   global.css contains a universal `@media (prefers-reduced-motion: reduce)`
+   rule that sets `animation-duration: 0.001ms !important` and
+   `animation-iteration-count: 1 !important` on *, *::before, *::after.
+   That makes every animation below INERT for users who opt out — they
+   snap to the element's static state with no looping. Consuming rules
+   should still wrap any large/decorative motion (e.g. 3D tilt driven by
+   transitions, parallax) in the same media query as defense-in-depth,
+   since the universal rule only neutralizes @keyframes-based animation,
+   not transition-driven transforms.
+   ===================================================================== */
+
+/* Gentle vertical float for glowing nodes / floating glass cards. */
+@keyframes float-soft {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+/* Diagonal light sheen sweeping across a glossy surface (use on a
+   ::before/::after overlay with a translucent gradient + overflow:hidden). */
+@keyframes sheen-sweep {
+  0%   { transform: translateX(-130%) skewX(-18deg); opacity: 0; }
+  12%  { opacity: 0.55; }
+  60%  { opacity: 0.2; }
+  100% { transform: translateX(230%) skewX(-18deg); opacity: 0; }
+}
+
+/* Soft pulsing glow halo for active nodes / live indicators.
+   Animates box-shadow spread + opacity; keep colors cool/soft. */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.35), 0 0 16px -6px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0), 0 0 28px -4px rgba(59, 130, 246, 0.55);
+  }
+}

@@ -1,0 +1,134 @@
+/* =====================================================================
+   AI ACADEMY — Redesign Area A: PREMIUM 3D HERO
+   ---------------------------------------------------------------------
+   Positioning + layering for <Hero3D/> (the dynamic three.js constellation)
+   and its static SVG fallback (<NeuralBackground/>), plus the readability
+   scrim that keeps hero text high-contrast (WCAG AA) on top of the canvas.
+
+   Layering inside `.hero-x` (defined in global.css):
+       z-index 0  → soft ambient gradient wash (this file, via .hero-x::before)
+       z-index 1  → .hero3d  (SVG fallback + three canvas)
+       z-index 2  → .hero-x__inner (text + CTAs)  ← set in global.css
+
+   CONTRACT:
+     - The whole backdrop is decorative: pointer-events:none + aria-hidden,
+       so it can NEVER block clicks or focus.
+     - Color/glow is accent only. The scrim guarantees text contrast.
+     - All motion is gated behind prefers-reduced-motion (defense in depth;
+       the canvas also independently refuses to animate under reduced motion).
+     - Mobile: the canvas is not even mounted < 640px (JS); CSS here also
+       hardens the fallback so there is no horizontal overflow.
+   ===================================================================== */
+
+/* Ambient light wash behind everything in the hero — a calm, premium base
+   so the hero never looks empty before/under the constellation. Static. */
+.hero-x::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% -10%, var(--grad-aurora-soft) 0%, transparent 60%),
+    radial-gradient(80% 70% at 12% 8%, var(--cyan-tint) 0%, transparent 55%),
+    radial-gradient(80% 70% at 88% 4%, var(--violet-tint) 0%, transparent 55%);
+  /* keep the glow gentle so reading stays calm */
+  opacity: 0.9;
+}
+
+/* Backdrop wrapper: holds the SVG fallback and (when allowed) the canvas. */
+.hero3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none; /* decorative — never intercept clicks */
+  overflow: hidden;
+}
+
+/* The static SVG layer (immediate paint + permanent fallback). */
+.hero3d__svg {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  transition: opacity 600ms var(--ease-out);
+}
+
+/* The three.js canvas mount. Sits above the SVG; fades in when ready. */
+.hero3d__canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out);
+  /* Match the SVG's soft vignette so the constellation fades at the edges
+     and never crowds the hero text or the section boundary. */
+  -webkit-mask-image: radial-gradient(ellipse 82% 72% at 50% 42%, #000 52%, transparent 100%);
+  mask-image: radial-gradient(ellipse 82% 72% at 50% 42%, #000 52%, transparent 100%);
+}
+.hero3d__canvas > canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Once the canvas has rendered its first frame, crossfade: SVG out, canvas in. */
+.hero3d--canvas-ready .hero3d__svg {
+  opacity: 0;
+}
+.hero3d--canvas-ready .hero3d__canvas {
+  opacity: 1;
+}
+
+/* Readability scrim — a soft light veil between the backdrop and the text so
+   body copy + CTAs always clear WCAG AA regardless of what the canvas draws.
+   Concentrated where the text lives (center) and feathering to the edges. */
+.hero-x__inner::before {
+  content: '';
+  position: absolute;
+  inset: -8% -12%;
+  z-index: -1; /* behind the text, above the canvas (canvas is on .hero-x) */
+  pointer-events: none;
+  background: radial-gradient(
+    70% 70% at 50% 48%,
+    rgba(247, 248, 250, 0.82) 0%,
+    rgba(247, 248, 250, 0.55) 42%,
+    rgba(247, 248, 250, 0) 78%
+  );
+}
+
+/* =====================================================================
+   MOBILE — no horizontal overflow; lighten the backdrop so text dominates.
+   (< 640px the canvas isn't mounted at all; only the SVG fallback shows.)
+   ===================================================================== */
+@media (max-width: 640px) {
+  .hero3d {
+    /* Slightly calmer + clipped so wide SVG slices never cause overflow. */
+    opacity: 0.85;
+  }
+  .hero-x::before {
+    opacity: 0.7;
+  }
+  .hero-x__inner::before {
+    /* Stronger veil on small screens for guaranteed contrast on busy bg. */
+    background: radial-gradient(
+      85% 80% at 50% 48%,
+      rgba(247, 248, 250, 0.9) 0%,
+      rgba(247, 248, 250, 0.62) 48%,
+      rgba(247, 248, 250, 0) 82%
+    );
+  }
+}
+
+/* =====================================================================
+   REDUCED MOTION — defense in depth.
+   global.css already neutralizes @keyframes globally and the canvas refuses
+   to mount under reduced motion, but we also hold the crossfade static here
+   so nothing animates (no opacity transition flash).
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .hero3d__svg,
+  .hero3d__canvas,
+  .hero3d--canvas-ready .hero3d__svg,
+  .hero3d--canvas-ready .hero3d__canvas {
+    transition: none !important;
+  }
+}

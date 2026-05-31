@@ -1,0 +1,581 @@
+/* =====================================================================
+   AI ACADEMY — Redesign · Area C
+   COURSE / LESSON / SIDEBAR / PROGRESS / ACTIVITY polish (Phase 2)
+   ---------------------------------------------------------------------
+   Premium LIGHT-futuristic pass over the in-app learning UI:
+     · Overview module cards — depth (--elev-*), per-level accent, hover/active
+     · Sidebar — premium active/locked/completed states, per-level rails
+     · Progress bars — gradient fill + advance glow
+     · Activity / Feedback — animated success glow + checkmark pop + star burst
+     · Stars — earned-star pop/shine
+     · Phase stepper + lesson chrome — per-level tinting (reading text stays calm)
+
+   CONSUMES Phase-1 tokens from redesign-tokens.css (--lvl-*, --elev-*, --glass-*,
+   gradients, keyframes). Per-level color arrives via inline `--lvl-accent`,
+   `--lvl-grad`, `--lvl-soft` set on a [data-lvl] ancestor by the JSX.
+
+   COLLISION STRATEGY: this file is imported AFTER global.css. Selectors here
+   are written at >= the specificity of the existing global.css redesign block
+   (the `.module-card:not(.module-card--locked):hover` etc. rules) so this pass
+   wins the cascade regardless of import nuance.
+
+   REDUCED MOTION: global.css ships a universal
+   `@media (prefers-reduced-motion: reduce)` rule that neutralizes ALL
+   animation + transition durations (!important). Every animation below is
+   therefore inert for opt-out users. As defense-in-depth we ALSO gate the
+   transform-based hover lifts + decorative loops in an explicit
+   prefers-reduced-motion block at the end of this file.
+
+   READABILITY: color/glow here is accent-only. Lesson body copy
+   (.concept-text, .feedback__body, .prompt) is never tinted or glowed.
+
+   MOBILE: cards/drawer never overflow — fills are clamped, the sidebar keeps
+   ellipsis on titles/concepts, hover lifts are disabled on touch widths.
+   ===================================================================== */
+
+/* Local fallbacks so any surface without an explicit [data-lvl] still renders
+   with the signature cool palette instead of an empty custom-property. */
+.module-card,
+.track-section,
+.nav-track,
+.lesson-view {
+  --lvl-accent: var(--indigo);
+  --lvl-grad: var(--grad-cool);
+  --lvl-soft: var(--indigo-soft);
+}
+
+/* =====================================================================
+   1. OVERVIEW — track sections + module cards
+   ===================================================================== */
+
+.track-section {
+  margin-bottom: var(--s7);
+}
+
+/* Track header: a slim per-level accent rail + colored chip. */
+.track-section__head {
+  position: relative;
+  padding-left: var(--s4);
+  margin-bottom: var(--s4);
+}
+.track-section__head::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  border-radius: var(--r-pill);
+  background: var(--lvl-grad);
+  box-shadow: 0 0 14px -3px var(--lvl-accent);
+}
+.track-section__head h2 {
+  margin: 2px 0 var(--s1);
+}
+
+/* Level chip tinted to the track's accent. */
+.track-section .track-chip {
+  background: var(--lvl-soft);
+  color: color-mix(in srgb, var(--lvl-accent) 78%, #1f2430);
+  border: 1px solid color-mix(in srgb, var(--lvl-accent) 28%, transparent);
+  box-shadow: var(--elev-1);
+}
+.track-section .track-chip--pro {
+  background: var(--grad-warm);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px -5px var(--pink-strong);
+}
+
+/* ---- Module cards: layered glass + depth + per-level accent --------- */
+.module-list {
+  gap: var(--s4);
+}
+
+.module-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: var(--s4) var(--s5);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--grad-surface-sheen), var(--surface);
+  background-blend-mode: normal;
+  box-shadow: var(--elev-2);
+  transition:
+    transform var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+
+/* A faint per-level accent rail down the leading edge of every card. */
+.module-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--lvl-grad);
+  opacity: 0.85;
+  transition: width var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out);
+}
+
+.module-card:not(.module-card--locked):hover,
+.module-card:not(.module-card--locked):focus-visible {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--lvl-accent) 45%, transparent);
+  box-shadow: var(--elev-hover);
+}
+.module-card:not(.module-card--locked):hover::before,
+.module-card:not(.module-card--locked):focus-visible::before {
+  width: 5px;
+  opacity: 1;
+}
+.module-card:not(.module-card--locked):active {
+  transform: translateY(-1px);
+  box-shadow: var(--elev-3);
+}
+
+/* Module icon: glassy level-tinted tile. */
+.module-card .module-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--r);
+  background: var(--lvl-soft);
+  color: var(--lvl-accent);
+  border: 1px solid color-mix(in srgb, var(--lvl-accent) 22%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), var(--elev-1);
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.module-card:not(.module-card--locked):hover .module-icon {
+  transform: scale(1.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 0 18px -4px var(--lvl-accent);
+}
+
+.module-card__index {
+  color: color-mix(in srgb, var(--lvl-accent) 70%, var(--text-3));
+}
+.module-card__status {
+  color: var(--lvl-accent);
+}
+
+/* Completed card: emerald glow + checkmark-green icon, level rail dimmed. */
+.module-card--done {
+  border-color: var(--success-border);
+}
+.module-card--done::before {
+  background: var(--grad-emerald);
+}
+.module-card--done .module-icon {
+  background: var(--emerald-soft);
+  color: var(--emerald-strong);
+  border-color: color-mix(in srgb, var(--emerald) 30%, transparent);
+}
+
+/* Current/next lesson: gently lifted + accent ring so it reads as "you're here". */
+.module-card--current {
+  border-color: color-mix(in srgb, var(--lvl-accent) 50%, transparent);
+  box-shadow: var(--elev-3), 0 0 0 3px color-mix(in srgb, var(--lvl-accent) 14%, transparent);
+}
+.module-card--current::after {
+  content: 'Continue';
+  position: absolute;
+  top: var(--s3);
+  right: var(--s4);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--lvl-grad);
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  box-shadow: 0 3px 10px -3px var(--lvl-accent);
+}
+/* Hide the floating pill on the smallest screens so it never overlaps text. */
+@media (max-width: 440px) {
+  .module-card--current::after {
+    display: none;
+  }
+}
+
+/* Locked card: calm, no rail glow, neutral icon. */
+.module-card--locked {
+  background: var(--surface-2);
+  box-shadow: var(--elev-1);
+}
+.module-card--locked::before {
+  opacity: 0.18;
+  background: var(--border-strong);
+}
+.module-card--locked .module-icon {
+  background: var(--surface);
+  color: var(--text-3);
+  border-color: var(--border);
+  box-shadow: none;
+}
+/* Locked lessons read muted everywhere — the lock glyph stays neutral, not accent. */
+.module-card--locked .module-card__status {
+  color: var(--text-3);
+}
+
+/* =====================================================================
+   2. SIDEBAR — track rails, premium item states, refined progress
+   ===================================================================== */
+
+/* Track group gets a faint per-level accent on its label tag. */
+.nav-track .track-label__tag {
+  background: var(--lvl-soft);
+  color: color-mix(in srgb, var(--lvl-accent) 80%, #20242e);
+  border: 1px solid color-mix(in srgb, var(--lvl-accent) 26%, transparent);
+}
+.nav-track .track-label__tag--pro {
+  background: var(--grad-warm);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Items: smooth, with a leading accent bar that grows on hover/active. */
+.nav-track .nav__item {
+  position: relative;
+  border-radius: var(--r-sm);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+.nav-track .nav__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 3px;
+  border-radius: var(--r-pill);
+  background: var(--lvl-grad);
+  opacity: 0;
+  transform: scaleY(0.5);
+  transform-origin: center;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.nav-track .nav__item:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--lvl-soft) 70%, transparent);
+}
+.nav-track .nav__item:hover:not(:disabled)::before {
+  opacity: 0.5;
+  transform: scaleY(1);
+}
+
+/* Active item: level-tinted glass pill + full accent rail + colored title. */
+.nav-track .nav__item--active {
+  background: var(--lvl-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lvl-accent) 22%, transparent);
+}
+.nav-track .nav__item--active::before {
+  opacity: 1;
+  transform: scaleY(1);
+  box-shadow: 0 0 10px -2px var(--lvl-accent);
+}
+.nav-track .nav__item--active .nav__title {
+  color: color-mix(in srgb, var(--lvl-accent) 76%, #1c2027);
+}
+.nav-track .nav__item--active .nav__status {
+  color: var(--lvl-accent);
+}
+
+/* Status glyphs per state. */
+.nav-track .nav__status--current {
+  color: var(--lvl-accent);
+}
+.nav-track .nav__item--active .nav__status--current {
+  animation: pulse-soft 2.4s var(--ease-out) infinite;
+  border-radius: var(--r-pill);
+}
+.nav__status--done {
+  color: var(--emerald-strong);
+}
+
+/* Locked item: clearly muted, lock sits in a faint chip. */
+.nav-track .nav__item:disabled .nav__status {
+  color: var(--text-3);
+  opacity: 0.8;
+}
+
+/* The "Course overview" item sits directly after .side-progress (outside any
+   .nav-track), so the adjacent-sibling selector targets only it — a neutral-cool
+   aurora tint when active, distinct from the per-level track items. */
+.side-progress + .nav__item--active {
+  background: var(--grad-aurora-soft);
+  box-shadow: inset 2px 0 0 var(--electric);
+}
+.side-progress + .nav__item--active .nav__title {
+  color: var(--indigo-strong);
+}
+
+/* Sidebar overall-progress block: lift it onto a faint glass card. */
+.side-progress {
+  position: relative;
+}
+.side-progress__row span:last-child {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+/* Streak chip: warm gradient flame on a soft warm tint. */
+.streak {
+  background: var(--orange-soft);
+  border: 1px solid color-mix(in srgb, var(--orange) 24%, transparent);
+  border-radius: var(--r-pill);
+  padding: 5px 10px;
+}
+.streak svg {
+  color: var(--orange-strong);
+}
+.streak strong {
+  color: color-mix(in srgb, var(--orange-strong) 88%, #25180e);
+}
+
+/* =====================================================================
+   3. PROGRESS BARS — premium gradient fill + advance glow
+   ===================================================================== */
+
+.bar {
+  height: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+.bar__fill {
+  background: var(--grad-cool);
+  box-shadow: 0 0 10px -2px rgba(59, 130, 246, 0.55);
+  /* Slightly springy so a freshly-earned lesson visibly advances. */
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+/* Toned variant: caller passed a level slot -> fill uses that level gradient. */
+.bar--toned .bar__fill {
+  background: var(--bar-tone, var(--grad-cool));
+}
+/* A soft moving sheen on the fill suggests "live progress". */
+.bar__fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: translateX(-120%);
+  animation: bar-sheen 2.8s var(--ease-out) infinite;
+}
+
+/* =====================================================================
+   4. LESSON CHROME — per-level tint on icon, stepper, labels
+   (Reading surfaces stay calm: concept text + body copy untouched.)
+   ===================================================================== */
+
+.lesson-view .lesson-head__icon {
+  background: var(--lvl-soft);
+  color: var(--lvl-accent);
+  border: 1px solid color-mix(in srgb, var(--lvl-accent) 22%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), var(--elev-2);
+}
+
+.lesson-view .section__label {
+  color: color-mix(in srgb, var(--lvl-accent) 72%, var(--text-2));
+}
+.lesson-view .section__label svg {
+  color: var(--lvl-accent);
+}
+
+/* Phase stepper: active step takes the level accent; past steps go emerald. */
+.lesson-view .phase-step {
+  border-radius: var(--r);
+  transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
+}
+.lesson-view .phase-step:hover {
+  border-color: color-mix(in srgb, var(--lvl-accent) 35%, var(--border));
+}
+.lesson-view .phase-step--active {
+  border-color: transparent;
+  background: var(--lvl-soft);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--lvl-accent) 25%, transparent),
+    0 0 22px -8px var(--lvl-accent);
+}
+.lesson-view .phase-step--active .phase-step__icon {
+  background: var(--lvl-grad);
+  color: #fff;
+  box-shadow: 0 4px 12px -4px var(--lvl-accent);
+}
+.lesson-view .phase-step--active .phase-step__doing {
+  color: color-mix(in srgb, var(--lvl-accent) 74%, #1d2128);
+}
+.lesson-view .phase-step--past .phase-step__icon {
+  background: var(--emerald-soft);
+  color: var(--emerald-strong);
+}
+
+/* Everyday-example callout: keep it a soft level-tinted glass note, text calm. */
+.lesson-view .callout {
+  background: var(--lvl-soft);
+  border: 1px solid color-mix(in srgb, var(--lvl-accent) 20%, transparent);
+  border-radius: var(--r);
+}
+.lesson-view .callout__icon {
+  color: var(--lvl-accent);
+}
+.lesson-view .callout p {
+  color: var(--text);
+}
+
+/* =====================================================================
+   5. ACTIVITY / FEEDBACK — animated success state
+   (Presentational only — grading logic in ActivityShell is untouched.)
+   ===================================================================== */
+
+.activity {
+  position: relative;
+}
+
+.feedback {
+  border-radius: var(--r-lg);
+  animation: rise-in 0.34s var(--ease-out) backwards;
+}
+
+/* Correct: emerald glass + soft success glow that gently settles. */
+.feedback--correct {
+  background: var(--emerald-soft);
+  border-color: color-mix(in srgb, var(--emerald) 38%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--emerald) 28%, transparent),
+    var(--elev-3);
+  animation: rise-in 0.34s var(--ease-out) backwards, success-glow 1.1s var(--ease-out) 0.1s both;
+}
+.feedback--correct .feedback__head {
+  color: var(--emerald-strong);
+}
+/* Checkmark pop on success. */
+.feedback--correct .feedback__head svg {
+  animation: check-pop 0.5s var(--ease-out) backwards;
+  transform-origin: center;
+}
+
+/* Incorrect: calm, supportive — clear but not alarming. */
+.feedback--incorrect {
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-2);
+}
+
+/* Star burst on the feedback stars: each earned star pops in sequence. */
+.feedback__stars .star[data-filled='true'] {
+  animation: star-pop 0.5s var(--ease-out) backwards;
+  animation-delay: calc(0.18s + var(--star-i, 0) * 0.12s);
+}
+
+/* =====================================================================
+   6. STARS — earned-star pop + subtle shine
+   ===================================================================== */
+
+.stars {
+  align-items: center;
+}
+.star {
+  display: inline-flex;
+  line-height: 0;
+}
+/* Earned stars get a faint warm glow so a 3-star result reads as a reward. */
+.star[data-filled='true'] svg {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--star) 55%, transparent));
+}
+
+/* =====================================================================
+   7. KEYFRAMES (Area-C local — inert under prefers-reduced-motion via the
+   universal global.css rule; also gated explicitly below).
+   ===================================================================== */
+
+@keyframes check-pop {
+  0%   { transform: scale(0.3); opacity: 0; }
+  55%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes star-pop {
+  0%   { transform: scale(0.2) rotate(-12deg); opacity: 0; }
+  60%  { transform: scale(1.25) rotate(4deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes success-glow {
+  0%   { box-shadow: 0 0 0 1px color-mix(in srgb, var(--emerald) 28%, transparent), 0 0 0 0 rgba(16, 185, 129, 0.45), var(--elev-3); }
+  45%  { box-shadow: 0 0 0 1px color-mix(in srgb, var(--emerald) 28%, transparent), 0 0 0 8px rgba(16, 185, 129, 0.18), var(--elev-3); }
+  100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--emerald) 28%, transparent), 0 0 0 0 rgba(16, 185, 129, 0), var(--elev-3); }
+}
+
+@keyframes bar-sheen {
+  0%   { transform: translateX(-120%); }
+  55%  { transform: translateX(220%); }
+  100% { transform: translateX(220%); }
+}
+
+/* Gentle scale/opacity pulse for the active "current lesson" dot. */
+@keyframes pulse-soft {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--lvl-accent) 40%, transparent); }
+  50%      { box-shadow: 0 0 0 5px color-mix(in srgb, var(--lvl-accent) 0%, transparent); }
+}
+
+/* =====================================================================
+   8. REDUCED MOTION — defense-in-depth.
+   The universal global.css rule already zeroes animation/transition durations.
+   Here we additionally cancel transform-based lifts + looping decoration so
+   opt-out users get a fully static, calm UI.
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .module-card:not(.module-card--locked):hover,
+  .module-card:not(.module-card--locked):focus-visible,
+  .module-card:not(.module-card--locked):active {
+    transform: none !important;
+  }
+  .module-card:not(.module-card--locked):hover .module-icon {
+    transform: none !important;
+  }
+  .bar__fill::after,
+  .feedback--correct,
+  .feedback--correct .feedback__head svg,
+  .feedback__stars .star[data-filled='true'],
+  .nav-track .nav__item--active .nav__status--current {
+    animation: none !important;
+  }
+  /* Keep the earned-star glow (it's static, not motion) but drop any transform. */
+  .star {
+    transform: none !important;
+  }
+}
+
+/* =====================================================================
+   9. MOBILE — no overflow, graceful degradation of depth/motion.
+   ===================================================================== */
+@media (max-width: 900px) {
+  /* Heavy ambient shadows are cheaper + cleaner on small screens. */
+  .module-card {
+    box-shadow: var(--elev-1);
+    border-radius: var(--r);
+  }
+  .module-card:not(.module-card--locked):hover {
+    /* Touch widths: no hover lift (avoids sticky :hover after tap). */
+    transform: none;
+    box-shadow: var(--elev-2);
+  }
+  .module-card--current {
+    box-shadow: var(--elev-2), 0 0 0 2px color-mix(in srgb, var(--lvl-accent) 16%, transparent);
+  }
+  /* Sidebar drawer titles/concepts already ellipsis in global.css; ensure the
+     accent rail never adds horizontal scroll inside the fixed-width drawer. */
+  .nav-track .nav__item {
+    overflow: hidden;
+  }
+}

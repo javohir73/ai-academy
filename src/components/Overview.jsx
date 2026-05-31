@@ -45,8 +45,11 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
       {TRACKS_WITH_OFFSETS.map((track, ti) => {
         const trackLocked = !progress.isUnlocked(track.levels[0].index)
         const prevTrack = TRACKS_WITH_OFFSETS[ti - 1]
+        // Per-level accent index (0..5) parsed from the track tag ("Level 3" -> 3),
+        // clamped to the 6 defined --lvl-* color slots. Purely presentational.
+        const lvl = Math.min(5, Math.max(0, parseInt(String(track.tag).replace(/\D/g, ''), 10) || ti))
         return (
-          <section className="track-section" key={track.id}>
+          <section className="track-section" key={track.id} data-lvl={lvl} style={{ '--lvl-accent': `var(--lvl-${lvl})`, '--lvl-grad': `var(--lvl-${lvl}-grad)`, '--lvl-soft': `var(--lvl-${lvl}-soft)` }}>
             <div className="track-section__head">
               <span className={`track-chip${track.pro ? ' track-chip--pro' : ''}`}>
                 {track.tag}
@@ -70,10 +73,12 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
                 const Icon = iconForLevel(level.id)
                 const locked = !progress.isUnlocked(index)
                 const completed = Boolean(progress.completed[level.id])
+                const isCurrent = !locked && !completed && index === currentIndex
                 const cls = [
                   'module-card',
                   locked && 'module-card--locked',
                   completed && 'module-card--done',
+                  isCurrent && 'module-card--current',
                 ]
                   .filter(Boolean)
                   .join(' ')

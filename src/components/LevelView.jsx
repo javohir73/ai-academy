@@ -16,6 +16,23 @@ import GuidedPractice from './GuidedPractice.jsx'
 import GoDeeper from './GoDeeper.jsx'
 import SpacedReview from './SpacedReview.jsx'
 import { iconForLevel } from './levelIcons.js'
+import { TRACKS } from '../data/tracks.js'
+
+/*
+ * Map each lesson id -> its level accent slot (0..5), derived from the track tag
+ * ("Level 3" -> 3) so colors stay in sync with the curriculum data. Purely
+ * presentational; used only to tint lesson chrome (icon, stepper, labels).
+ */
+const LEVEL_COLOR_INDEX = (() => {
+  const map = {}
+  TRACKS.forEach((track, ti) => {
+    const lvl = Math.min(5, Math.max(0, parseInt(String(track.tag).replace(/\D/g, ''), 10) || ti))
+    track.levels.forEach((level) => {
+      map[level.id] = lvl
+    })
+  })
+  return map
+})()
 
 /*
  * A single lesson, taught with gradual release of responsibility:
@@ -67,8 +84,16 @@ export default function LevelView({
       ? 'Try the challenge yourself'
       : null
 
+  // Per-level accent for lesson chrome (icon, step, labels). Reading text stays
+  // calm/high-contrast — this only tints accents. Mapped from the lesson's level id.
+  const lvl = LEVEL_COLOR_INDEX[level.id] ?? 2
+
   return (
-    <article>
+    <article
+      className="lesson-view"
+      data-lvl={lvl}
+      style={{ '--lvl-accent': `var(--lvl-${lvl})`, '--lvl-grad': `var(--lvl-${lvl}-grad)`, '--lvl-soft': `var(--lvl-${lvl}-soft)` }}
+    >
       <button className="back-link" onClick={onBack}>
         <ChevronLeft size={18} /> Course overview
       </button>

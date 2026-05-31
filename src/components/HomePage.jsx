@@ -10,8 +10,12 @@ import {
   Clock,
   Wifi,
   GraduationCap,
+  Layers,
+  Code2,
+  CloudCheck,
+  Sprout,
 } from 'lucide-react'
-import NeuralBackground from './NeuralBackground.jsx'
+import Hero3D from './Hero3D.jsx'
 import { TRACKS, LEVELS } from '../data/tracks.js'
 
 /*
@@ -21,32 +25,67 @@ import { TRACKS, LEVELS } from '../data/tracks.js'
  *   - "Explore curriculum"  → onExplore (scrolls to the curriculum preview)
  *
  * Everything is local CSS + Lucide icons (no external assets/CDNs), so it adds
- * no new CSP origins. FeatureGrid / CurriculumPreview are kept inline as small
- * presentational pieces (used only here) rather than over-split into files.
+ * no new CSP origins. FeatureGrid / LearningPath / StatsStrip are kept inline
+ * as small presentational pieces (used only here) rather than split into files.
  */
 
+/* Brand glyphs for the footer social links. Lucide dropped standalone brand
+   logos (trademark), so these are small inline SVGs — no new dep, no CDN. They
+   inherit currentColor and are aria-hidden (the link carries the accessible
+   label). simple-icons paths, 24x24 viewBox. */
+function LinkedInIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+    </svg>
+  )
+}
+function GitHubIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M12 .3a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58l-.01-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.07 1.83 2.81 1.3 3.5.99.1-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.01 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.7.83.58A12 12 0 0 0 12 .3z" />
+    </svg>
+  )
+}
+
+/* Feature cards rotate through four accent families (cyan → violet →
+   emerald → orange). The accent only colors the icon tile, top bar, and
+   hover glow — never the body copy (which stays calm + AA). Styling reads
+   these via CSS custom props set inline in FeatureGrid. */
 const FEATURES = [
   {
     Icon: BookOpenCheck,
     title: 'Concept-first lessons',
     body: 'Start with plain-English ideas and everyday examples — the intuition comes before any math or code.',
+    accent: 'cyan',
   },
   {
     Icon: MousePointerClick,
     title: 'Interactive challenges',
     body: 'Learn by doing: sort, match, predict, and build. Almost every lesson is a hands-on challenge, not a quiz.',
+    accent: 'violet',
   },
   {
     Icon: TerminalSquare,
     title: 'Real Python in the browser',
     body: 'Write and run real scikit-learn code in an in-browser notebook — no installs, no setup, graded instantly.',
+    accent: 'emerald',
   },
   {
     Icon: ShieldCheck,
     title: 'Responsible AI & LLM evaluation',
     body: 'Finish by thinking like an AI model evaluator: score answers, catch hallucinations, and judge AI responsibly.',
+    accent: 'orange',
   },
 ]
+
+/* Maps a feature accent name → the Phase-1 token trio the CSS consumes. */
+const ACCENTS = {
+  cyan: { '--accent': 'var(--cyan)', '--accent-soft': 'var(--cyan-soft)', '--accent-grad': 'var(--grad-cool)' },
+  violet: { '--accent': 'var(--violet)', '--accent-soft': 'var(--violet-soft)', '--accent-grad': 'var(--violet-grad)' },
+  emerald: { '--accent': 'var(--emerald)', '--accent-soft': 'var(--emerald-soft)', '--accent-grad': 'var(--grad-emerald)' },
+  orange: { '--accent': 'var(--orange)', '--accent-soft': 'var(--orange-soft)', '--accent-grad': 'var(--orange-grad)' },
+}
 
 const TRUST = [
   {
@@ -69,8 +108,12 @@ const TRUST = [
 function FeatureGrid() {
   return (
     <div className="feature-grid">
-      {FEATURES.map(({ Icon, title, body }, i) => (
-        <div className="feature-card glow-card" key={title} style={{ '--i': i }}>
+      {FEATURES.map(({ Icon, title, body, accent }, i) => (
+        <div
+          className="feature-card"
+          key={title}
+          style={{ '--i': i, ...ACCENTS[accent] }}
+        >
           <div className="feature-card__icon">
             <Icon size={24} aria-hidden="true" />
           </div>
@@ -82,18 +125,108 @@ function FeatureGrid() {
   )
 }
 
-function CurriculumPreview() {
+/* Per-level node color/gradient/tint, keyed by the numeric level (0..5).
+   Consumes the Phase-1 --lvl-* map so the spine + nodes stay consistent
+   with the sidebar / path elsewhere in the app. */
+function levelVars(n) {
+  return {
+    '--node-color': `var(--lvl-${n})`,
+    '--node-grad': `var(--lvl-${n}-grad)`,
+    '--node-shadow': `color-mix(in srgb, var(--lvl-${n}) 55%, transparent)`,
+    '--card-tint': `color-mix(in srgb, var(--lvl-${n}) 7%, transparent)`,
+  }
+}
+
+/* Premium vertical timeline for the curriculum. A gradient spine threads
+   glowing, color-coded level nodes (L0..L5). The curriculum data jumps
+   from Level 3 to Level 5 (Computer Vision isn't built yet), so we render
+   a dashed "ghost" Level 4 step in that gap to keep the journey legible.
+   Pure CSS/HTML — no three here. */
+function LearningPath() {
+  // Build the ordered step list, inserting the L4 ghost where the gap is.
+  const steps = []
+  TRACKS.forEach((track) => {
+    const num = Number(track.tag.replace('Level ', ''))
+    if (num === 5 && !steps.some((s) => s.ghost)) {
+      steps.push({ ghost: true, num: 4 })
+    }
+    steps.push({
+      id: track.id,
+      num,
+      title: track.title,
+      blurb: track.blurb,
+      pro: track.pro,
+      count: track.levels.length,
+      // The dashed L4 ghost step owns the Computer-Vision message, so we
+      // drop L5's comingSoon (which repeats it) but keep L3's roadmap note.
+      comingSoon: track.tag === 'Level 5' ? null : track.comingSoon,
+    })
+  })
+
   return (
-    <div className="curriculum-rail">
-      {TRACKS.map((track, i) => (
-        <div className="level-card glow-card" key={track.id} style={{ '--i': i }}>
-          <div className="level-card__num">
-            {track.tag.replace('Level ', 'LEVEL ')}
-            <span className="gradient-text">{track.tag.replace('Level ', '')}</span>
-          </div>
-          <h3>{track.title}</h3>
-          <p>{track.blurb}</p>
-          {track.comingSoon && <p className="level-card__soon">{track.comingSoon}</p>}
+    <ol className="learn-path">
+      {steps.map((step, i) =>
+        step.ghost ? (
+          <li className="path-step path-step--ghost" key="ghost-l4" style={{ '--i': i }}>
+            <div className="path-step__node" aria-hidden="true">
+              <span>L</span>4
+            </div>
+            <div className="path-step__card">
+              <span className="path-step__tag">Level 4 · Coming soon</span>
+              <h3>Computer Vision</h3>
+              <p>How machines see — image classification and visual models. In development between Levels 3 and 5.</p>
+            </div>
+          </li>
+        ) : (
+          <li className="path-step" key={step.id} style={{ '--i': i, ...levelVars(step.num) }}>
+            <div className="path-step__node" aria-hidden="true">
+              <span>L</span>
+              {step.num}
+            </div>
+            <div className="path-step__card">
+              <span className="path-step__tag">
+                Level {step.num}
+                {step.pro && <span className="path-step__pro">PRO</span>}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.blurb}</p>
+              <span className="path-step__lessons">
+                <Layers size={14} aria-hidden="true" />
+                {step.count} {step.count === 1 ? 'lesson' : 'lessons'}
+              </span>
+              {step.comingSoon && <span className="path-step__soon">{step.comingSoon}</span>}
+            </div>
+          </li>
+        ),
+      )}
+    </ol>
+  )
+}
+
+/* Concise proof points shown as glassy chips. The lesson count is derived
+   from the real curriculum so it never drifts. */
+function StatsStrip({ lessonCount }) {
+  const stats = [
+    { Icon: Layers, value: `${lessonCount} lessons`, label: 'Hands-on, concept-first', accent: 'cyan' },
+    { Icon: Code2, value: 'Real Python', label: 'scikit-learn in your browser', accent: 'emerald' },
+    { Icon: CloudCheck, value: 'Cloud progress', label: 'Synced across devices', accent: 'electric' },
+    { Icon: Sprout, value: 'Beginner-first', label: 'No prior code or math', accent: 'orange' },
+  ]
+  return (
+    <div className="stats-strip">
+      {stats.map(({ Icon, value, label, accent }) => (
+        <div
+          className="stat-chip"
+          key={value}
+          style={{ '--accent': `var(--${accent})`, '--accent-soft': `var(--${accent}-soft)` }}
+        >
+          <span className="stat-chip__icon">
+            <Icon size={20} aria-hidden="true" />
+          </span>
+          <span className="stat-chip__body">
+            <span className="stat-chip__value">{value}</span>
+            <span className="stat-chip__label">{label}</span>
+          </span>
         </div>
       ))}
     </div>
@@ -125,7 +258,7 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
 
       {/* Hero */}
       <header className="hero-x">
-        <NeuralBackground />
+        <Hero3D />
         <div className="hero-x__inner">
           <span className="chip-grad">
             <Sparkles size={13} aria-hidden="true" /> Learn AI &amp; ML from scratch
@@ -159,6 +292,11 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
         <FeatureGrid />
       </section>
 
+      {/* Stats / benefit strip */}
+      <section className="home-section home-section--stats" aria-label="At a glance">
+        <StatsStrip lessonCount={lessonCount} />
+      </section>
+
       {/* Curriculum preview */}
       <section className="home-section" id="curriculum" aria-labelledby="curriculum-h">
         <div className="home-section__head">
@@ -169,7 +307,7 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
             journey always feels achievable.
           </p>
         </div>
-        <CurriculumPreview />
+        <LearningPath />
       </section>
 
       {/* Trust / benefits */}
@@ -204,8 +342,45 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
         </div>
       </section>
 
-      <footer className="home__footer">
-        AI Academy — learn AI &amp; Machine Learning by doing. Runs in your browser, no setup required.
+      <footer className="site-footer">
+        <span className="site-footer__line" aria-hidden="true" />
+        <div className="site-footer__inner">
+          <div className="site-footer__brand">
+            <span className="brand__mark" aria-hidden="true">
+              <GraduationCap size={18} />
+            </span>
+            <span className="site-footer__brand-text">
+              <span className="site-footer__name">AI Academy</span>
+              <span className="site-footer__tagline">Learn AI &amp; Machine Learning by doing.</span>
+            </span>
+          </div>
+
+          <div className="site-footer__meta">
+            <span className="site-footer__credit">
+              Built by <span className="site-footer__founder">Javohirbek</span>
+            </span>
+            <span className="site-footer__socials">
+              <a
+                className="social-link"
+                href="https://www.linkedin.com/in/javohiraz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Javohirbek on LinkedIn"
+              >
+                <LinkedInIcon />
+              </a>
+              <a
+                className="social-link"
+                href="https://github.com/javohir73"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Javohirbek on GitHub"
+              >
+                <GitHubIcon />
+              </a>
+            </span>
+          </div>
+        </div>
       </footer>
     </div>
   )
