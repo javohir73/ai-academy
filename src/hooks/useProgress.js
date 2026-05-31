@@ -68,6 +68,7 @@ export function useProgress(user = null) {
   const mergedForUser = useRef(null) // which userId we've already merged for this session
   const saveTimer = useRef(null)
   const skipNextPush = useRef(false) // don't immediately re-push a cloud-sourced merge's own write
+  const previousUserId = useRef(null) // last userId we saw, to detect a real sign-out transition
 
   // Persist to localStorage on every change (always — the offline source of truth).
   useEffect(() => {
@@ -135,6 +136,30 @@ export function useProgress(user = null) {
     }, 800)
     return () => clearTimeout(saveTimer.current)
   }, [state, userId])
+
+  // Clear on-device progress on a genuine sign-out (a non-null userId -> null
+  // transition). This returns shared/public computers to a fresh anonymous
+  // state. The user's data is safe: it lives in their cloud account and is
+  // re-fetched + merged on next sign-in.
+  //
+  // Anonymous users are never affected — on first load both userId and
+  // previousUserId.current are null, so the transition condition is false.
+  // The old cloud row is never wiped: the debounced push effect early-returns
+  // when !userId, and we cancel saveTimer here before clearing state, so no
+  // empty snapshot is ever pushed for the departed user.
+  useEffect(() => {
+    if (previousUserId.current !== null && userId === null) {
+      clearTimeout(saveTimer.current)
+      setState({ ...EMPTY }) // fresh clone — never mutate the shared EMPTY
+      try {
+        localStorage.removeItem(STORAGE_KEY)
+      } catch {
+        /* storage blocked; the in-memory clear is enough */
+      }
+      setSyncState('idle')
+    }
+    previousUserId.current = userId
+  }, [userId])
 
   const setOnboarded = useCallback(() => {
     setState((s) => (s.onboarded ? s : { ...s, onboarded: true }))
