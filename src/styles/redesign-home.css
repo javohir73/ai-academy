@@ -507,3 +507,140 @@
     opacity: 0 !important;
   }
 }
+
+/* ====================================================================
+   PREMIUM FOOTER
+   A compact glass footer: a gradient accent hairline on top, a brand
+   area (mark + name + tagline), and founder credit with social links.
+   Light-futuristic, consistent with the redesign. Replaces the old
+   plain .home__footer text. Desktop = two columns; mobile = stacked,
+   centered, no overflow, no awkward wrapping inside the chips.
+   ==================================================================== */
+.site-footer {
+  position: relative;
+  margin-top: clamp(var(--s6), 6vw, var(--s8));
+  padding: clamp(var(--s5), 4vw, var(--s7)) clamp(var(--s4), 5vw, var(--s7));
+  background: var(--glass-2, rgba(255, 255, 255, 0.6));
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.5));
+}
+/* Gradient accent line riding the top edge. */
+.site-footer__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--grad-aurora, linear-gradient(90deg, var(--cyan), var(--indigo)));
+  opacity: 0.85;
+}
+.site-footer__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+.site-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-width: 0;
+}
+.site-footer__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.site-footer__name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.site-footer__tagline {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+.site-footer__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+.site-footer__credit {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  white-space: nowrap; /* keep "Built by Javohirbek" on one line */
+}
+.site-footer__founder {
+  font-weight: 600;
+  color: var(--text);
+}
+.site-footer__socials {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+/* Glassy icon chips with a futuristic hover (cyan→indigo wash + lift). */
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r, 12px);
+  color: var(--text-2);
+  background: var(--surface, #fff);
+  border: 1px solid var(--glass-border, rgba(0, 0, 0, 0.08));
+  box-shadow: var(--elev-1);
+  transition:
+    transform var(--dur-fast, 0.15s) var(--ease-out, ease),
+    color var(--dur-fast, 0.15s) var(--ease-out, ease),
+    box-shadow var(--dur-fast, 0.15s) var(--ease-out, ease),
+    border-color var(--dur-fast, 0.15s) var(--ease-out, ease);
+}
+.social-link:hover,
+.social-link:focus-visible {
+  color: var(--indigo);
+  border-color: color-mix(in srgb, var(--indigo) 35%, transparent);
+  box-shadow: var(--elev-hover, var(--elev-2));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .social-link:hover,
+  .social-link:focus-visible {
+    transform: translateY(-2px);
+  }
+}
+
+/* Mobile: stack + center, guarantee no overflow / no awkward wrap. */
+@media (max-width: 640px) {
+  .site-footer__inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--s4);
+  }
+  .site-footer__brand {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--s2);
+  }
+  .site-footer__brand-text {
+    align-items: center;
+  }
+  .site-footer__meta {
+    flex-direction: column;
+    gap: var(--s3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-link {
+    transition: none !important;
+    transform: none !important;
+  }
+}

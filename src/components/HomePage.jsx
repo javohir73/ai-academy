@@ -29,6 +29,25 @@ import { TRACKS, LEVELS } from '../data/tracks.js'
  * as small presentational pieces (used only here) rather than split into files.
  */
 
+/* Brand glyphs for the footer social links. Lucide dropped standalone brand
+   logos (trademark), so these are small inline SVGs — no new dep, no CDN. They
+   inherit currentColor and are aria-hidden (the link carries the accessible
+   label). simple-icons paths, 24x24 viewBox. */
+function LinkedInIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+    </svg>
+  )
+}
+function GitHubIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M12 .3a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58l-.01-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.07 1.83 2.81 1.3 3.5.99.1-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.01 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.7.83.58A12 12 0 0 0 12 .3z" />
+    </svg>
+  )
+}
+
 /* Feature cards rotate through four accent families (cyan → violet →
    emerald → orange). The accent only colors the icon tile, top bar, and
    hover glow — never the body copy (which stays calm + AA). Styling reads
@@ -323,8 +342,45 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
         </div>
       </section>
 
-      <footer className="home__footer">
-        AI Academy — learn AI &amp; Machine Learning by doing. Runs in your browser, no setup required.
+      <footer className="site-footer">
+        <span className="site-footer__line" aria-hidden="true" />
+        <div className="site-footer__inner">
+          <div className="site-footer__brand">
+            <span className="brand__mark" aria-hidden="true">
+              <GraduationCap size={18} />
+            </span>
+            <span className="site-footer__brand-text">
+              <span className="site-footer__name">AI Academy</span>
+              <span className="site-footer__tagline">Learn AI &amp; Machine Learning by doing.</span>
+            </span>
+          </div>
+
+          <div className="site-footer__meta">
+            <span className="site-footer__credit">
+              Built by <span className="site-footer__founder">Javohirbek</span>
+            </span>
+            <span className="site-footer__socials">
+              <a
+                className="social-link"
+                href="https://www.linkedin.com/in/javohiraz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Javohirbek on LinkedIn"
+              >
+                <LinkedInIcon />
+              </a>
+              <a
+                className="social-link"
+                href="https://github.com/javohir73"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Javohirbek on GitHub"
+              >
+                <GitHubIcon />
+              </a>
+            </span>
+          </div>
+        </div>
       </footer>
     </div>
   )
