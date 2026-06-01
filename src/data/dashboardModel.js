@@ -38,7 +38,7 @@ const pct = (n, d) => (d > 0 ? Math.round((n / d) * 100) : 0)
  * @param {object} progress  the useProgress() return value (or a compatible mock)
  * @returns {object} the dashboard view-model (see file header)
  */
-export function buildDashboardModel(progress) {
+export function buildDashboardModel(progress, tracksWithOffsets = TRACKS_WITH_OFFSETS) {
   // Defensive defaults so a partial/mocked progress never throws.
   const completed = progress?.completed ?? {}
   const starsFor = progress?.starsFor ?? ((id) => completed[id] ?? 0)
@@ -52,7 +52,7 @@ export function buildDashboardModel(progress) {
 
   // Flat lesson list annotated with its track tag + flat index, in play order.
   const flat = []
-  for (const track of TRACKS_WITH_OFFSETS) {
+  for (const track of tracksWithOffsets) {
     for (const { level, index } of track.levels) {
       flat.push({ id: level.id, title: level.title, levelTag: track.tag, trackTitle: track.title, index })
     }
@@ -100,7 +100,7 @@ export function buildDashboardModel(progress) {
     .map((l) => ({ id: l.id, title: l.title, levelTag: l.levelTag, stars: starsFor(l.id), index: l.index }))
 
   // --- Per-level rollup cards (L0–L5) ----------------------------------------
-  const levels = TRACKS_WITH_OFFSETS.map((track) => {
+  const levels = tracksWithOffsets.map((track) => {
     const lessons = track.levels
     const doneCount = lessons.filter(({ level }) => completed[level.id]).length
     const stars = lessons.reduce((sum, { level }) => sum + starsFor(level.id), 0)
