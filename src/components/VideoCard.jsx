@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Play, Film } from 'lucide-react'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * VideoCard — a clean placeholder for a short lesson video / animated
@@ -8,6 +9,7 @@ import { Play, Film } from 'lucide-react'
  * adding a `src` to the level's `video` data.
  */
 export default function VideoCard({ title, description, duration, src }) {
+  const { t } = useLanguage()
   const [playing, setPlaying] = useState(false)
 
   return (
@@ -21,10 +23,10 @@ export default function VideoCard({ title, description, duration, src }) {
         <button
           className="video-card__frame"
           onClick={() => setPlaying(true)}
-          aria-label={`Play video: ${title}`}
+          aria-label={`${t('video.playLabel.pre')}${title}`}
         >
           <span className="video-card__badge">
-            <Film size={14} /> Video
+            <Film size={14} /> {t('video.badge')}
           </span>
           {duration && <span className="video-card__duration">{duration}</span>}
           <span className="video-card__play" aria-hidden="true">

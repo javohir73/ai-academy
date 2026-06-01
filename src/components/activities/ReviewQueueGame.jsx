@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * ReviewQueueGame — "what is AI evaluation?" (intermediate 1). Each AI answer
@@ -10,6 +11,7 @@ import { AlertTriangle } from 'lucide-react'
  * data = { approveLabel, flagLabel, items: [{ id, prompt, answer, issue }] }
  */
 export default function ReviewQueueGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [choices, setChoices] = useState({}) // itemId -> 'approve' | 'flag'
   const [submitted, setSubmitted] = useState(false)
   const allAnswered = Object.keys(choices).length === data.items.length
@@ -67,7 +69,7 @@ export default function ReviewQueueGame({ data, onResult }) {
       })}
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!allAnswered || submitted}>
-          Check decisions
+          {t('act.checkDecisions')}
         </button>
       </div>
     </div>

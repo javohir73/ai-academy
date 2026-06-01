@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Check, X, Calculator, AlertTriangle, ArrowRight } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * ShapeCalc — the mini-calculator engine ('calc' type). Three CNN-sizing tools
@@ -63,6 +64,7 @@ export function flattenSize({ c, h, w }) {
 // ---------------------------------------------------------------------------
 
 export default function ShapeCalc({ data, onResult }) {
+  const { t } = useLanguage()
   const mode = data.mode
   const [value, setValue] = useState('') // typed number (as string)
   const [invalid, setInvalid] = useState(false) // conv-output "invalid config" tick
@@ -105,47 +107,45 @@ export default function ShapeCalc({ data, onResult }) {
 
   if (isConvOutput) {
     given.push(
-      { k: 'Input size W', v: data.W },
-      { k: 'Filter F', v: data.F },
-      { k: 'Padding P', v: data.P },
-      { k: 'Stride S', v: data.S },
+      { k: t('calc.given.inputW'), v: data.W },
+      { k: t('calc.given.filterF'), v: data.F },
+      { k: t('calc.given.paddingP'), v: data.P },
+      { k: t('calc.given.strideS'), v: data.S },
     )
     formula = 'output = (W − F + 2P) / S + 1'
-    question = question || 'What is the output feature-map side length?'
-    unit = 'px per side'
+    question = question || t('calc.q.convOutput')
+    unit = t('calc.unit.px')
   } else if (mode === 'param-explosion') {
     given.push(
-      { k: 'Image', v: `${data.H}×${data.W}×${data.C}` },
-      { k: 'Conv filter', v: `${data.kernel}×${data.kernel}×${data.C}` },
+      { k: t('calc.given.image'), v: `${data.H}×${data.W}×${data.C}` },
+      { k: t('calc.given.convFilter'), v: `${data.kernel}×${data.kernel}×${data.C}` },
     )
     if (data.ask === 'fc') {
       formula = 'FC neuron weights = H × W × C'
-      question = question || 'How many weights does ONE fully-connected neuron need?'
-      unit = 'weights'
+      question = question || t('calc.q.fc')
+      unit = t('calc.unit.weights')
     } else if (data.ask === 'conv') {
       formula = 'conv filter weights = F × F × C'
-      question = question || 'How many weights does ONE conv filter need (shared everywhere)?'
-      unit = 'weights'
+      question = question || t('calc.q.conv')
+      unit = t('calc.unit.weights')
     } else {
       formula = 'ratio = (H × W × C) / (F × F × C)'
-      question = question || 'How many times MORE weights does the FC neuron use than the conv filter?'
-      unit = '× more'
+      question = question || t('calc.q.ratio')
+      unit = t('calc.unit.more')
     }
   } else {
     // flatten
-    given.push({ k: 'Conv/pool volume (C, H, W)', v: `(${data.shape.c}, ${data.shape.h}, ${data.shape.w})` })
+    given.push({ k: t('calc.given.volume'), v: `(${data.shape.c}, ${data.shape.h}, ${data.shape.w})` })
     formula = 'in_features = C × H × W'
-    question = question || 'What in_features must the first nn.Linear use after flattening?'
-    unit = 'features'
+    question = question || t('calc.q.flatten')
+    unit = t('calc.unit.features')
   }
 
   return (
     <div className="stack">
       <p className="count-hint" style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}>
         <Calculator size={16} aria-hidden="true" />
-        <span>
-          Work it out with the formula below, then enter your answer.
-        </span>
+        <span>{t('calc.workItOut')}</span>
       </p>
 
       {/* Given values */}
@@ -176,7 +176,7 @@ export default function ShapeCalc({ data, onResult }) {
             value={value}
             disabled={submitted || invalid}
             placeholder="?"
-            aria-label="Your answer"
+            aria-label={t('calc.yourAnswer')}
             onChange={(e) => setValue(e.target.value)}
           />
           <span className="calc-entry__unit">{unit}</span>
@@ -195,7 +195,7 @@ export default function ShapeCalc({ data, onResult }) {
               }}
             />
             <AlertTriangle size={15} aria-hidden="true" />
-            This stride/padding combo is invalid (no whole-number output)
+            {t('calc.invalidConfig')}
           </label>
         )}
       </div>
@@ -211,13 +211,13 @@ export default function ShapeCalc({ data, onResult }) {
           <span>
             {isConvOutput && !truth.valid ? (
               <>
-                Correct call: <strong>invalid</strong> — (W − F + 2P) = {data.W - data.F + 2 * data.P} is
-                not divisible by S = {data.S}, so the output side isn't a whole number. Change the
-                stride or padding.
+                {t('calc.invalid.pre')}<strong>{t('calc.invalid.word')}</strong>
+                {t('calc.invalid.mid')}{data.W - data.F + 2 * data.P}
+                {t('calc.invalid.s')}{data.S}{t('calc.invalid.post')}
               </>
             ) : (
               <>
-                Answer: <strong>{isConvOutput ? truth.size : truth.value}</strong> {unit}
+                {t('calc.result.answer.pre')}<strong>{isConvOutput ? truth.size : truth.value}</strong> {unit}
                 {mode === 'param-explosion' && data.ask !== 'ratio' && (
                   <>
                     {' '}
@@ -233,7 +233,7 @@ export default function ShapeCalc({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!canCheck}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

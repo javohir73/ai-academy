@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { User } from 'lucide-react'
 import { shuffle } from '../../utils/shuffle.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * BiasGridGame — spot the missing group (level 7). Shows a training set as a
@@ -16,6 +17,7 @@ import { shuffle } from '../../utils/shuffle.js'
  * }
  */
 export default function BiasGridGame({ data, onResult }) {
+  const { t } = useLanguage()
   const cards = useMemo(
     () => shuffle(data.samples.map((g, i) => ({ g, key: i }))),
     [data],
@@ -39,7 +41,7 @@ export default function BiasGridGame({ data, onResult }) {
     <div className="stack">
       <p className="count-hint">{data.legend}</p>
 
-      <div className="bias-grid" role="img" aria-label="Training data samples by group">
+      <div className="bias-grid" role="img" aria-label={t('biasGrid.samplesAria')}>
         {cards.map((c) => (
           <div className={`bias-sample bias-tint-${tintOf(c.g)}`} key={c.key}>
             <User size={16} aria-hidden="true" />
@@ -55,7 +57,7 @@ export default function BiasGridGame({ data, onResult }) {
       <div
         className="options"
         role="radiogroup"
-        aria-label="Which group is missing"
+        aria-label={t('biasGrid.missingAria')}
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
       >
         {data.options.map((o) => {
@@ -76,7 +78,7 @@ export default function BiasGridGame({ data, onResult }) {
               {o}
               {submitted && (
                 <span className="option__mark">
-                  {counts[o]} {counts[o] === 1 ? 'sample' : 'samples'}
+                  {counts[o]} {counts[o] === 1 ? t('mark.sample.one') : t('mark.sample.many')}
                 </span>
               )}
             </button>
@@ -88,7 +90,7 @@ export default function BiasGridGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!selected || submitted}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

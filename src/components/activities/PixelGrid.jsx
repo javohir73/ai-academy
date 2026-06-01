@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, X, CheckCircle2, AlertTriangle, Eye } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * PixelGrid — the Pixel Inspector ('pixel-grid' type). Makes "an image is just
@@ -31,12 +32,13 @@ import { Check, X, CheckCircle2, AlertTriangle, Eye } from 'lucide-react'
  */
 
 const CHANNEL_META = {
-  r: { label: 'Red', idx: 0, swatch: '#ef4444' },
-  g: { label: 'Green', idx: 1, swatch: '#22c55e' },
-  b: { label: 'Blue', idx: 2, swatch: '#3b82f6' },
+  r: { labelKey: 'pixel.channel.red', idx: 0, swatch: '#ef4444' },
+  g: { labelKey: 'pixel.channel.green', idx: 1, swatch: '#22c55e' },
+  b: { labelKey: 'pixel.channel.blue', idx: 2, swatch: '#3b82f6' },
 }
 
 export default function PixelGrid({ data, onResult }) {
+  const { t } = useLanguage()
   const pixels = data.pixels ?? []
   const channels = data.channels ?? ['r', 'g', 'b']
   const check = data.check ?? { question: '', choices: [] }
@@ -87,13 +89,12 @@ export default function PixelGrid({ data, onResult }) {
       <p className="count-hint" style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}>
         <Eye size={16} aria-hidden="true" />
         <span>
-          This image is a grid of <strong>(R, G, B)</strong> numbers. Toggle a channel to see its
-          contribution, and click any pixel to read its exact values.
+          {t('pixel.intro.pre')}<strong>(R, G, B)</strong>{t('pixel.intro.post')}
         </span>
       </p>
 
       {/* Channel toggles — flip a channel's contribution on/off everywhere. */}
-      <div className="pixel-toggles" role="group" aria-label="Channel toggles">
+      <div className="pixel-toggles" role="group" aria-label={t('pixel.togglesAria')}>
         {channels.map((ch) => {
           const meta = CHANNEL_META[ch]
           const on = enabled.has(ch)
@@ -110,7 +111,7 @@ export default function PixelGrid({ data, onResult }) {
                 style={{ background: on ? meta.swatch : 'transparent', borderColor: meta.swatch }}
                 aria-hidden="true"
               />
-              {meta.label}
+              {t(meta.labelKey)}
             </button>
           )
         })}
@@ -146,7 +147,7 @@ export default function PixelGrid({ data, onResult }) {
           {inspected ? (
             <>
               <span className="pixel-readout__label">
-                Pixel ({inspect.r + 1}, {inspect.c + 1})
+                {t('pixel.label.pre')}({inspect.r + 1}, {inspect.c + 1})
               </span>
               <span className="pixel-readout__vals">
                 <span style={{ color: CHANNEL_META.r.swatch }}>R {inspected[0]}</span>
@@ -155,7 +156,7 @@ export default function PixelGrid({ data, onResult }) {
               </span>
             </>
           ) : (
-            <span className="pixel-readout__hint">Click a pixel to inspect its (R, G, B).</span>
+            <span className="pixel-readout__hint">{t('pixel.clickHint')}</span>
           )}
         </div>
       </div>
@@ -166,11 +167,11 @@ export default function PixelGrid({ data, onResult }) {
 
         {!submitted && (
           <p className="count-hint" style={{ margin: 0 }}>
-            Use the toggles and pixel read-out above, then pick the best answer.
+            {t('pixel.pickAnswer')}
           </p>
         )}
 
-        <div className="options" role="radiogroup" aria-label="Prediction choices">
+        <div className="options" role="radiogroup" aria-label={t('pixel.choicesAria')}>
           {check.choices.map((c) => {
             const isPicked = picked === c.id
             let cls = 'option'
@@ -194,12 +195,12 @@ export default function PixelGrid({ data, onResult }) {
                   </span>
                   {submitted && c.correct && (
                     <span className="option__mark">
-                      <Check size={15} /> correct
+                      <Check size={15} /> {t('mark.correct')}
                     </span>
                   )}
                   {submitted && isPicked && !c.correct && (
                     <span className="option__mark">
-                      <X size={15} /> not this
+                      <X size={15} /> {t('mark.notThis')}
                     </span>
                   )}
                 </button>
@@ -221,7 +222,7 @@ export default function PixelGrid({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={submit} disabled={picked == null || submitted}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

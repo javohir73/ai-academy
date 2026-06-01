@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Check, X } from 'lucide-react'
 import { shuffle } from '../../utils/shuffle.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * MatchGame — match each FEATURE (clue) on the left to its LABEL (answer) on
@@ -13,6 +14,7 @@ import { shuffle } from '../../utils/shuffle.js'
  * }
  */
 export default function MatchGame({ data, onResult }) {
+  const { t } = useLanguage()
   const n = data.pairs.length
   // Right column is shuffled; each entry remembers its original pair index.
   const rights = useMemo(
@@ -115,13 +117,13 @@ export default function MatchGame({ data, onResult }) {
 
       <p className="count-hint center">
         {activeLeft !== null
-          ? `Now select the answer for “${data.pairs[activeLeft].left}”.`
-          : 'Select a clue on the left to start a link.'}
+          ? `${t('match.nowSelect.pre')}${data.pairs[activeLeft].left}${t('match.nowSelect.post')}`
+          : t('match.start')}
       </p>
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!allLinked || submitted}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

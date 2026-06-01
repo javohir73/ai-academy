@@ -15,6 +15,7 @@ import AccountPrompt from './components/AccountPrompt.jsx'
 import LanguageSwitcher from './components/LanguageSwitcher.jsx'
 import LanguageModal from './components/LanguageModal.jsx'
 import { hasSavedLanguage } from './i18n/LanguageProvider.jsx'
+import { useLanguage } from './i18n/useLanguage.js'
 
 /*
  * App is the layout shell. It has three views, tracked in `view`:
@@ -30,6 +31,7 @@ export default function App() {
   const auth = useAuth()
   const progress = useProgress(auth.user)
   const { levels: localizedLevels } = useLocalizedTracks()
+  const { t } = useLanguage()
   const [view, setView] = useState('home') // 'home' | 'dashboard' | 'overview' | 'lesson'
   const [levelIndex, setLevelIndex] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -220,7 +222,7 @@ export default function App() {
           <button
             className="icon-btn"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Open course menu"
+            aria-label={t('topbar.openMenu')}
           >
             <Menu size={20} />
           </button>
@@ -231,7 +233,7 @@ export default function App() {
             className={`topbar__nav${view === 'dashboard' ? ' topbar__nav--active' : ''}`}
             onClick={goDashboard}
           >
-            Dashboard
+            {t('topbar.dashboard')}
           </button>
           <span className="topbar__spacer" />
           <LanguageSwitcher className="topbar__lang" />

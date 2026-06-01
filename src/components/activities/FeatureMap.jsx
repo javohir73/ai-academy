@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, X, CheckCircle2, AlertTriangle, Layers, Activity } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * FeatureMap — the activation-visualizer engine ('featuremap' type). Two modes
@@ -74,15 +75,16 @@ function HeatGrid({ grid, label }) {
 }
 
 function SelfCheck({ check, picked, submitted, onSelect }) {
+  const { t } = useLanguage()
   return (
     <div className="fmap-check">
       <p className="scenario">{check.question}</p>
       {!submitted && (
         <p className="count-hint" style={{ margin: 0 }}>
-          Explore above, then pick the best answer.
+          {t('fmap.exploreFirst')}
         </p>
       )}
-      <div className="options" role="radiogroup" aria-label="Self-check choices">
+      <div className="options" role="radiogroup" aria-label={t('fmap.selfCheckAria')}>
         {check.choices.map((c) => {
           const isPicked = picked === c.id
           let cls = 'option'
@@ -105,12 +107,12 @@ function SelfCheck({ check, picked, submitted, onSelect }) {
                 </span>
                 {submitted && c.correct && (
                   <span className="option__mark">
-                    <Check size={15} /> correct
+                    <Check size={15} /> {t('mark.correct')}
                   </span>
                 )}
                 {submitted && isPicked && !c.correct && (
                   <span className="option__mark">
-                    <X size={15} /> not this
+                    <X size={15} /> {t('mark.notThis')}
                   </span>
                 )}
               </button>
@@ -133,6 +135,7 @@ function SelfCheck({ check, picked, submitted, onSelect }) {
 }
 
 export default function FeatureMap({ data, onResult }) {
+  const { t } = useLanguage()
   const mode = data.mode === 'adversarial' ? 'adversarial' : 'depth'
   const check = data.check ?? { question: '', choices: [] }
 
@@ -187,14 +190,11 @@ export default function FeatureMap({ data, onResult }) {
             style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}
           >
             <Layers size={16} aria-hidden="true" />
-            <span>
-              Step through the network's depth. Watch the activations go from generic edges to
-              object-specific parts.
-            </span>
+            <span>{t('fmap.depthIntro')}</span>
           </p>
 
           {/* Depth tabs */}
-          <div className="fmap-tabs" role="tablist" aria-label="Network depth">
+          <div className="fmap-tabs" role="tablist" aria-label={t('fmap.depthAria')}>
             {layers.map((l, i) => (
               <button
                 key={l.id}
@@ -213,7 +213,7 @@ export default function FeatureMap({ data, onResult }) {
             <div className="fmap-stage">
               <HeatGrid
                 grid={layers[depthIdx].grid}
-                label={`${layers[depthIdx].label} activation map`}
+                label={`${layers[depthIdx].label}${t('fmap.activationSuffix')}`}
               />
               <p className="fmap-caption">{layers[depthIdx].caption}</p>
             </div>
@@ -226,23 +226,21 @@ export default function FeatureMap({ data, onResult }) {
             style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}
           >
             <Activity size={16} aria-hidden="true" />
-            <span>
-              Drag the perturbation strength up. The picture barely changes — but watch the model's
-              prediction.
-            </span>
+            <span>{t('fmap.advIntro')}</span>
           </p>
 
           <div className="fmap-adv">
             <div className="fmap-stage">
-              <HeatGrid grid={perturbed(data.base ?? [])} label="Input image (with perturbation)" />
+              <HeatGrid grid={perturbed(data.base ?? [])} label={t('fmap.perturbInputLabel')} />
               <p className="fmap-caption">
-                Perturbation ε = {eps} / {maxEps} — visually {eps === 0 ? 'clean' : 'almost identical'}
+                {t('fmap.perturbCaption.pre')}{eps} / {maxEps}
+                {eps === 0 ? t('fmap.perturbCaption.clean') : t('fmap.perturbCaption.identical')}
               </p>
             </div>
 
             <label className="fmap-slider">
               <span className="colab__eyebrow" style={{ margin: 0 }}>
-                Attack strength (ε)
+                {t('fmap.attackStrength')}
               </span>
               <input
                 type="range"
@@ -250,7 +248,7 @@ export default function FeatureMap({ data, onResult }) {
                 max={maxEps}
                 step={1}
                 value={eps}
-                aria-label="Perturbation strength epsilon"
+                aria-label={t('fmap.attackStrengthAria')}
                 onChange={(e) => setEps(Number(e.target.value))}
               />
             </label>
@@ -258,12 +256,12 @@ export default function FeatureMap({ data, onResult }) {
             {/* Prediction read-out: confident, and wrong past the threshold. */}
             <div className={`fmap-pred${flipped ? ' is-flipped' : ''}`} aria-live="polite">
               <span className="fmap-pred__label">
-                Prediction: <strong>{flipped ? data.wrongLabel : data.trueLabel}</strong>
+                {t('fmap.prediction.pre')}<strong>{flipped ? data.wrongLabel : data.trueLabel}</strong>
               </span>
               <span className="fmap-pred__bar" aria-hidden="true">
                 <span className="fmap-pred__fill" style={{ width: `${confidence}%` }} />
               </span>
-              <span className="fmap-pred__conf">{confidence}% confident</span>
+              <span className="fmap-pred__conf">{confidence}{t('fmap.confident.post')}</span>
             </div>
           </div>
         </>
@@ -273,7 +271,7 @@ export default function FeatureMap({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={submit} disabled={picked == null || submitted}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { History, Check, X } from 'lucide-react'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * SpacedReview — a tiny, ungraded warm-up that resurfaces a concept from an
@@ -11,6 +12,7 @@ import { History, Check, X } from 'lucide-react'
  *   { question, options: string[], answerIndex, note }
  */
 export default function SpacedReview({ data }) {
+  const { t } = useLanguage()
   const [chosen, setChosen] = useState(null) // index | null
   if (!data) return null
 
@@ -18,9 +20,9 @@ export default function SpacedReview({ data }) {
   const correct = chosen === data.answerIndex
 
   return (
-    <aside className="spaced" aria-label="Quick review of an earlier lesson">
+    <aside className="spaced" aria-label={t('spaced.aria')}>
       <div className="spaced__label">
-        <History size={14} /> Quick review
+        <History size={14} /> {t('spaced.label')}
       </div>
       <p className="spaced__q">{data.question}</p>
       <div className="spaced__opts">
@@ -48,7 +50,7 @@ export default function SpacedReview({ data }) {
       </div>
       {answered && (
         <p className={`spaced__note${correct ? '' : ' spaced__note--miss'}`}>
-          {correct ? data.note : `Not quite — ${data.note}`}
+          {correct ? data.note : `${t('spaced.miss.pre')}${data.note}`}
         </p>
       )}
     </aside>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * EthicsGame — make responsible AI decisions (level 10). For each real-world
@@ -10,6 +11,7 @@ import { Check, CheckCircle2, AlertTriangle } from 'lucide-react'
  * data = { scenarios: [{ situation, options: [{ id, text, best, why }] }] }
  */
 export default function EthicsGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [answers, setAnswers] = useState({}) // scenarioIndex -> optionId
   const [submitted, setSubmitted] = useState(false)
 
@@ -32,7 +34,7 @@ export default function EthicsGame({ data, onResult }) {
       {data.scenarios.map((scenario, si) => (
         <div key={scenario.id ?? si}>
           <div className="scenario">{scenario.situation}</div>
-          <div className="options" role="radiogroup" aria-label={`Scenario ${si + 1} options`}>
+          <div className="options" role="radiogroup" aria-label={`${t('ethics.scenarioAria.pre')}${si + 1}${t('ethics.scenarioAria.post')}`}>
             {scenario.options.map((o) => {
               const picked = answers[si] === o.id
               let cls = 'option'
@@ -52,7 +54,7 @@ export default function EthicsGame({ data, onResult }) {
                     <span>{o.text}</span>
                     {submitted && o.best && (
                       <span className="option__mark">
-                        <Check size={15} /> recommended
+                        <Check size={15} /> {t('mark.recommended')}
                       </span>
                     )}
                   </button>
@@ -75,7 +77,7 @@ export default function EthicsGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!allAnswered || submitted}>
-          Check decisions
+          {t('act.checkDecisions')}
         </button>
       </div>
     </div>

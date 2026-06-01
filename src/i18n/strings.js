@@ -339,6 +339,11 @@ export const UI = {
     'calc.unit.more': '× more',
     'calc.unit.features': 'features',
     'calc.result.answer.pre': 'Answer: ',
+    'calc.invalid.pre': 'Correct call: ',
+    'calc.invalid.word': 'invalid',
+    'calc.invalid.mid': ' — (W − F + 2P) = ',
+    'calc.invalid.s': ' is not divisible by S = ',
+    'calc.invalid.post': ', so the output side isn’t a whole number. Change the stride or padding.',
 
     // scenario
     'scenario.hint.multi': 'Select every choice that applies, then check your answer.',
@@ -368,6 +373,10 @@ export const UI = {
     'capstone.summary.body.post': ' evaluator tasks — scoring, ranking, catching a hallucination, rewriting a weak reply, and reflecting on your judgement.',
     'capstone.summary.cert': 'You can think like an AI model evaluator.',
     'capstone.summary.claim': 'Claim your result',
+
+    // ethics
+    'ethics.scenarioAria.pre': 'Scenario ',
+    'ethics.scenarioAria.post': ' options',
 
     // bias grid
     'biasGrid.samplesAria': 'Training data samples by group',
@@ -820,6 +829,11 @@ export const UI = {
     'calc.unit.more': '× ko’p',
     'calc.unit.features': 'belgilar',
     'calc.result.answer.pre': 'Javob: ',
+    'calc.invalid.pre': 'To’g’ri qaror: ',
+    'calc.invalid.word': 'yaroqsiz',
+    'calc.invalid.mid': ' — (W − F + 2P) = ',
+    'calc.invalid.s': ' S = ',
+    'calc.invalid.post': ' ga bo’linmaydi, shuning uchun chiqish tomoni butun son emas. Stride yoki paddingni o’zgartiring.',
 
     // scenario
     'scenario.hint.multi': 'Mos keladigan har bir tanlovni belgilang, so’ng javobingizni tekshiring.',
@@ -849,6 +863,10 @@ export const UI = {
     'capstone.summary.body.post': ' ta baholovchi topshiriqni bajardingiz — baholash, saralash, gallyutsinatsiyani topish, zaif javobni qayta yozish va o’z hukmingiz ustida mulohaza yuritish.',
     'capstone.summary.cert': 'Siz AI model baholovchisidek fikrlay olasiz.',
     'capstone.summary.claim': 'Natijangizni oling',
+
+    // ethics
+    'ethics.scenarioAria.pre': 'Vaziyat ',
+    'ethics.scenarioAria.post': ' tanlovlari',
 
     // bias grid
     'biasGrid.samplesAria': 'O’quv ma’lumotlari namunalari guruhlar bo’yicha',

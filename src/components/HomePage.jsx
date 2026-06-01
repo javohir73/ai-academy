@@ -55,30 +55,10 @@ function GitHubIcon(props) {
    hover glow — never the body copy (which stays calm + AA). Styling reads
    these via CSS custom props set inline in FeatureGrid. */
 const FEATURES = [
-  {
-    Icon: BookOpenCheck,
-    title: 'Concept-first lessons',
-    body: 'Start with plain-English ideas and everyday examples — the intuition comes before any math or code.',
-    accent: 'cyan',
-  },
-  {
-    Icon: MousePointerClick,
-    title: 'Interactive challenges',
-    body: 'Learn by doing: sort, match, predict, and build. Almost every lesson is a hands-on challenge, not a quiz.',
-    accent: 'violet',
-  },
-  {
-    Icon: TerminalSquare,
-    title: 'Real Python in the browser',
-    body: 'Write and run real scikit-learn code in an in-browser notebook — no installs, no setup, graded instantly.',
-    accent: 'emerald',
-  },
-  {
-    Icon: ShieldCheck,
-    title: 'Responsible AI & LLM evaluation',
-    body: 'Finish by thinking like an AI model evaluator: score answers, catch hallucinations, and judge AI responsibly.',
-    accent: 'orange',
-  },
+  { Icon: BookOpenCheck, titleKey: 'home.feature.concept.title', bodyKey: 'home.feature.concept.body', accent: 'cyan' },
+  { Icon: MousePointerClick, titleKey: 'home.feature.interactive.title', bodyKey: 'home.feature.interactive.body', accent: 'violet' },
+  { Icon: TerminalSquare, titleKey: 'home.feature.python.title', bodyKey: 'home.feature.python.body', accent: 'emerald' },
+  { Icon: ShieldCheck, titleKey: 'home.feature.responsible.title', bodyKey: 'home.feature.responsible.body', accent: 'orange' },
 ]
 
 /* Maps a feature accent name → the Phase-1 token trio the CSS consumes. */
@@ -90,37 +70,25 @@ const ACCENTS = {
 }
 
 const TRUST = [
-  {
-    Icon: Sparkles,
-    title: 'Beginner-friendly',
-    body: 'No prior coding or math required. Each level unlocks the next, so you are never thrown in the deep end.',
-  },
-  {
-    Icon: Wifi,
-    title: 'Zero setup',
-    body: 'Runs entirely in your browser. Nothing to install, configure, or pay for to get started.',
-  },
-  {
-    Icon: Clock,
-    title: 'Self-paced',
-    body: 'Your progress saves automatically on your device. Pick up exactly where you left off, any time.',
-  },
+  { Icon: Sparkles, titleKey: 'home.trust.beginner.title', bodyKey: 'home.trust.beginner.body' },
+  { Icon: Wifi, titleKey: 'home.trust.setup.title', bodyKey: 'home.trust.setup.body' },
+  { Icon: Clock, titleKey: 'home.trust.paced.title', bodyKey: 'home.trust.paced.body' },
 ]
 
-function FeatureGrid() {
+function FeatureGrid({ t }) {
   return (
     <div className="feature-grid">
-      {FEATURES.map(({ Icon, title, body, accent }, i) => (
+      {FEATURES.map(({ Icon, titleKey, bodyKey, accent }, i) => (
         <div
           className="feature-card"
-          key={title}
+          key={titleKey}
           style={{ '--i': i, ...ACCENTS[accent] }}
         >
           <div className="feature-card__icon">
             <Icon size={24} aria-hidden="true" />
           </div>
-          <h3>{title}</h3>
-          <p>{body}</p>
+          <h3>{t(titleKey)}</h3>
+          <p>{t(bodyKey)}</p>
         </div>
       ))}
     </div>
@@ -142,7 +110,7 @@ function levelVars(n) {
 /* Premium vertical timeline for the curriculum. A gradient spine threads
    glowing, color-coded level nodes (L0..L5), one per real track (localized).
    Pure CSS/HTML — no three here. */
-function LearningPath() {
+function LearningPath({ t }) {
   const { tracks } = useLocalizedTracks()
   const steps = tracks.map((track) => ({
     id: track.id,
@@ -164,14 +132,14 @@ function LearningPath() {
           </div>
           <div className="path-step__card">
             <span className="path-step__tag">
-              Level {step.num}
-              {step.pro && <span className="path-step__pro">PRO</span>}
+              {t('home.level')} {step.num}
+              {step.pro && <span className="path-step__pro">{t('home.pro')}</span>}
             </span>
             <h3>{step.title}</h3>
             <p>{step.blurb}</p>
             <span className="path-step__lessons">
               <Layers size={14} aria-hidden="true" />
-              {step.count} {step.count === 1 ? 'lesson' : 'lessons'}
+              {step.count} {step.count === 1 ? t('home.lesson.one') : t('home.lesson.many')}
             </span>
             {step.comingSoon && <span className="path-step__soon">{step.comingSoon}</span>}
           </div>
@@ -183,12 +151,12 @@ function LearningPath() {
 
 /* Concise proof points shown as glassy chips. The lesson count is derived
    from the real curriculum so it never drifts. */
-function StatsStrip({ lessonCount }) {
+function StatsStrip({ lessonCount, t }) {
   const stats = [
-    { Icon: Layers, value: `${lessonCount} lessons`, label: 'Hands-on, concept-first', accent: 'cyan' },
-    { Icon: Code2, value: 'Real Python', label: 'scikit-learn in your browser', accent: 'emerald' },
-    { Icon: CloudCheck, value: 'Cloud progress', label: 'Synced across devices', accent: 'electric' },
-    { Icon: Sprout, value: 'Beginner-first', label: 'No prior code or math', accent: 'orange' },
+    { Icon: Layers, value: `${lessonCount} ${t('home.lesson.many')}`, label: t('home.stat.lessons.label'), accent: 'cyan' },
+    { Icon: Code2, value: t('home.stat.python.value'), label: t('home.stat.python.label'), accent: 'emerald' },
+    { Icon: CloudCheck, value: t('home.stat.cloud.value'), label: t('home.stat.cloud.label'), accent: 'electric' },
+    { Icon: Sprout, value: t('home.stat.beginner.value'), label: t('home.stat.beginner.label'), accent: 'orange' },
   ]
   return (
     <div className="stats-strip">
@@ -242,15 +210,15 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
         <Hero3D />
         <div className="hero-x__inner">
           <span className="chip-grad">
-            <Sparkles size={13} aria-hidden="true" /> Learn AI &amp; ML from scratch
+            <Sparkles size={13} aria-hidden="true" /> {t('home.chip.hero')}
           </span>
           <h1>
             <span className="gradient-text">AI Academy</span>
           </h1>
           <p className="hero-x__lead">
-            A futuristic, beginner-friendly way to learn Artificial Intelligence and Machine Learning —
-            through {lessonCount} interactive lessons that take you from “what is data?” to running real
-            Python models and evaluating AI responsibly.
+            {t('home.lead.pre')}
+            {lessonCount}
+            {t('home.lead.post')}
           </p>
           <div className="btn-row hero-x__cta">
             <button className="btn btn--primary btn--lg" onClick={onStart}>
@@ -266,45 +234,42 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
       {/* Features */}
       <section className="home-section" aria-labelledby="features-h">
         <div className="home-section__head">
-          <span className="chip-grad">How it works</span>
-          <h2 id="features-h">Built for how beginners actually learn</h2>
-          <p>Motivation before mechanism, doing before memorizing — and real tools when you’re ready.</p>
+          <span className="chip-grad">{t('home.features.chip')}</span>
+          <h2 id="features-h">{t('home.features.title')}</h2>
+          <p>{t('home.features.sub')}</p>
         </div>
-        <FeatureGrid />
+        <FeatureGrid t={t} />
       </section>
 
       {/* Stats / benefit strip */}
-      <section className="home-section home-section--stats" aria-label="At a glance">
-        <StatsStrip lessonCount={lessonCount} />
+      <section className="home-section home-section--stats" aria-label={t('home.stats.aria')}>
+        <StatsStrip lessonCount={lessonCount} t={t} />
       </section>
 
       {/* Curriculum preview */}
       <section className="home-section" id="curriculum" aria-labelledby="curriculum-h">
         <div className="home-section__head">
-          <span className="chip-grad">The path</span>
-          <h2 id="curriculum-h">A clear path, one level at a time</h2>
-          <p>
-            Five levels take you from foundations to applied AI evaluation. Each unlocks the next, so the
-            journey always feels achievable.
-          </p>
+          <span className="chip-grad">{t('home.path.chip')}</span>
+          <h2 id="curriculum-h">{t('home.path.title')}</h2>
+          <p>{t('home.path.sub')}</p>
         </div>
-        <LearningPath />
+        <LearningPath t={t} />
       </section>
 
       {/* Trust / benefits */}
       <section className="home-section" aria-labelledby="trust-h">
         <div className="home-section__head">
-          <span className="chip-grad">Why learners stay</span>
-          <h2 id="trust-h">Approachable by design</h2>
+          <span className="chip-grad">{t('home.trust.chip')}</span>
+          <h2 id="trust-h">{t('home.trust.title')}</h2>
         </div>
         <div className="trust-row">
-          {TRUST.map(({ Icon, title, body }) => (
-            <div className="trust-item" key={title}>
+          {TRUST.map(({ Icon, titleKey, bodyKey }) => (
+            <div className="trust-item" key={titleKey}>
               <div className="trust-item__icon">
                 <Icon size={22} aria-hidden="true" />
               </div>
-              <h3>{title}</h3>
-              <p>{body}</p>
+              <h3>{t(titleKey)}</h3>
+              <p>{t(bodyKey)}</p>
             </div>
           ))}
         </div>
@@ -314,9 +279,9 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
       <section className="home-cta" aria-labelledby="cta-h">
         <div className="glass-card">
           <h2 id="cta-h">
-            Ready to <span className="gradient-text">build your first model?</span>
+            {t('home.finalCta.pre')}<span className="gradient-text">{t('home.finalCta.highlight')}</span>
           </h2>
-          <p>Jump in — the first lesson is a two-minute win, and everything saves as you go.</p>
+          <p>{t('home.finalCta.sub')}</p>
           <button className="btn btn--primary btn--lg" onClick={onStart}>
             <Rocket size={20} /> {t('home.cta.start')}
           </button>
@@ -332,13 +297,13 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
             </span>
             <span className="site-footer__brand-text">
               <span className="site-footer__name">AI Academy</span>
-              <span className="site-footer__tagline">Learn AI &amp; Machine Learning by doing.</span>
+              <span className="site-footer__tagline">{t('home.footer.tagline')}</span>
             </span>
           </div>
 
           <div className="site-footer__meta">
             <span className="site-footer__credit">
-              Built by <span className="site-footer__founder">Javohirbek</span>
+              {t('home.footer.builtBy')} <span className="site-footer__founder">Javohirbek</span>
             </span>
             <span className="site-footer__socials">
               <a

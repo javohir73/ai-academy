@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * CompareAnswersGame — pairwise ranking (intermediate 4). Two answers to the
@@ -9,6 +10,7 @@ import { Check } from 'lucide-react'
  * data = { rounds: [{ id, promptText, a, b, better, why }] }
  */
 export default function CompareAnswersGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [picks, setPicks] = useState({}) // roundId -> 'a' | 'b'
   const [submitted, setSubmitted] = useState(false)
   const allPicked = Object.keys(picks).length === data.rounds.length
@@ -45,7 +47,7 @@ export default function CompareAnswersGame({ data, onResult }) {
                   onClick={() => pick(r.id, side)}
                 >
                   <span className="compare__tag">
-                    Answer {side.toUpperCase()}
+                    {t('compare.answer')} {side.toUpperCase()}
                     {submitted && isBetter && <Check size={15} aria-hidden="true" />}
                   </span>
                   <span className="compare__text">{r[side]}</span>
@@ -63,7 +65,7 @@ export default function CompareAnswersGame({ data, onResult }) {
       ))}
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!allPicked || submitted}>
-          Check choices
+          {t('act.checkChoices')}
         </button>
       </div>
     </div>

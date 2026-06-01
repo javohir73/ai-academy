@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { Check, X, CornerDownRight } from 'lucide-react'
 import { shuffle } from '../../utils/shuffle.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * SortGame — "sort items into two groups" (level 1). Two ways to play, both
@@ -15,6 +16,7 @@ import { shuffle } from '../../utils/shuffle.js'
  * }
  */
 export default function SortGame({ data, onResult }) {
+  const { t: tr } = useLanguage()
   const tokens = useMemo(() => shuffle(data.tokens), [data])
   const [placement, setPlacement] = useState({}) // tokenId -> bucketId
   const [selected, setSelected] = useState(null)
@@ -91,10 +93,10 @@ export default function SortGame({ data, onResult }) {
 
   return (
     <div className="stack">
-      <div className="tokens" role="group" aria-label="Cards to sort">
+      <div className="tokens" role="group" aria-label={tr('sort.cardsAria')}>
         {allPlaced ? (
           <p className="count-hint" style={{ margin: 0 }}>
-            {submitted ? 'See your results below.' : 'All sorted — select “Check answer”.'}
+            {submitted ? tr('sort.results') : tr('sort.allSorted')}
           </p>
         ) : (
           unplaced.map((t) => (
@@ -129,7 +131,7 @@ export default function SortGame({ data, onResult }) {
               <div className="bucket__title">{bucket.label}</div>
               <div className="bucket__items">
                 {items.length === 0 && !selected && !drag && (
-                  <span className="bucket__empty">Drop cards here</span>
+                  <span className="bucket__empty">{tr('sort.dropHere')}</span>
                 )}
                 {items.map((t) => {
                   const ok = t.bucket === bucket.id
@@ -142,8 +144,8 @@ export default function SortGame({ data, onResult }) {
                       disabled={submitted}
                       aria-label={
                         submitted
-                          ? `${t.label}: ${ok ? 'correct' : 'wrong group'}`
-                          : `${t.label}, select to remove`
+                          ? `${t.label}: ${ok ? tr('sort.mark.correct') : tr('sort.mark.wrong')}`
+                          : `${t.label}${tr('sort.removeSuffix')}`
                       }
                     >
                       {t.label}
@@ -154,7 +156,7 @@ export default function SortGame({ data, onResult }) {
                 })}
                 {selected && !submitted && (
                   <button className="btn btn--secondary" onClick={() => place(selected, bucket.id)}>
-                    <CornerDownRight size={16} /> Place here
+                    <CornerDownRight size={16} /> {tr('sort.placeHere')}
                   </button>
                 )}
               </div>
@@ -165,7 +167,7 @@ export default function SortGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!allPlaced || submitted}>
-          Check answer
+          {tr('act.checkAnswer')}
         </button>
       </div>
 

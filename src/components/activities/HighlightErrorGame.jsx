@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * HighlightErrorGame — hallucination detection (intermediate 5). The AI answer
@@ -10,6 +11,7 @@ import { AlertTriangle } from 'lucide-react'
  * data = { promptText, sentences: [{ id, text, bad, issue? }], why }
  */
 export default function HighlightErrorGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [selected, setSelected] = useState([])
   const [submitted, setSubmitted] = useState(false)
 
@@ -58,7 +60,7 @@ export default function HighlightErrorGame({ data, onResult }) {
       )}
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={submitted}>
-          Check highlights
+          {t('act.checkHighlights')}
         </button>
       </div>
     </div>

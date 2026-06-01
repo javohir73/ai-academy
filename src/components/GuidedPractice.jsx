@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Lightbulb, HelpCircle, CheckCircle2 } from 'lucide-react'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * GuidedPractice — the "We do" phase. One scaffolded attempt with an escalating
@@ -12,6 +13,7 @@ import { Lightbulb, HelpCircle, CheckCircle2 } from 'lucide-react'
  *   { prompt, hints: string[], answer, explanation }
  */
 export default function GuidedPractice({ data }) {
+  const { t } = useLanguage()
   // How many hints the learner has chosen to reveal, and whether the answer is shown.
   const [revealed, setRevealed] = useState(0)
   const [answerShown, setAnswerShown] = useState(false)
@@ -30,7 +32,7 @@ export default function GuidedPractice({ data }) {
         <ol className="guided__hints">
           {hints.slice(0, revealed).map((hint, i) => (
             <li key={i} className="guided__hint">
-              <span className="guided__hint-label">Hint {i + 1}</span>
+              <span className="guided__hint-label">{t('guided.hint')} {i + 1}</span>
               <span>{hint}</span>
             </li>
           ))}
@@ -45,22 +47,24 @@ export default function GuidedPractice({ data }) {
               onClick={() => setRevealed((r) => r + 1)}
             >
               <Lightbulb size={16} />
-              {revealed === 0 ? 'Stuck? Reveal a hint' : `Reveal hint ${revealed + 1} of ${hints.length}`}
+              {revealed === 0
+                ? t('guided.revealFirst')
+                : `${t('guided.revealMore.pre')}${revealed + 1}${t('guided.revealMore.mid')}${hints.length}`}
             </button>
           )}
           <button
             className="btn btn--ghost"
             onClick={() => setAnswerShown(true)}
             disabled={!allHintsSeen}
-            title={allHintsSeen ? undefined : 'Work through the hints first'}
+            title={allHintsSeen ? undefined : t('guided.workThroughFirst')}
           >
-            <HelpCircle size={16} /> Show the answer
+            <HelpCircle size={16} /> {t('guided.showAnswer')}
           </button>
         </div>
       )}
 
       {!answerShown && !allHintsSeen && (
-        <p className="guided__nudge">Give it a real think first — try a hint before peeking at the answer.</p>
+        <p className="guided__nudge">{t('guided.nudge')}</p>
       )}
 
       {answerShown && (

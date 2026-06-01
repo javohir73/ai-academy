@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Lock, CheckCircle2, Minus, Plus } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * PredictGame — a tiny live "model" (level 6). The predicted value is a simple
@@ -17,6 +18,7 @@ function clamp(n, lo, hi) {
 }
 
 export default function PredictGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [values, setValues] = useState(() =>
     Object.fromEntries(data.inputs.map((i) => [i.id, i.start])),
   )
@@ -48,7 +50,7 @@ export default function PredictGame({ data, onResult }) {
   return (
     <div className="slider-game">
       <div className="predict-readout">
-        <div className="predict-readout__label">Predicted exam score</div>
+        <div className="predict-readout__label">{t('predict.readout')}</div>
         <div className="predict-readout__value">
           {predicted}
           {data.unit}
@@ -67,7 +69,7 @@ export default function PredictGame({ data, onResult }) {
           }}
         >
           {reached && <CheckCircle2 size={16} aria-hidden="true" />}
-          {reached ? 'Target reached — lock it in.' : data.target.label}
+          {reached ? t('predict.targetReached') : data.target.label}
         </p>
       </div>
 
@@ -82,7 +84,7 @@ export default function PredictGame({ data, onResult }) {
               className="icon-btn slider-step"
               onClick={() => stepInput(input, -1)}
               disabled={submitted || values[input.id] <= input.min}
-              aria-label={`Decrease ${input.label}`}
+              aria-label={`${t('predict.decrease.pre')}${input.label}`}
             >
               <Minus size={16} />
             </button>
@@ -100,7 +102,7 @@ export default function PredictGame({ data, onResult }) {
               className="icon-btn slider-step"
               onClick={() => stepInput(input, 1)}
               disabled={submitted || values[input.id] >= input.max}
-              aria-label={`Increase ${input.label}`}
+              aria-label={`${t('predict.increase.pre')}${input.label}`}
             >
               <Plus size={16} />
             </button>
@@ -110,7 +112,7 @@ export default function PredictGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={lockIn} disabled={submitted}>
-          <Lock size={16} /> Lock in prediction
+          <Lock size={16} /> {t('predict.lockIn')}
         </button>
       </div>
     </div>

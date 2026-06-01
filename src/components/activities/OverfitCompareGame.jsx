@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, X } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * OverfitCompareGame — compare two model diagrams (level 8). Two small SVG
@@ -24,6 +25,7 @@ const POINTS = [
 ]
 
 function ModelChart({ kind }) {
+  const { t } = useLanguage()
   const dots = POINTS.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="4.5" className="of-dot" />)
   const line =
     kind === 'overfit' ? (
@@ -32,7 +34,7 @@ function ModelChart({ kind }) {
       <line x1="16" y1="92" x2="184" y2="26" className="of-line of-line--smooth" />
     )
   return (
-    <svg viewBox="0 0 200 110" className="of-svg" role="img" aria-label={kind === 'overfit' ? 'A line that bends to pass through every dot' : 'A straight line through the middle of the dots'}>
+    <svg viewBox="0 0 200 110" className="of-svg" role="img" aria-label={kind === 'overfit' ? t('overfit.overfitAria') : t('overfit.smoothAria')}>
       {line}
       <g>{dots}</g>
     </svg>
@@ -40,6 +42,7 @@ function ModelChart({ kind }) {
 }
 
 export default function OverfitCompareGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [model, setModel] = useState(null)
   const [reason, setReason] = useState(null)
   const [submitted, setSubmitted] = useState(false)
@@ -113,7 +116,7 @@ export default function OverfitCompareGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!ready || submitted}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

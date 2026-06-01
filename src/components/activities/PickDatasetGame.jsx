@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { shuffle } from '../../utils/shuffle.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * PickDatasetGame — single-choice "evaluate the datasets and pick the right
@@ -10,6 +11,7 @@ import { shuffle } from '../../utils/shuffle.js'
  * data = { options: [{ id, title, sample, isCorrect, why }, ...] }
  */
 export default function PickDatasetGame({ data, onResult }) {
+  const { t } = useLanguage()
   const options = useMemo(() => shuffle(data.options), [data])
   const [selected, setSelected] = useState(null)
   const [submitted, setSubmitted] = useState(false)
@@ -22,7 +24,7 @@ export default function PickDatasetGame({ data, onResult }) {
 
   return (
     <div className="stack">
-      <div className="options" role="radiogroup" aria-label="Choose a dataset">
+      <div className="options" role="radiogroup" aria-label={t('dataset.chooseAria')}>
         {options.map((o) => {
           let cls = 'dataset'
           if (!submitted && selected === o.id) cls += ' dataset--selected'
@@ -55,7 +57,7 @@ export default function PickDatasetGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!selected || submitted}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

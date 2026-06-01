@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent } from '../../test/renderWithLang.jsx'
 import Convolve from './Convolve.jsx'
 
 // kernel mode: 3x3 patch starting at (1,1), sharpen-ish kernel; the authored
