@@ -11,6 +11,9 @@ import HomePage from './components/HomePage.jsx'
 import AuthModal from './components/AuthModal.jsx'
 import AccountMenu from './components/AccountMenu.jsx'
 import AccountPrompt from './components/AccountPrompt.jsx'
+import LanguageSwitcher from './components/LanguageSwitcher.jsx'
+import LanguageModal from './components/LanguageModal.jsx'
+import { hasSavedLanguage } from './i18n/LanguageProvider.jsx'
 
 /*
  * App is the layout shell. It has three views, tracked in `view`:
@@ -30,6 +33,8 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
   const [authMode, setAuthMode] = useState('signin')
+  // First-visit language modal: shown only when no language preference is saved.
+  const [langModalOpen, setLangModalOpen] = useState(() => !hasSavedLanguage())
 
   const menuBtnRef = useRef(null)
   const sidebarRef = useRef(null)
@@ -123,6 +128,7 @@ export default function App() {
   // every view, so they overlay Home and the course alike.
   const authChrome = (
     <>
+      <LanguageModal open={langModalOpen} onClose={() => setLangModalOpen(false)} />
       <AuthModal
         open={authOpen}
         initialMode={authMode}
@@ -226,6 +232,7 @@ export default function App() {
             Dashboard
           </button>
           <span className="topbar__spacer" />
+          <LanguageSwitcher className="topbar__lang" />
           {accountMenu}
         </div>
 
