@@ -7,6 +7,7 @@ import './styles/redesign-auth.css'
 import './styles/redesign-course.css'
 import './styles/redesign-vision.css'
 import './styles/redesign-dashboard.css'
+import './styles/redesign-i18n.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
