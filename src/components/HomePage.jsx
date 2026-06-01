@@ -18,7 +18,7 @@ import {
 import Hero3D from './Hero3D.jsx'
 import LanguageSwitcher from './LanguageSwitcher.jsx'
 import { useLanguage } from '../i18n/useLanguage.js'
-import { TRACKS, LEVELS } from '../data/tracks.js'
+import { useLocalizedTracks } from '../i18n/useLocalizedTracks.js'
 
 /*
  * HomePage — the marketing / landing screen shown before the course. It is the
@@ -143,9 +143,10 @@ function levelVars(n) {
    glowing, color-coded level nodes (L0..L5), one per real track in TRACKS.
    Pure CSS/HTML — no three here. */
 function LearningPath() {
-  const steps = TRACKS.map((track) => ({
+  const { tracks } = useLocalizedTracks()
+  const steps = tracks.map((track) => ({
     id: track.id,
-    num: Number(track.tag.replace('Level ', '')),
+    num: Number(String(track.tag).replace(/\D/g, '')),
     title: track.title,
     blurb: track.blurb,
     pro: track.pro,
@@ -212,7 +213,8 @@ function StatsStrip({ lessonCount }) {
 
 export default function HomePage({ onStart, onExplore, accountSlot }) {
   const { t } = useLanguage()
-  const lessonCount = LEVELS.length
+  const { levels } = useLocalizedTracks()
+  const lessonCount = levels.length
 
   return (
     <div className="home">
