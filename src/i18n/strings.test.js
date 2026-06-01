@@ -20,8 +20,14 @@ describe('strings catalog', () => {
   it('no string value is empty', () => {
     for (const locale of ['en', 'uz']) {
       for (const [k, v] of Object.entries(UI[locale])) {
-        expect(v, `${locale}.${k}`).toBeTruthy()
+        expect(v.trim().length, `${locale}.${k}`).toBeGreaterThan(0)
       }
+    }
+  })
+
+  it('Uzbek uses U+2019 (right quote), never U+2018 (left quote)', () => {
+    for (const [k, v] of Object.entries(UI.uz)) {
+      expect(v.includes('‘'), `${k} contains U+2018 LEFT SINGLE QUOTATION MARK`).toBe(false)
     }
   })
 })
@@ -52,6 +58,11 @@ describe('createT', () => {
   it('returns the key itself as the last resort', () => {
     const t = createT('uz')
     expect(t('totally.unknown.key')).toBe('totally.unknown.key')
+  })
+
+  it('falls back to English for an unknown locale', () => {
+    const t = createT('fr')
+    expect(t('nav.brand')).toBe(UI.en['nav.brand'])
   })
 
   it('warns once (dev only) when falling back', () => {

@@ -9,7 +9,7 @@ export const UI = {
     'lang.modal.title': 'Choose your language',
     'lang.modal.subtitle': 'You can change this anytime from the top bar.',
     'lang.en': 'English',
-    'lang.uz': 'O‘zbekcha',
+    'lang.uz': 'O’zbekcha',
     'lang.switch.label': 'Language',
     'lang.note.contentEnglish': 'Lessons are currently shown in English.',
 
@@ -103,11 +103,11 @@ export const UI = {
   uz: {
     // language picker / switcher
     'lang.modal.title': 'Tilni tanlang',
-    'lang.modal.subtitle': 'Buni istalgan vaqtda yuqori paneldan o‘zgartirishingiz mumkin.',
+    'lang.modal.subtitle': 'Buni istalgan vaqtda yuqori paneldan o’zgartirishingiz mumkin.',
     'lang.en': 'English',
-    'lang.uz': 'O‘zbekcha',
+    'lang.uz': 'O’zbekcha',
     'lang.switch.label': 'Til',
-    'lang.note.contentEnglish': 'Darslar hozircha ingliz tilida ko‘rsatiladi.',
+    'lang.note.contentEnglish': 'Darslar hozircha ingliz tilida ko’rsatiladi.',
 
     // top bar / nav
     'nav.dashboard': 'Boshqaruv paneli',
@@ -115,7 +115,7 @@ export const UI = {
     'nav.brand': 'AI Academy',
     'nav.openMenu': 'Kurs menyusini ochish',
     'nav.closeMenu': 'Menyuni yopish',
-    'nav.home': 'AI Academy bosh sahifasiga o‘tish',
+    'nav.home': 'AI Academy bosh sahifasiga o’tish',
 
     // sidebar
     'side.overallProgress': 'Umumiy progress',
@@ -128,7 +128,7 @@ export const UI = {
     'lesson.of': '/',
     'lesson.back': 'Kurs sharhi',
     'lesson.phase.learn.doing': 'Men qilaman',
-    'lesson.phase.learn.title': 'O‘rganish',
+    'lesson.phase.learn.title': 'O’rganish',
     'lesson.phase.guided.doing': 'Birga qilamiz',
     'lesson.phase.guided.title': 'Birga mashq qilamiz',
     'lesson.phase.practice.doing': 'Siz qilasiz',
@@ -139,7 +139,7 @@ export const UI = {
     'lesson.section.worked': 'Ishlangan misol',
     'lesson.guided.lead': 'Keling, birgalikda bosqichma-bosqich ishlaymiz. Qachon qiynalsangiz, maslahatdan foydalaning.',
     'lesson.cta.guided': 'Birga mashq qilamiz',
-    'lesson.cta.practice': 'Topshiriqni o‘zingiz bajaring',
+    'lesson.cta.practice': 'Topshiriqni o’zingiz bajaring',
 
     // generic activity-shell chrome (NOT per-activity body)
     'act.check': 'Javoblarni tekshirish',
@@ -148,9 +148,9 @@ export const UI = {
     'auth.title.signin': 'Xush kelibsiz',
     'auth.title.signup': 'Bepul hisob yarating',
     'auth.title.reset': 'Parolni tiklash',
-    'auth.sub.signin': 'Progressingizni qurilmalar bo‘ylab sinxronlash uchun kiring.',
+    'auth.sub.signin': 'Progressingizni qurilmalar bo’ylab sinxronlash uchun kiring.',
     'auth.sub.signup': 'Yulduzlar, seriya va progressingizni bulutga saqlang.',
-    'auth.sub.reset': 'Yangi parol o‘rnatish uchun sizga xavfsiz havola yuboramiz.',
+    'auth.sub.reset': 'Yangi parol o’rnatish uchun sizga xavfsiz havola yuboramiz.',
     'auth.field.email': 'Email',
     'auth.field.password': 'Parol',
     'auth.placeholder.email': 'siz@misol.com',
@@ -165,17 +165,17 @@ export const UI = {
     'auth.switch.backToSignin': 'Kirishga qaytish',
     'auth.close': 'Yopish',
     'auth.notice.reset': 'Parolni tiklash havolasi uchun emailingizni tekshiring.',
-    'auth.notice.signup': 'Hisob yaratildi. Agar email tasdiqlash yoqilgan bo‘lsa, pochtangizni tekshiring — so‘ng kiring.',
-    'auth.error.exists': 'Bu email allaqachon ro‘yxatdan o‘tgan — kirishni sinab ko‘ring.',
-    'auth.error.invalid': 'Email yoki parol noto‘g‘ri ko‘rinadi. Qayta urinib ko‘ring.',
-    'auth.error.password': 'Parol kamida 6 ta belgidan iborat bo‘lishi kerak.',
+    'auth.notice.signup': 'Hisob yaratildi. Agar email tasdiqlash yoqilgan bo’lsa, pochtangizni tekshiring — so’ng kiring.',
+    'auth.error.exists': 'Bu email allaqachon ro’yxatdan o’tgan — kirishni sinab ko’ring.',
+    'auth.error.invalid': 'Email yoki parol noto’g’ri ko’rinadi. Qayta urinib ko’ring.',
+    'auth.error.password': 'Parol kamida 6 ta belgidan iborat bo’lishi kerak.',
     'auth.error.notConfigured': 'Bu joylashtirishda hisoblar hali sozlanmagan. Progressingiz baribir shu qurilmada saqlanadi.',
-    'auth.error.email': 'Iltimos, to‘g‘ri email manzilini kiriting.',
-    'auth.error.generic': 'Nimadir xato ketdi. Iltimos, qayta urinib ko‘ring.',
+    'auth.error.email': 'Iltimos, to’g’ri email manzilini kiriting.',
+    'auth.error.generic': 'Nimadir xato ketdi. Iltimos, qayta urinib ko’ring.',
 
     // account menu + sync states
     'account.savedOnDevice': 'Shu qurilmada saqlangan',
-    'account.savedOnDevice.title': 'Bu joylashtirishda hisoblar yo‘q; progress shu brauzerda saqlanadi.',
+    'account.savedOnDevice.title': 'Bu joylashtirishda hisoblar yo’q; progress shu brauzerda saqlanadi.',
     'account.signin': 'Kirish',
     'account.menu': 'Hisob menyusi',
     'account.signout': 'Chiqish',
@@ -207,10 +207,15 @@ export function createT(locale) {
   return function t(key) {
     const active = UI[locale]
     if (active && key in active) return active[key]
-    if (import.meta.env.DEV) {
-      console.warn(`[i18n] missing "${key}" for locale "${locale}" — falling back to English`)
+    if (key in UI.en) {
+      if (import.meta.env.DEV) {
+        console.warn(`[i18n] missing "${key}" for locale "${locale}" — falling back to English`)
+      }
+      return UI.en[key]
     }
-    if (key in UI.en) return UI.en[key]
+    if (import.meta.env.DEV) {
+      console.warn(`[i18n] missing "${key}" in any locale (asked for "${locale}")`)
+    }
     return key
   }
 }
