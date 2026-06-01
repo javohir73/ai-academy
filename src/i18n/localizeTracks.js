@@ -1,8 +1,9 @@
 /* Pure per-field overlay of Uzbek curriculum strings onto the English base.
    English is the fallback for any missing locale field. Never mutates input. */
 
+import { localizeLesson } from './localizeLesson.js'
+
 const TRACK_FIELDS = ['tag', 'title', 'blurb', 'comingSoon']
-const LESSON_FIELDS = ['title', 'concept']
 
 function overlay(base, patch, fields) {
   if (!patch) return base
@@ -28,7 +29,7 @@ export function localizeTracks(tracks, locale, uzMap) {
   const lessonPatches = uzMap.lessons ?? {}
   return tracks.map((track) => {
     const localizedLevels = track.levels.map((level) =>
-      overlay(level, lessonPatches[level.id], LESSON_FIELDS),
+      localizeLesson(level, lessonPatches[level.id]),
     )
     const t = overlay(track, trackPatches[track.id], TRACK_FIELDS)
     const changedLevels = localizedLevels.some((l, i) => l !== track.levels[i])
