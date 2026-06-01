@@ -217,7 +217,7 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
   return (
     <div className="home">
       {/* Top nav */}
-      <nav className="home__nav" aria-label="Home">
+      <nav className="home__nav" aria-label={t('home.nav.aria')}>
         <span className="brand">
           <span className="brand__mark" aria-hidden="true">
             <GraduationCap size={20} />

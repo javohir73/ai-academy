@@ -20,8 +20,12 @@ function renderApp() {
 describe('language switch — view & progress stability', () => {
   it('switching language does not change the current view (stays on Home)', () => {
     renderApp()
+    // A Home-only landmark: the Home page nav. Present before the switch.
+    expect(document.querySelector('.home__nav')).toBeInTheDocument()
     const uzBtn = screen.getAllByRole('button', { name: /o’zbekcha|ozbekcha/i })[0]
     fireEvent.click(uzBtn)
+    // Still on Home after the switch (no reload, no view change) AND lang persisted.
+    expect(document.querySelector('.home__nav')).toBeInTheDocument()
     expect(localStorage.getItem(LANG_STORAGE_KEY)).toBe('uz')
   })
 

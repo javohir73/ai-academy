@@ -22,6 +22,7 @@ export const UI = {
     'nav.home': 'Go to AI Academy home',
 
     // home page chrome (nav + hero CTAs)
+    'home.nav.aria': 'Home',
     'home.nav.curriculum': 'Curriculum',
     'home.cta.start': 'Start learning',
     'home.cta.explore': 'Explore curriculum',
@@ -123,6 +124,7 @@ export const UI = {
     'nav.home': 'AI Academy bosh sahifasiga o’tish',
 
     // home page chrome (nav + hero CTAs)
+    'home.nav.aria': 'Bosh sahifa',
     'home.nav.curriculum': 'Kurs dasturi',
     'home.cta.start': 'O’rganishni boshlash',
     'home.cta.explore': 'Kursni ko’rib chiqish',
