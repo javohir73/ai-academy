@@ -1,139 +1,76 @@
-/* Deep per-field overlay of a Uzbek lesson-body patch onto the English lesson.
-   English is the fallback for every missing field. Never mutates input.
-   Activity `data` user-facing text is overlaid by the item's stable id; all
-   logic fields (id, bucket, type, correctId, best, duration, isCorrect) are
-   preserved untouched. */
+/* Deep overlay of a Uzbek lesson patch onto the English lesson.
 
-const str = (v) => typeof v === 'string' && v.length > 0
+   The patch MIRRORS the English structure and supplies translated strings
+   wherever a field should be localized. The overlay is fully generic:
 
-function overlayStrings(base, patch, fields) {
-  if (!base || !patch) return base
-  let out = base
-  for (const f of fields) {
-    if (str(patch[f]) && patch[f] !== base[f]) {
-      if (out === base) out = { ...base }
-      out[f] = patch[f]
-    }
+     - patch string            → overrides the base string at that path
+     - patch array  + base array → merged element-wise BY INDEX (recursively)
+     - patch object + base object → merged BY KEY (recursively)
+     - a key present in the patch but ABSENT in the base → ignored
+       (we only ever localize fields that already exist — a stray/typo'd key
+        can never inject phantom data or change structure)
+     - any base field the patch does not mention → kept as-is (English fallback)
+     - non-string base values (numbers, booleans: weights, correctId, isCorrect,
+       icon, kernel, pixels…) are preserved unless the patch explicitly supplies
+       a replacement of the same kind — translations only ever supply strings,
+       so all gameplay/logic fields survive untouched.
+
+   English is the fallback for everything missing. Never mutates the input.
+   This one function localizes the whole lesson body INCLUDING every activity
+   `data` shape (pipeline, match, classify, predict, bias-grid, overfit-compare,
+   neural, pixel-grid, convolve, calc, builder, featuremap, scenario, colab,
+   review-queue, rate, compare, highlight, label-issues, rewrite, capstone, …)
+   because the translation file simply mirrors the paths it wants translated. */
+
+function deepOverlay(base, patch) {
+  if (patch == null) return base
+
+  // String override: only when the base is also a string (don't change types,
+  // don't translate a numeric label like { label: 320 }).
+  if (typeof patch === 'string') {
+    if (typeof base === 'string' && patch.length > 0 && patch !== base) return patch
+    return base
   }
-  return out
-}
 
-function overlayArray(baseArr, patchArr) {
-  if (!Array.isArray(baseArr) || !Array.isArray(patchArr)) return baseArr
-  let changed = false
-  const out = baseArr.map((el, i) => {
-    if (str(patchArr[i]) && patchArr[i] !== el) {
-      changed = true
-      return patchArr[i]
-    }
-    return el
-  })
-  return changed ? out : baseArr
-}
-
-function overlayByIdLabel(items, patchMap, labelField) {
-  if (!Array.isArray(items) || !patchMap) return items
-  let changed = false
-  const out = items.map((it) => {
-    const v = patchMap[it.id]
-    if (str(v) && v !== it[labelField]) {
-      changed = true
-      return { ...it, [labelField]: v }
-    }
-    return it
-  })
-  return changed ? out : items
-}
-
-function localizeActivityData(data, patch) {
-  if (!data || !patch) return data
-  let out = data
-  const set = (key, val) => {
-    if (val !== data[key]) {
-      if (out === data) out = { ...data }
-      out[key] = val
-    }
-  }
-  if (data.buckets && patch.buckets) set('buckets', overlayByIdLabel(data.buckets, patch.buckets, 'label'))
-  if (data.tokens && patch.tokens) set('tokens', overlayByIdLabel(data.tokens, patch.tokens, 'label'))
-  if (data.options && patch.options) {
-    const opts = data.options.map((o) => overlayStrings(o, patch.options[o.id], ['title', 'sample', 'why', 'label', 'text']))
-    if (opts.some((o, i) => o !== data.options[i])) set('options', opts)
-  }
-  if (data.scenarios && patch.scenarios) {
-    const scn = data.scenarios.map((s) => {
-      const sp = patch.scenarios[s.id]
-      if (!sp) return s
-      let so = overlayStrings(s, sp, ['situation'])
-      if (s.options && sp.options) {
-        const o2 = s.options.map((o) => overlayStrings(o, sp.options[o.id], ['text', 'why']))
-        if (o2.some((o, i) => o !== s.options[i])) {
-          if (so === s) so = { ...s }
-          so.options = o2
-        }
-      }
-      return so
+  // Array: merge element-wise by index. Extra patch elements are ignored
+  // (structure follows the English base).
+  if (Array.isArray(patch)) {
+    if (!Array.isArray(base)) return base
+    let changed = false
+    const out = base.map((el, i) => {
+      const merged = deepOverlay(el, patch[i])
+      if (merged !== el) changed = true
+      return merged
     })
-    if (scn.some((s, i) => s !== data.scenarios[i])) set('scenarios', scn)
+    return changed ? out : base
   }
-  return out
-}
 
-function localizeActivity(activity, patch) {
-  if (!activity || !patch) return activity
-  let out = overlayStrings(activity, patch, ['prompt'])
-  if (activity.feedback && patch.feedback) {
-    const fb = overlayStrings(activity.feedback, patch.feedback, ['correct', 'incorrect'])
-    if (fb !== activity.feedback) { if (out === activity) out = { ...activity }; out.feedback = fb }
+  // Object: merge by key. Only keys that ALREADY exist in the base are touched.
+  if (typeof patch === 'object') {
+    if (base == null || typeof base !== 'object' || Array.isArray(base)) return base
+    let out = base
+    for (const key of Object.keys(patch)) {
+      if (!(key in base)) continue // never inject new keys
+      const merged = deepOverlay(base[key], patch[key])
+      if (merged !== base[key]) {
+        if (out === base) out = { ...base }
+        out[key] = merged
+      }
+    }
+    return out
   }
-  if (activity.data && patch.data) {
-    const d = localizeActivityData(activity.data, patch.data)
-    if (d !== activity.data) { if (out === activity) out = { ...activity }; out.data = d }
-  }
-  return out
-}
 
-const BAGS = {
-  example: ['text'],
-  goDeeper: ['title', 'body'],
-  video: ['title', 'description'],
+  return base
 }
 
 /**
  * @param {object} level  English lesson object
- * @param {object|null} patch  uz overlay (title/concept/body fields), or null
+ * @param {object|null} patch  uz overlay mirroring the lesson's translatable paths
  * @returns {object} new lesson with uz overlaid, English fallback per field
  */
 export function localizeLesson(level, patch) {
   if (!level || !patch) return level
-  let out = overlayStrings(level, patch, ['title', 'concept', 'explanation'])
-  const clone = () => { if (out === level) out = { ...level } }
-
-  for (const [key, fields] of Object.entries(BAGS)) {
-    if (level[key] && patch[key]) {
-      const merged = overlayStrings(level[key], patch[key], fields)
-      if (merged !== level[key]) { clone(); out[key] = merged }
-    }
-  }
-
-  if (level.workedExample && patch.workedExample) {
-    let we = overlayStrings(level.workedExample, patch.workedExample, ['intro', 'takeaway'])
-    const steps = overlayArray(level.workedExample.steps, patch.workedExample.steps)
-    if (steps !== level.workedExample.steps) { if (we === level.workedExample) we = { ...level.workedExample }; we.steps = steps }
-    if (we !== level.workedExample) { clone(); out.workedExample = we }
-  }
-
-  if (level.guided && patch.guided) {
-    let g = overlayStrings(level.guided, patch.guided, ['prompt', 'answer', 'explanation'])
-    const hints = overlayArray(level.guided.hints, patch.guided.hints)
-    if (hints !== level.guided.hints) { if (g === level.guided) g = { ...level.guided }; g.hints = hints }
-    if (g !== level.guided) { clone(); out.guided = g }
-  }
-
-  if (level.activity && patch.activity) {
-    const a = localizeActivity(level.activity, patch.activity)
-    if (a !== level.activity) { clone(); out.activity = a }
-  }
-
-  return out
+  return deepOverlay(level, patch)
 }
+
+export { deepOverlay }

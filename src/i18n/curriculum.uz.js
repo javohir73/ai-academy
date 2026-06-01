@@ -90,23 +90,24 @@ export const LESSONS_UZ = {
     activity: {
       prompt: 'Jamoa uy narxlarini bashorat qilmoqchi. Buni haqiqatan ham o’rgata oladigan ma’lumotlar to’plamini tanlang.',
       data: {
-        options: {
-          good: {
+        // arrays mirror the English `data.options` order (index-matched).
+        options: [
+          {
             title: 'O’tgan uy sotuvlari',
             sample: '5 000 ta sotilgan uy: maydoni, xonalar soni, joylashuvi va yakuniy sotuv narxi bilan.',
             why: 'Ko’plab misollar, javob (sotuv narxi) bilan birga — aynan nazoratli o’qitishga kerak bo’lgan narsa.',
           },
-          'no-label': {
+          {
             title: 'Narxsiz uylar',
             sample: '5 000 ta uy: maydoni va joylashuvi bor — lekin narx ustuni bo’sh.',
             why: 'Narx ustunisiz o’rganadigan javob yo’q.',
           },
-          tiny: {
+          {
             title: 'Uchta uy',
             sample: 'Atigi 3 ta uy: to’liq ma’lumot va narxlari bilan.',
             why: 'Uchta satr ishonchli qonuniyatni o’rganish uchun juda kam.',
           },
-        },
+        ],
       },
       feedback: {
         correct:
@@ -158,15 +159,16 @@ export const LESSONS_UZ = {
     activity: {
       prompt: 'Har bir kartani AI yoki AI emas guruhiga torting — yoki kartani bosib, so’ng guruhni bosing.',
       data: {
-        buckets: { ai: 'AI', not: 'AI emas' },
-        tokens: {
-          t1: 'Telefonda yuz bilan ochish',
-          t2: 'Keraksiz xatlarni ilg’ovchi spam filtri',
-          t3: 'Cho’ntak kalkulyatori',
-          t4: 'Savollarga javob beruvchi ovozli yordamchi',
-          t5: 'Lampochkani yoqadigan yorug’lik kaliti',
-          t6: 'Sizga yoqishi mumkin bo’lgan ko’rsatuvni taklif qiluvchi xizmat',
-        },
+        // arrays mirror the English buckets/tokens order (index-matched).
+        buckets: [{ label: 'AI' }, { label: 'AI emas' }],
+        tokens: [
+          { label: 'Telefonda yuz bilan ochish' },
+          { label: 'Keraksiz xatlarni ilg’ovchi spam filtri' },
+          { label: 'Cho’ntak kalkulyatori' },
+          { label: 'Savollarga javob beruvchi ovozli yordamchi' },
+          { label: 'Lampochkani yoqadigan yorug’lik kaliti' },
+          { label: 'Sizga yoqishi mumkin bo’lgan ko’rsatuvni taklif qiluvchi xizmat' },
+        ],
       },
       feedback: {
         correct:
@@ -221,40 +223,41 @@ export const LESSONS_UZ = {
     activity: {
       prompt: 'Har bir hayotiy vaziyat uchun eng mas’uliyatli harakatni tanlang, so’ng qarorlaringizni tekshiring.',
       data: {
-        scenarios: {
-          s1: {
+        // arrays mirror the English scenarios/options order (index-matched).
+        scenarios: [
+          {
             situation:
               'Maktab AI insholarni baholab, yakuniy baholarni o’quvchilarga elektron pochta orqali yuborishini xohlaydi — hech bir o’qituvchi ko’rib chiqmasdan.',
-            options: {
-              a: {
+            options: [
+              {
                 text: 'AI baholasin va yakuniy baholarni avtomatik yuborsin.',
                 why: 'AI xato qilishi va ma’noni o’tkazib yuborishi mumkin. Baho kabi muhim qarorni odam ko’rib chiqishi kerak.',
               },
-              b: {
+              {
                 text: 'AI baho taklif qilsin, lekin u hisobga olinishidan oldin o’qituvchi ko’rib chiqsin.',
                 why: 'Muhim qaror odam zimmasida qoladi. AI yordam beradi; odamlar qaror qiladi.',
               },
-              c: {
+              {
                 text: 'Maktabdagi barcha kompyuterlarni butunlay taqiqlash.',
                 why: 'AI foydali vosita bo’lishi mumkin. Maqsad — undan mas’uliyat bilan foydalanish, butunlay taqiqlash emas.',
               },
-            },
+            ],
           },
-          s2: {
+          {
             situation:
               'Ilova chatbotini foydalanuvchilarning shaxsiy xabarlarida — ularga aytmasdan — o’qitmoqchi.',
-            options: {
-              a: {
+            options: [
+              {
                 text: 'Shaxsiy xabarlardan jimgina foydalanish — bu botni yaxshilaydi.',
                 why: 'Bu odamlarning maxfiyligi va ishonchini buzadi. Odamlar avval bilishi va rozi bo’lishi kerak.',
               },
-              b: {
+              {
                 text: 'Avval foydalanuvchilardan ruxsat so’rash va rad etishga imkon berish.',
                 why: 'Maxfiylikni hurmat qilish va rozilik so’rash — AIdan mas’uliyatli foydalanish.',
               },
-            },
+            ],
           },
-        },
+        ],
       },
       feedback: {
         correct:
