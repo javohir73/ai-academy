@@ -14,12 +14,17 @@ import { FOUNDATIONS_LEVELS } from './foundations.js'
 import { BEGINNER_LEVELS } from './levels.js'
 import { INTERMEDIATE_LEVELS } from './intermediate.js'
 import { VISION_LEVELS } from './vision.js'
+import { ENRICHMENT } from './enrichment.js'
 
 // Index every lesson by id so tracks can be composed by curriculum level.
+// Lessons that originally shipped with only an "I do" concept + "You do"
+// activity get their "We do" scaffold (workedExample + guided + goDeeper)
+// merged in from enrichment.js here — additive, and reversible by dropping the
+// import. The merged blocks override nothing else on the lesson.
 const BY_ID = Object.fromEntries(
   [...FOUNDATIONS_LEVELS, ...BEGINNER_LEVELS, ...INTERMEDIATE_LEVELS, ...VISION_LEVELS].map((l) => [
     l.id,
-    l,
+    ENRICHMENT[l.id] ? { ...l, ...ENRICHMENT[l.id] } : l,
   ]),
 )
 const pick = (...ids) => ids.map((id) => BY_ID[id])
