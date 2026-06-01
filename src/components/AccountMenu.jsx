@@ -51,8 +51,13 @@ export default function AccountMenu({ configured, user, syncState, onSignInClick
   // Local-only deployment: no accounts, just reassure the learner.
   if (!configured) {
     return (
-      <span className="account-local" title="This deployment has no accounts; progress is saved in this browser.">
-        <HardDrive size={14} aria-hidden="true" /> Saved on this device
+      <span
+        className="account-local"
+        title="This deployment has no accounts; progress is saved in this browser."
+        aria-label="Saved on this device"
+      >
+        <HardDrive size={14} aria-hidden="true" />
+        <span className="account-local__label">Saved on this device</span>
       </span>
     )
   }

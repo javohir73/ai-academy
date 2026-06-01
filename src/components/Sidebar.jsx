@@ -1,4 +1,4 @@
-import { GraduationCap, Lock, CheckCircle2, Circle, X, Flame } from 'lucide-react'
+import { GraduationCap, LayoutDashboard, Lock, CheckCircle2, Circle, X, Flame } from 'lucide-react'
 import { TRACKS_WITH_OFFSETS, LEVELS } from '../data/tracks.js'
 import ProgressBar from './ProgressBar.jsx'
 import Stars from './Stars.jsx'
@@ -17,6 +17,7 @@ export default function Sidebar({
   currentIndex,
   open,
   onHome,
+  onDashboard,
   onOverview,
   onSelectLevel,
   onClose,
@@ -72,6 +73,20 @@ export default function Sidebar({
         )}
         {accountSlot && <div className="side-account">{accountSlot}</div>}
       </div>
+
+      {onDashboard && (
+        <button
+          className={`nav__item${view === 'dashboard' ? ' nav__item--active' : ''}`}
+          onClick={onDashboard}
+        >
+          <span className="nav__status">
+            <LayoutDashboard size={18} />
+          </span>
+          <span className="nav__body">
+            <span className="nav__title">Dashboard</span>
+          </span>
+        </button>
+      )}
 
       <button
         className={`nav__item${view === 'overview' ? ' nav__item--active' : ''}`}

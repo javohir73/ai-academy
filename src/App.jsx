@@ -6,6 +6,7 @@ import { useAuth } from './hooks/useAuth.js'
 import Sidebar from './components/Sidebar.jsx'
 import Overview from './components/Overview.jsx'
 import LevelView from './components/LevelView.jsx'
+import Dashboard from './components/Dashboard.jsx'
 import HomePage from './components/HomePage.jsx'
 import AuthModal from './components/AuthModal.jsx'
 import AccountMenu from './components/AccountMenu.jsx'
@@ -13,9 +14,10 @@ import AccountPrompt from './components/AccountPrompt.jsx'
 
 /*
  * App is the layout shell. It has three views, tracked in `view`:
- *   'home'     — the marketing/landing page (HomePage), shown first
- *   'overview' — the course home (lesson grid)
- *   'lesson'   — a single lesson
+ *   'home'      — the marketing/landing page (HomePage), shown first
+ *   'dashboard' — the learner's home base (progress, continue, review)
+ *   'overview'  — the course home (lesson grid)
+ *   'lesson'    — a single lesson
  * Home is a full-bleed page with no sidebar; the course views keep the
  * persistent sidebar (a slide-in drawer on mobile). Using view state instead
  * of a router keeps deployment a plain static build (no SPA rewrites needed).
@@ -23,7 +25,7 @@ import AccountPrompt from './components/AccountPrompt.jsx'
 export default function App() {
   const auth = useAuth()
   const progress = useProgress(auth.user)
-  const [view, setView] = useState('home') // 'home' | 'overview' | 'lesson'
+  const [view, setView] = useState('home') // 'home' | 'dashboard' | 'overview' | 'lesson'
   const [levelIndex, setLevelIndex] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
@@ -95,6 +97,13 @@ export default function App() {
     window.scrollTo({ top: 0 })
   }
 
+  function goDashboard() {
+    progress.setOnboarded()
+    setView('dashboard')
+    setSidebarOpen(false)
+    window.scrollTo({ top: 0 })
+  }
+
   function goHome() {
     setView('home')
     setSidebarOpen(false)
@@ -141,14 +150,18 @@ export default function App() {
     />
   )
 
-  // "Start learning" from Home: go straight to the next unlocked-but-unfinished
-  // lesson if there is one, otherwise the course overview.
+  // "Start learning" from Home:
+  //   - a returning learner (any completed lessons) lands on their Dashboard,
+  //   - a brand-new learner goes straight into the first lesson (fastest first win),
+  //   - if everything is done, the Dashboard (which shows the completed state).
   function enterCourse() {
     progress.setOnboarded()
-    if (currentIndex >= 0 && progress.isUnlocked(currentIndex)) {
+    if (progress.completedCount > 0) {
+      goDashboard()
+    } else if (currentIndex >= 0 && progress.isUnlocked(currentIndex)) {
       openLevel(currentIndex)
     } else {
-      goOverview()
+      goDashboard()
     }
   }
 
@@ -181,6 +194,7 @@ export default function App() {
         currentIndex={currentIndex}
         open={sidebarOpen}
         onHome={goHome}
+        onDashboard={goDashboard}
         onOverview={goOverview}
         onSelectLevel={openLevel}
         onClose={() => setSidebarOpen(false)}
@@ -205,12 +219,28 @@ export default function App() {
           <button className="topbar__brand" onClick={goHome}>
             AI Academy
           </button>
+          <button
+            className={`topbar__nav${view === 'dashboard' ? ' topbar__nav--active' : ''}`}
+            onClick={goDashboard}
+          >
+            Dashboard
+          </button>
           <span className="topbar__spacer" />
           {accountMenu}
         </div>
 
-        <main className="content fade-in" key={view === 'lesson' ? LEVELS[levelIndex].id : 'overview'}>
-          {view === 'overview' ? (
+        <main className="content fade-in" key={view === 'lesson' ? LEVELS[levelIndex].id : view}>
+          {view === 'dashboard' ? (
+            <Dashboard
+              progress={progress}
+              user={auth.user}
+              configured={auth.configured}
+              syncState={progress.syncState}
+              onOpenLevel={openLevel}
+              onOverview={goOverview}
+              onHome={goHome}
+            />
+          ) : view === 'overview' ? (
             <Overview progress={progress} currentIndex={currentIndex} onOpenLevel={openLevel} />
           ) : (
             <LevelView
