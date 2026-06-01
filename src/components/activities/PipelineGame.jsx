@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Database, GraduationCap, Box, Sparkles, RefreshCw, ChevronRight, Check, X, Info } from 'lucide-react'
 import { shuffle } from '../../utils/shuffle.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * PipelineGame — interactive ML pipeline diagram (level 2). Tap the shuffled
@@ -13,6 +14,7 @@ import { shuffle } from '../../utils/shuffle.js'
 const ICONS = { Database, GraduationCap, Box, Sparkles, RefreshCw }
 
 export default function PipelineGame({ data, onResult }) {
+  const { t } = useLanguage()
   const correctIds = data.stages.map((s) => s.id)
   const tray = useMemo(() => shuffle(data.stages), [data])
   const [order, setOrder] = useState([]) // placed stage ids, in slot order
@@ -58,7 +60,7 @@ export default function PipelineGame({ data, onResult }) {
                   className={`pipeline__step${ok ? ' option--correct' : ''}${wrong ? ' option--wrong' : ''}`}
                   onClick={() => removeAt(i)}
                   disabled={submitted}
-                  aria-label={`Step ${i + 1}: ${stage.label}${submitted ? (ok ? ', correct' : ', wrong position') : ', tap to remove'}`}
+                  aria-label={`${t('pipeline.step')} ${i + 1}: ${stage.label}`}
                 >
                   <span className="pipeline__num">{i + 1}</span>
                   <Icon size={20} aria-hidden="true" />
@@ -69,7 +71,7 @@ export default function PipelineGame({ data, onResult }) {
               ) : (
                 <div className="pipeline__step pipeline__step--empty">
                   <span className="pipeline__num">{i + 1}</span>
-                  <span className="muted">Step {i + 1}</span>
+                  <span className="muted">{t('pipeline.step')} {i + 1}</span>
                 </div>
               )}
               {i < data.stages.length - 1 && (
@@ -87,12 +89,12 @@ export default function PipelineGame({ data, onResult }) {
             <strong>{infoStage.label}:</strong> {infoStage.desc}
           </span>
         ) : (
-          <span className="muted">Tap a stage below to add it to the pipeline and learn what it does.</span>
+          <span className="muted">{t('pipeline.infoEmpty')}</span>
         )}
       </div>
 
       {remaining.length > 0 && !submitted && (
-        <div className="tokens" aria-label="Pipeline stages">
+        <div className="tokens" aria-label={t('pipeline.stagesAria')}>
           {remaining.map((s) => {
             const Icon = ICONS[s.icon]
             return (
@@ -106,13 +108,13 @@ export default function PipelineGame({ data, onResult }) {
 
       {submitted && (
         <p className="count-hint center">
-          Correct order: {data.stages.map((s) => s.label).join(' → ')}
+          {t('pipeline.correctOrder.pre')}{data.stages.map((s) => s.label).join(' → ')}
         </p>
       )}
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!full || submitted}>
-          Check order
+          {t('act.checkOrder')}
         </button>
       </div>
     </div>

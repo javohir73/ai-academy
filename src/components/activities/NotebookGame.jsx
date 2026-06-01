@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Play, RotateCcw, Loader2, AlertTriangle } from 'lucide-react'
 import { ensureLoaded, runCell, runTests, resetNamespace } from '../../utils/pyodideService.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * NotebookGame — the "notebook" activity type: a real, runnable Python cell.
@@ -21,10 +22,11 @@ import { ensureLoaded, runCell, runTests, resetNamespace } from '../../utils/pyo
  * Concept lessons never mount this.
  */
 export default function NotebookGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [code, setCode] = useState(data.starter ?? '')
   const [boot, setBoot] = useState('booting') // booting | ready | error
   const [running, setRunning] = useState(false)
-  const [bootMsg, setBootMsg] = useState('Booting your Python environment…')
+  const [bootMsg, setBootMsg] = useState(() => t('notebook.booting'))
   const [output, setOutput] = useState('')
   const [hintLevel, setHintLevel] = useState(0) // how many hints to reveal
   // A single boot promise shared by mount + Run, so a click before boot
@@ -128,7 +130,7 @@ export default function NotebookGame({ data, onResult }) {
   return (
     <div className="notebook">
       <label className="notebook__label" htmlFor="code-cell">
-        Your code
+        {t('notebook.yourCode')}
       </label>
       <textarea
         id="code-cell"
@@ -143,11 +145,10 @@ export default function NotebookGame({ data, onResult }) {
       {boot === 'error' ? (
         <div className="notebook__boot">
           <p className="feedback feedback--incorrect" role="alert">
-            <AlertTriangle size={18} aria-hidden="true" /> Couldn’t load the Python
-            environment — check your connection and try again.
+            <AlertTriangle size={18} aria-hidden="true" /> {t('notebook.bootError')}
           </p>
           <button className="btn btn--primary" onClick={retryBoot}>
-            <RotateCcw size={16} /> Retry
+            <RotateCcw size={16} /> {t('notebook.retry')}
           </button>
         </div>
       ) : (
@@ -166,21 +167,21 @@ export default function NotebookGame({ data, onResult }) {
         >
           {running ? (
             <>
-              <Loader2 size={16} className="spin" /> Running…
+              <Loader2 size={16} className="spin" /> {t('notebook.running')}
             </>
           ) : (
             <>
-              <Play size={16} /> Run
+              <Play size={16} /> {t('notebook.run')}
             </>
           )}
         </button>
         <button className="btn btn--ghost" onClick={resetCell} disabled={running}>
-          <RotateCcw size={16} /> Reset cell
+          <RotateCcw size={16} /> {t('notebook.resetCell')}
         </button>
       </div>
 
       {output && (
-        <pre className="code-output" aria-label="Output">
+        <pre className="code-output" aria-label={t('notebook.outputAria')}>
           {output}
         </pre>
       )}

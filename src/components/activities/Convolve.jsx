@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Check, X, Grid3x3, Layers } from 'lucide-react'
 import { shuffle } from '../../utils/shuffle.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * Convolve — see how a convolution / pooling window slides over a grid, then
@@ -41,6 +42,7 @@ import { shuffle } from '../../utils/shuffle.js'
 const WINDOW = { kernel: 3, pool: 2 }
 
 export default function Convolve({ data, onResult }) {
+  const { t } = useLanguage()
   const mode = data.mode === 'pool' ? 'pool' : 'kernel'
   const size = WINDOW[mode]
   const { r: tr, c: tc } = data.targetCell
@@ -64,30 +66,30 @@ export default function Convolve({ data, onResult }) {
   const opLabel =
     mode === 'pool'
       ? data.op === 'max'
-        ? 'Max pooling'
-        : 'Average pooling'
-      : data.kernelName || 'Kernel'
+        ? t('convolve.pool.max')
+        : t('convolve.pool.avg')
+      : data.kernelName || t('convolve.kernel')
 
   const formula =
     mode === 'pool'
       ? data.op === 'max'
-        ? 'Pick the largest value inside the 2×2 window.'
-        : 'Add the four values inside the 2×2 window, then divide by 4.'
-      : 'Multiply each cell in the highlighted 3×3 patch by the kernel cell in the same position, then add all nine products.'
+        ? t('convolve.formula.max')
+        : t('convolve.formula.avg')
+      : t('convolve.formula.kernel')
 
   return (
     <div className="stack">
       <p className="count-hint" style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}>
         {mode === 'pool' ? <Layers size={16} aria-hidden="true" /> : <Grid3x3 size={16} aria-hidden="true" />}
         <span>
-          <strong>{opLabel}.</strong> The bright outline is the window. It feeds the highlighted output cell.
+          <strong>{opLabel}</strong>{t('convolve.lead.post')}
         </span>
       </p>
 
       <div className="conv-stage">
         {/* Input grid with sliding window ----------------------------- */}
         <figure className="conv-panel">
-          <figcaption className="conv-panel__cap">Input</figcaption>
+          <figcaption className="conv-panel__cap">{t('convolve.input')}</figcaption>
           <div
             className="conv-grid"
             role="img"
@@ -125,11 +127,11 @@ export default function Convolve({ data, onResult }) {
         {/* Kernel (only in kernel mode) ------------------------------- */}
         {mode === 'kernel' && data.kernel && (
           <figure className="conv-panel">
-            <figcaption className="conv-panel__cap">Kernel</figcaption>
+            <figcaption className="conv-panel__cap">{t('convolve.kernel')}</figcaption>
             <div
               className="conv-grid conv-grid--kernel"
               role="img"
-              aria-label="Kernel weights"
+              aria-label={t('convolve.kernelAria')}
               style={{ gridTemplateColumns: `repeat(${data.kernel[0].length}, 1fr)` }}
             >
               {data.kernel.map((row, r) =>
@@ -147,13 +149,13 @@ export default function Convolve({ data, onResult }) {
       <p className="conv-formula">{formula}</p>
 
       <p className="prompt" style={{ marginBottom: 'var(--s3)' }}>
-        What number lands in the highlighted output cell?
+        {t('convolve.q')}
       </p>
 
       <div
         className="options"
         role="radiogroup"
-        aria-label="Pick the output value"
+        aria-label={t('convolve.pickAria')}
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))' }}
       >
         {choices.map((ch) => {
@@ -201,7 +203,7 @@ export default function Convolve({ data, onResult }) {
           onClick={check}
           disabled={selected == null || submitted}
         >
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

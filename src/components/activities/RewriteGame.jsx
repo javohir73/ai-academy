@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, X } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * RewriteGame — improve a weak answer to 5/5 (intermediate 7). The learner
@@ -12,6 +13,7 @@ import { Check, X } from 'lucide-react'
 const MIN_REWRITE = 12
 
 export default function RewriteGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [text, setText] = useState('')
   const [picked, setPicked] = useState([])
   const [submitted, setSubmitted] = useState(false)
@@ -32,11 +34,11 @@ export default function RewriteGame({ data, onResult }) {
     <div className="stack">
       <div className="eval-card__prompt">{data.promptText}</div>
       <div className="eval-weak">
-        <span className="eval-weak__tag">Weak answer · 1 / 5</span>“{data.weakAnswer}”
+        <span className="eval-weak__tag">{t('rewrite.weakTag')}</span>“{data.weakAnswer}”
       </div>
 
       <label className="rewrite-label" htmlFor="rewrite-box">
-        Your improved answer
+        {t('rewrite.improvedLabel')}
       </label>
       <textarea
         id="rewrite-box"
@@ -49,9 +51,9 @@ export default function RewriteGame({ data, onResult }) {
       />
 
       <p className="match-col__head" style={{ margin: 0 }}>
-        What did this answer need? (select all that apply)
+        {t('rewrite.whatNeeded')}
       </p>
-      <div className="options" role="group" aria-label="Improvements this answer needed">
+      <div className="options" role="group" aria-label={t('rewrite.improvementsAria')}>
         {data.improvements.map((im) => {
           const on = picked.includes(im.id)
           let cls = 'option'
@@ -85,7 +87,7 @@ export default function RewriteGame({ data, onResult }) {
       {submitted && data.modelAnswer && (
         <div className="eval-model">
           <span className="eval-model__tag">
-            <Check size={14} aria-hidden="true" /> Model 5 / 5 answer
+            <Check size={14} aria-hidden="true" /> {t('rewrite.modelTag')}
           </span>
           {data.modelAnswer}
         </div>
@@ -93,7 +95,7 @@ export default function RewriteGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={submitted}>
-          Submit rewrite
+          {t('rewrite.submit')}
         </button>
       </div>
     </div>

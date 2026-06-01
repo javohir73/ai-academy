@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * ClassifyGame — read the clues for each mystery item and pick its class
@@ -11,6 +12,7 @@ import { Check } from 'lucide-react'
  * }
  */
 export default function ClassifyGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [answers, setAnswers] = useState({}) // roundIndex -> optionId
   const [submitted, setSubmitted] = useState(false)
 
@@ -31,7 +33,7 @@ export default function ClassifyGame({ data, onResult }) {
     <div className="stack">
       {data.rounds.map((round, i) => (
         <div className="subcard" key={round.id ?? i}>
-          <div className="match-col__head">Mystery {i + 1}</div>
+          <div className="match-col__head">{t('classify.mystery')} {i + 1}</div>
           <ul className="clue-list">
             {round.clues.map((clue) => (
               <li key={clue}>{clue}</li>
@@ -40,7 +42,7 @@ export default function ClassifyGame({ data, onResult }) {
           <div
             className="options"
             role="radiogroup"
-            aria-label={`Classify mystery ${i + 1}`}
+            aria-label={`${t('classify.mystery')} ${i + 1}`}
             style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))' }}
           >
             {round.options.map((o) => {
@@ -73,7 +75,7 @@ export default function ClassifyGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!allAnswered || submitted}>
-          Check answers
+          {t('act.checkAnswers')}
         </button>
       </div>
     </div>

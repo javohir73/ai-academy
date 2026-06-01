@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, X, CheckCircle2, AlertTriangle, Square, CheckSquare } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * ScenarioGame — judgment + short reasoning ('scenario' type). Presents one
@@ -28,6 +29,7 @@ import { Check, X, CheckCircle2, AlertTriangle, Square, CheckSquare } from 'luci
  *   - multi: correct iff the selected set is EXACTLY the set of `correct` options.
  */
 export default function ScenarioGame({ data, onResult }) {
+  const { t } = useLanguage()
   const multi = !!data.multi
   const [selected, setSelected] = useState(() => new Set()) // chosen choice ids
   const [submitted, setSubmitted] = useState(false)
@@ -65,9 +67,7 @@ export default function ScenarioGame({ data, onResult }) {
     onResult({ correct })
   }
 
-  const hint = multi
-    ? 'Select every choice that applies, then check your answer.'
-    : 'Pick the single best choice, then check your answer.'
+  const hint = multi ? t('scenario.hint.multi') : t('scenario.hint.single')
 
   return (
     <div className="stack">
@@ -82,7 +82,7 @@ export default function ScenarioGame({ data, onResult }) {
       <div
         className="options"
         role={multi ? 'group' : 'radiogroup'}
-        aria-label="Choices"
+        aria-label={t('scenario.choicesAria')}
       >
         {data.choices.map((c) => {
           const picked = selected.has(c.id)
@@ -113,12 +113,12 @@ export default function ScenarioGame({ data, onResult }) {
                 </span>
                 {submitted && c.correct && (
                   <span className="option__mark">
-                    <Check size={15} /> {multi ? 'should pick' : 'best choice'}
+                    <Check size={15} /> {multi ? t('mark.shouldPick') : t('mark.bestChoice')}
                   </span>
                 )}
                 {submitted && picked && !c.correct && (
                   <span className="option__mark">
-                    <X size={15} /> not this
+                    <X size={15} /> {t('mark.notThis')}
                   </span>
                 )}
               </button>
@@ -139,7 +139,7 @@ export default function ScenarioGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!hasSelection || submitted}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

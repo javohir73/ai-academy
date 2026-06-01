@@ -1,5 +1,6 @@
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 import Stars from './Stars.jsx'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * The feedback panel shown after a learner submits an answer. `status` is
@@ -7,12 +8,13 @@ import Stars from './Stars.jsx'
  * `actions` are the buttons (Continue / Try again) supplied by ActivityShell.
  */
 export default function Feedback({ status, message, stars, actions }) {
+  const { t } = useLanguage()
   const correct = status === 'correct'
   return (
     <div className={`feedback ${correct ? 'feedback--correct' : 'feedback--incorrect'}`} role="alert">
       <div className="feedback__head">
         {correct ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-        <span>{correct ? 'Correct' : 'Not quite — try again'}</span>
+        <span>{correct ? t('feedback.correct') : t('feedback.incorrect')}</span>
       </div>
 
       {correct && typeof stars === 'number' && (

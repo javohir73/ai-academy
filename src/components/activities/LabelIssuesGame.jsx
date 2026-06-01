@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Check, X } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * LabelIssuesGame — Helpful / Honest / Harmless (intermediate 6). Each answer
@@ -13,6 +14,7 @@ import { Check, X } from 'lucide-react'
  * }
  */
 export default function LabelIssuesGame({ data, onResult }) {
+  const { t } = useLanguage()
   const [assign, setAssign] = useState({}) // statementId -> labelId
   const [selLabel, setSelLabel] = useState(null)
   const [submitted, setSubmitted] = useState(false)
@@ -78,7 +80,7 @@ export default function LabelIssuesGame({ data, onResult }) {
 
   return (
     <div className="stack">
-      <div className="issue-labels" role="group" aria-label="Issue labels">
+      <div className="issue-labels" role="group" aria-label={t('label.labelsAria')}>
         {data.labels.map((l) => (
           <button
             key={l.id}
@@ -99,8 +101,8 @@ export default function LabelIssuesGame({ data, onResult }) {
 
       <p className="count-hint">
         {selLabel
-          ? `Now tap an answer to label it “${labelText(selLabel)}”.`
-          : 'Drag a label onto an answer — or tap a label, then tap an answer.'}
+          ? `${t('label.nowTap.pre')}${labelText(selLabel)}${t('label.nowTap.post')}`
+          : t('label.dragHint')}
       </p>
 
       <div className="stack">
@@ -119,7 +121,7 @@ export default function LabelIssuesGame({ data, onResult }) {
               data-statement-id={s.id}
               role="button"
               tabIndex={submitted ? -1 : 0}
-              aria-label={`Answer: ${s.text}. ${assigned ? 'Labeled ' + labelText(assigned) : 'No label yet'}`}
+              aria-label={`${t('label.answerAria.pre')}${s.text}. ${assigned ? t('label.answerAria.labeled') + labelText(assigned) : t('label.answerAria.none')}`}
               onClick={() => onClickStatement(s.id)}
               onKeyDown={(e) => {
                 if ((e.key === 'Enter' || e.key === ' ') && selLabel) {
@@ -136,13 +138,13 @@ export default function LabelIssuesGame({ data, onResult }) {
                     {submitted && (ok ? <Check size={14} aria-hidden="true" /> : <X size={14} aria-hidden="true" />)}
                   </span>
                 ) : (
-                  <span className="muted">drop label</span>
+                  <span className="muted">{t('label.dropLabel')}</span>
                 )}
               </span>
               {submitted && (
                 <p className="eval-issue" style={{ marginTop: 'var(--s2)' }}>
                   <span>
-                    {ok ? '' : `Should be “${labelText(s.label)}”. `}
+                    {ok ? '' : `${t('label.shouldBe.pre')}${labelText(s.label)}${t('label.shouldBe.post')}`}
                     {s.why}
                   </span>
                 </p>
@@ -154,7 +156,7 @@ export default function LabelIssuesGame({ data, onResult }) {
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={!allAssigned || submitted}>
-          Check labels
+          {t('act.checkLabels')}
         </button>
       </div>
 

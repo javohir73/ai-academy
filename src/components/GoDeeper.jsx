@@ -1,4 +1,5 @@
 import { ChevronRight, Sigma } from 'lucide-react'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * GoDeeper — optional rigor that NEVER blocks progression. Renders as a native
@@ -10,6 +11,7 @@ import { ChevronRight, Sigma } from 'lucide-react'
  *   { title, body, formula?, formulaLegend?: [{ sym, plain }] }
  */
 export default function GoDeeper({ data }) {
+  const { t } = useLanguage()
   if (!data) return null
   return (
     <details className="go-deeper">
@@ -17,7 +19,7 @@ export default function GoDeeper({ data }) {
         <ChevronRight className="go-deeper__chevron" size={16} aria-hidden="true" />
         <Sigma size={15} aria-hidden="true" />
         <span>{data.title}</span>
-        <span className="go-deeper__tag">Optional</span>
+        <span className="go-deeper__tag">{t('goDeeper.optional')}</span>
       </summary>
       <div className="go-deeper__body">
         <p>{data.body}</p>

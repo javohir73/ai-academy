@@ -9,6 +9,7 @@ import {
   Target,
   ListOrdered,
 } from 'lucide-react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * ColabLaunch — the GPU-lesson launcher ('colab' type). GPU lessons (training a
@@ -42,6 +43,7 @@ import {
  * is true. On submit we reveal the `why` on the picked choice and the right one.
  */
 export default function ColabLaunch({ data, onResult }) {
+  const { t } = useLanguage()
   const check = data.check ?? { question: '', choices: [] }
   const steps = data.steps ?? []
   const [picked, setPicked] = useState(null) // selected choice id
@@ -65,9 +67,7 @@ export default function ColabLaunch({ data, onResult }) {
       <p className="colab__runs-on" role="note">
         <Cpu size={16} aria-hidden="true" />
         <span>
-          This runs in a <strong>free GPU notebook</strong> (Colab or Kaggle), not in your
-          browser. Open it, follow the steps, then answer the check below to mark this lesson
-          complete.
+          {t('colab.runsOn.pre')}<strong>{t('colab.runsOn.strong')}</strong>{t('colab.runsOn.post')}
         </span>
       </p>
 
@@ -78,7 +78,7 @@ export default function ColabLaunch({ data, onResult }) {
             <Target size={18} />
           </span>
           <div>
-            <span className="colab__eyebrow">Your goal</span>
+            <span className="colab__eyebrow">{t('colab.yourGoal')}</span>
             <p className="colab__goal-text">{data.goal}</p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function ColabLaunch({ data, onResult }) {
       {steps.length > 0 && (
         <div className="colab__steps">
           <p className="colab__eyebrow colab__eyebrow--row">
-            <ListOrdered size={16} aria-hidden="true" /> In the notebook
+            <ListOrdered size={16} aria-hidden="true" /> {t('colab.inNotebook')}
           </p>
           <ol className="colab__step-list">
             {steps.map((step, i) => (
@@ -112,7 +112,7 @@ export default function ColabLaunch({ data, onResult }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ExternalLink size={18} aria-hidden="true" /> Open in Colab
+            <ExternalLink size={18} aria-hidden="true" /> {t('colab.openColab')}
           </a>
         )}
         {data.kaggleUrl && (
@@ -122,23 +122,23 @@ export default function ColabLaunch({ data, onResult }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ExternalLink size={18} aria-hidden="true" /> Open in Kaggle
+            <ExternalLink size={18} aria-hidden="true" /> {t('colab.openKaggle')}
           </a>
         )}
       </div>
 
       {/* Self-check — keeps mastery/progression working without running code */}
       <div className="colab__check">
-        <p className="colab__eyebrow">Quick self-check</p>
+        <p className="colab__eyebrow">{t('colab.selfCheck')}</p>
         <p className="scenario">{check.question}</p>
 
         {!submitted && (
           <p className="count-hint" style={{ margin: 0 }}>
-            Pick the best answer based on what you saw in the notebook, then check it.
+            {t('colab.pickAnswer')}
           </p>
         )}
 
-        <div className="options" role="radiogroup" aria-label="Self-check choices">
+        <div className="options" role="radiogroup" aria-label={t('colab.selfCheckAria')}>
           {check.choices.map((c) => {
             const isPicked = picked === c.id
             let cls = 'option'
@@ -162,12 +162,12 @@ export default function ColabLaunch({ data, onResult }) {
                   </span>
                   {submitted && c.correct && (
                     <span className="option__mark">
-                      <Check size={15} /> correct
+                      <Check size={15} /> {t('mark.correct')}
                     </span>
                   )}
                   {submitted && isPicked && !c.correct && (
                     <span className="option__mark">
-                      <X size={15} /> not this
+                      <X size={15} /> {t('mark.notThis')}
                     </span>
                   )}
                 </button>
@@ -193,7 +193,7 @@ export default function ColabLaunch({ data, onResult }) {
           onClick={submit}
           disabled={picked == null || submitted}
         >
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

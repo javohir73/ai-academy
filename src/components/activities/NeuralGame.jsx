@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * NeuralGame — "build a neural network by connecting nodes" (level 9).
@@ -9,6 +10,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
  * data = { layers: { input:[{id,label}], hidden:[...], output:[...] } }
  */
 export default function NeuralGame({ data, onResult }) {
+  const { t } = useLanguage()
   const { input, hidden, output } = data.layers
   const layers = [input, hidden, output]
 
@@ -89,9 +91,9 @@ export default function NeuralGame({ data, onResult }) {
   }, [])
 
   const layerMeta = [
-    { key: 'input', label: 'Input', nodes: input },
-    { key: 'hidden', label: 'Hidden', nodes: hidden },
-    { key: 'output', label: 'Output', nodes: output },
+    { key: 'input', label: t('neural.layer.input'), nodes: input },
+    { key: 'hidden', label: t('neural.layer.hidden'), nodes: hidden },
+    { key: 'output', label: t('neural.layer.output'), nodes: output },
   ]
 
   return (
@@ -149,13 +151,13 @@ export default function NeuralGame({ data, onResult }) {
       </div>
 
       <p className="nn__hint">
-        Connections: <strong>{edges.size}</strong> of {required.length}
-        {active && ' · now select a neuron in the next layer'}
+        {t('neural.connections.pre')}<strong>{edges.size}</strong>{t('neural.connections.mid')}{required.length}
+        {active && t('neural.connections.next')}
       </p>
 
       <div className="btn-row btn-row--center">
         <button className="btn btn--primary" onClick={check} disabled={submitted}>
-          Check network
+          {t('act.checkNetwork')}
         </button>
       </div>
     </div>

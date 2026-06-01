@@ -174,6 +174,324 @@ export const UI = {
     'prompt.text': 'Create a free account to save your stars and streak to the cloud and pick up on any device.',
     'prompt.save': 'Save my progress',
     'prompt.notNow': 'Not now',
+
+    // home page — marketing copy (hero, features, trust, stats, sections, footer)
+    'home.chip.hero': 'Learn AI & ML from scratch',
+    'home.lead.pre': 'A futuristic, beginner-friendly way to learn Artificial Intelligence and Machine Learning — through ',
+    'home.lead.post': ' interactive lessons that take you from “what is data?” to running real Python models and evaluating AI responsibly.',
+    'home.features.chip': 'How it works',
+    'home.features.title': 'Built for how beginners actually learn',
+    'home.features.sub': 'Motivation before mechanism, doing before memorizing — and real tools when you’re ready.',
+    'home.feature.concept.title': 'Concept-first lessons',
+    'home.feature.concept.body': 'Start with plain-English ideas and everyday examples — the intuition comes before any math or code.',
+    'home.feature.interactive.title': 'Interactive challenges',
+    'home.feature.interactive.body': 'Learn by doing: sort, match, predict, and build. Almost every lesson is a hands-on challenge, not a quiz.',
+    'home.feature.python.title': 'Real Python in the browser',
+    'home.feature.python.body': 'Write and run real scikit-learn code in an in-browser notebook — no installs, no setup, graded instantly.',
+    'home.feature.responsible.title': 'Responsible AI & LLM evaluation',
+    'home.feature.responsible.body': 'Finish by thinking like an AI model evaluator: score answers, catch hallucinations, and judge AI responsibly.',
+    'home.stats.aria': 'At a glance',
+    'home.stat.lessons.label': 'Hands-on, concept-first',
+    'home.stat.python.value': 'Real Python',
+    'home.stat.python.label': 'scikit-learn in your browser',
+    'home.stat.cloud.value': 'Cloud progress',
+    'home.stat.cloud.label': 'Synced across devices',
+    'home.stat.beginner.value': 'Beginner-first',
+    'home.stat.beginner.label': 'No prior code or math',
+    'home.path.chip': 'The path',
+    'home.path.title': 'A clear path, one level at a time',
+    'home.path.sub': 'Five levels take you from foundations to applied AI evaluation. Each unlocks the next, so the journey always feels achievable.',
+    'home.level': 'Level',
+    'home.lesson.one': 'lesson',
+    'home.lesson.many': 'lessons',
+    'home.pro': 'PRO',
+    'home.trust.chip': 'Why learners stay',
+    'home.trust.title': 'Approachable by design',
+    'home.trust.beginner.title': 'Beginner-friendly',
+    'home.trust.beginner.body': 'No prior coding or math required. Each level unlocks the next, so you are never thrown in the deep end.',
+    'home.trust.setup.title': 'Zero setup',
+    'home.trust.setup.body': 'Runs entirely in your browser. Nothing to install, configure, or pay for to get started.',
+    'home.trust.paced.title': 'Self-paced',
+    'home.trust.paced.body': 'Your progress saves automatically on your device. Pick up exactly where you left off, any time.',
+    'home.finalCta.pre': 'Ready to ',
+    'home.finalCta.highlight': 'build your first model?',
+    'home.finalCta.sub': 'Jump in — the first lesson is a two-minute win, and everything saves as you go.',
+    'home.footer.tagline': 'Learn AI & Machine Learning by doing.',
+    'home.footer.builtBy': 'Built by',
+
+    // shared activity shell + feedback
+    'feedback.correct': 'Correct',
+    'feedback.incorrect': 'Not quite — try again',
+    'act.nextLesson': 'Next lesson',
+    'act.backToOverview': 'Back to overview',
+    'act.replay': 'Replay for a better score',
+    'act.tryAgain': 'Try again',
+    'act.checkAnswer': 'Check answer',
+    'act.checkAnswers': 'Check answers',
+    'act.checkOrder': 'Check order',
+    'act.checkScore': 'Check score',
+    'act.checkScores': 'Check scores',
+    'act.checkChoice': 'Check choice',
+    'act.checkChoices': 'Check choices',
+    'act.checkDecisions': 'Check decisions',
+    'act.checkNetwork': 'Check network',
+    'act.checkHighlight': 'Check highlight',
+    'act.checkHighlights': 'Check highlights',
+    'act.checkLabels': 'Check labels',
+    'act.continue': 'Continue',
+    'act.clear': 'Clear',
+
+    // guided practice
+    'guided.hint': 'Hint',
+    'guided.revealFirst': 'Stuck? Reveal a hint',
+    'guided.revealMore.pre': 'Reveal hint ',
+    'guided.revealMore.mid': ' of ',
+    'guided.showAnswer': 'Show the answer',
+    'guided.workThroughFirst': 'Work through the hints first',
+    'guided.nudge': 'Give it a real think first — try a hint before peeking at the answer.',
+
+    // spaced review
+    'spaced.aria': 'Quick review of an earlier lesson',
+    'spaced.label': 'Quick review',
+    'spaced.miss.pre': 'Not quite — ',
+
+    // video card
+    'video.badge': 'Video',
+    'video.playLabel.pre': 'Play video: ',
+
+    // go deeper
+    'goDeeper.optional': 'Optional',
+
+    // pipeline
+    'pipeline.step': 'Step',
+    'pipeline.infoEmpty': 'Tap a stage below to add it to the pipeline and learn what it does.',
+    'pipeline.correctOrder.pre': 'Correct order: ',
+    'pipeline.stagesAria': 'Pipeline stages',
+
+    // classify / general round labels
+    'classify.mystery': 'Mystery',
+
+    // match
+    'match.nowSelect.pre': 'Now select the answer for “',
+    'match.nowSelect.post': '”.',
+    'match.start': 'Select a clue on the left to start a link.',
+
+    // sort
+    'sort.results': 'See your results below.',
+    'sort.allSorted': 'All sorted — select “Check answer”.',
+    'sort.cardsAria': 'Cards to sort',
+    'sort.dropHere': 'Drop cards here',
+    'sort.placeHere': 'Place here',
+    'sort.mark.correct': 'correct',
+    'sort.mark.wrong': 'wrong group',
+    'sort.removeSuffix': ', select to remove',
+
+    // predict
+    'predict.readout': 'Predicted exam score',
+    'predict.targetReached': 'Target reached — lock it in.',
+    'predict.lockIn': 'Lock in prediction',
+    'predict.decrease.pre': 'Decrease ',
+    'predict.increase.pre': 'Increase ',
+
+    // option marks (shared across scenario / featuremap / colab / pixel / ethics)
+    'mark.correct': 'correct',
+    'mark.notThis': 'not this',
+    'mark.recommended': 'recommended',
+    'mark.bestChoice': 'best choice',
+    'mark.shouldPick': 'should pick',
+    'mark.sample.one': 'sample',
+    'mark.sample.many': 'samples',
+
+    // featuremap
+    'fmap.exploreFirst': 'Explore above, then pick the best answer.',
+    'fmap.selfCheckAria': 'Self-check choices',
+    'fmap.depthIntro': 'Step through the network’s depth. Watch the activations go from generic edges to object-specific parts.',
+    'fmap.depthAria': 'Network depth',
+    'fmap.advIntro': 'Drag the perturbation strength up. The picture barely changes — but watch the model’s prediction.',
+    'fmap.perturbInputLabel': 'Input image (with perturbation)',
+    'fmap.perturbCaption.pre': 'Perturbation ε = ',
+    'fmap.perturbCaption.clean': ' — visually clean',
+    'fmap.perturbCaption.identical': ' — visually almost identical',
+    'fmap.attackStrength': 'Attack strength (ε)',
+    'fmap.attackStrengthAria': 'Perturbation strength epsilon',
+    'fmap.prediction.pre': 'Prediction: ',
+    'fmap.confident.post': '% confident',
+    'fmap.activationSuffix': ' activation map',
+
+    // shape calc
+    'calc.workItOut': 'Work it out with the formula below, then enter your answer.',
+    'calc.invalidConfig': 'This stride/padding combo is invalid (no whole-number output)',
+    'calc.yourAnswer': 'Your answer',
+    'calc.given.inputW': 'Input size W',
+    'calc.given.filterF': 'Filter F',
+    'calc.given.paddingP': 'Padding P',
+    'calc.given.strideS': 'Stride S',
+    'calc.given.image': 'Image',
+    'calc.given.convFilter': 'Conv filter',
+    'calc.given.volume': 'Conv/pool volume (C, H, W)',
+    'calc.q.convOutput': 'What is the output feature-map side length?',
+    'calc.q.fc': 'How many weights does ONE fully-connected neuron need?',
+    'calc.q.conv': 'How many weights does ONE conv filter need (shared everywhere)?',
+    'calc.q.ratio': 'How many times MORE weights does the FC neuron use than the conv filter?',
+    'calc.q.flatten': 'What in_features must the first nn.Linear use after flattening?',
+    'calc.unit.px': 'px per side',
+    'calc.unit.weights': 'weights',
+    'calc.unit.more': '× more',
+    'calc.unit.features': 'features',
+    'calc.result.answer.pre': 'Answer: ',
+    'calc.invalid.pre': 'Correct call: ',
+    'calc.invalid.word': 'invalid',
+    'calc.invalid.mid': ' — (W − F + 2P) = ',
+    'calc.invalid.s': ' is not divisible by S = ',
+    'calc.invalid.post': ', so the output side isn’t a whole number. Change the stride or padding.',
+
+    // scenario
+    'scenario.hint.multi': 'Select every choice that applies, then check your answer.',
+    'scenario.hint.single': 'Pick the single best choice, then check your answer.',
+    'scenario.choicesAria': 'Choices',
+
+    // capstone
+    'capstone.progressAria': 'Evaluation packet progress',
+    'capstone.task.pre': 'Task ',
+    'capstone.task.mid': ' of ',
+    'capstone.yourScore': 'Your score',
+    'capstone.scoreAria': 'Score from 1 to 5',
+    'capstone.scale.poor': '1 · Poor',
+    'capstone.scale.excellent': '5 · Excellent',
+    'capstone.expertScore.pre': 'Expert score: ',
+    'capstone.rate.bad': 'Re-weigh the rubric and try a different score.',
+    'capstone.compare.bad': 'Compare against the rubric — which answer truly serves the user?',
+    'capstone.highlight.bad': 'Look for the sentence that is confidently false.',
+    'capstone.answer': 'Answer',
+    'capstone.weakTag': 'Weak answer · 1 / 5',
+    'capstone.improvedLabel': 'Your improved answer',
+    'capstone.submitContinue': 'Submit & continue',
+    'capstone.submitReflection': 'Submit reflection',
+    'capstone.reflectionAria': 'Your reflection',
+    'capstone.summary.title': 'Evaluation packet complete',
+    'capstone.summary.body.pre': 'You worked through all ',
+    'capstone.summary.body.post': ' evaluator tasks — scoring, ranking, catching a hallucination, rewriting a weak reply, and reflecting on your judgement.',
+    'capstone.summary.cert': 'You can think like an AI model evaluator.',
+    'capstone.summary.claim': 'Claim your result',
+
+    // ethics
+    'ethics.scenarioAria.pre': 'Scenario ',
+    'ethics.scenarioAria.post': ' options',
+
+    // bias grid
+    'biasGrid.samplesAria': 'Training data samples by group',
+    'biasGrid.missingAria': 'Which group is missing',
+
+    // overfit compare
+    'overfit.overfitAria': 'A line that bends to pass through every dot',
+    'overfit.smoothAria': 'A straight line through the middle of the dots',
+
+    // neural
+    'neural.layer.input': 'Input',
+    'neural.layer.hidden': 'Hidden',
+    'neural.layer.output': 'Output',
+    'neural.connections.pre': 'Connections: ',
+    'neural.connections.mid': ' of ',
+    'neural.connections.next': ' · now select a neuron in the next layer',
+
+    // pick dataset
+    'dataset.chooseAria': 'Choose a dataset',
+
+    // convolve
+    'convolve.pool.max': 'Max pooling',
+    'convolve.pool.avg': 'Average pooling',
+    'convolve.kernel': 'Kernel',
+    'convolve.formula.max': 'Pick the largest value inside the 2×2 window.',
+    'convolve.formula.avg': 'Add the four values inside the 2×2 window, then divide by 4.',
+    'convolve.formula.kernel': 'Multiply each cell in the highlighted 3×3 patch by the kernel cell in the same position, then add all nine products.',
+    'convolve.lead.post': '. The bright outline is the window. It feeds the highlighted output cell.',
+    'convolve.input': 'Input',
+    'convolve.q': 'What number lands in the highlighted output cell?',
+    'convolve.pickAria': 'Pick the output value',
+    'convolve.kernelAria': 'Kernel weights',
+
+    // cnn builder
+    'builder.targetDefault': 'Tap layers in order to assemble the network. Tap a placed layer to remove it and everything after it.',
+    'builder.availableAria': 'Available layers',
+    'builder.allPlaced': 'All layers placed — review the order, then check your answer.',
+    'builder.inputImage': 'Input image',
+    'builder.addAbove': '→ add layers above',
+    'builder.prediction': '→ prediction',
+    'builder.networkAria': 'Your network, in order',
+    'builder.missing.pre': 'The pipeline is missing ',
+    'builder.missing.post': ' at step ',
+    'builder.aLayer': 'a layer',
+    'builder.step.wrong.pre': 'Step ',
+    'builder.step.wrong.post': ' is in the wrong place — check the canonical order.',
+    'builder.thisLayer': 'this layer',
+
+    // colab launch
+    'colab.runsOn.pre': 'This runs in a ',
+    'colab.runsOn.strong': 'free GPU notebook',
+    'colab.runsOn.post': ' (Colab or Kaggle), not in your browser. Open it, follow the steps, then answer the check below to mark this lesson complete.',
+    'colab.yourGoal': 'Your goal',
+    'colab.inNotebook': 'In the notebook',
+    'colab.openColab': 'Open in Colab',
+    'colab.openKaggle': 'Open in Kaggle',
+    'colab.selfCheck': 'Quick self-check',
+    'colab.pickAnswer': 'Pick the best answer based on what you saw in the notebook, then check it.',
+    'colab.selfCheckAria': 'Self-check choices',
+
+    // pixel grid
+    'pixel.intro.pre': 'This image is a grid of ',
+    'pixel.intro.post': ' numbers. Toggle a channel to see its contribution, and click any pixel to read its exact values.',
+    'pixel.togglesAria': 'Channel toggles',
+    'pixel.channel.red': 'Red',
+    'pixel.channel.green': 'Green',
+    'pixel.channel.blue': 'Blue',
+    'pixel.label.pre': 'Pixel ',
+    'pixel.clickHint': 'Click a pixel to inspect its (R, G, B).',
+    'pixel.pickAnswer': 'Use the toggles and pixel read-out above, then pick the best answer.',
+    'pixel.choicesAria': 'Prediction choices',
+
+    // notebook
+    'notebook.yourCode': 'Your code',
+    'notebook.booting': 'Booting your Python environment…',
+    'notebook.bootError': 'Couldn’t load the Python environment — check your connection and try again.',
+    'notebook.retry': 'Retry',
+    'notebook.running': 'Running…',
+    'notebook.run': 'Run',
+    'notebook.resetCell': 'Reset cell',
+    'notebook.outputAria': 'Output',
+
+    // rewrite
+    'rewrite.weakTag': 'Weak answer · 1 / 5',
+    'rewrite.improvedLabel': 'Your improved answer',
+    'rewrite.whatNeeded': 'What did this answer need? (select all that apply)',
+    'rewrite.improvementsAria': 'Improvements this answer needed',
+    'rewrite.modelTag': 'Model 5 / 5 answer',
+    'rewrite.submit': 'Submit rewrite',
+
+    // rate response / capstone shared
+    'rate.yourScore': 'Your score',
+    'rate.scale.poor': '1 · Poor',
+    'rate.scale.excellent': '5 · Excellent',
+    'rate.expertScore.pre': 'Expert score: ',
+    'rate.scoreAria.pre': 'Score from 1 to 5 for: ',
+
+    // compare answers
+    'compare.answer': 'Answer',
+
+    // label issues
+    'label.labelsAria': 'Issue labels',
+    'label.nowTap.pre': 'Now tap an answer to label it “',
+    'label.nowTap.post': '”.',
+    'label.dragHint': 'Drag a label onto an answer — or tap a label, then tap an answer.',
+    'label.dropLabel': 'drop label',
+    'label.shouldBe.pre': 'Should be “',
+    'label.shouldBe.post': '”. ',
+    'label.answerAria.pre': 'Answer: ',
+    'label.answerAria.labeled': 'Labeled ',
+    'label.answerAria.none': 'No label yet',
+
+    // app topbar
+    'topbar.openMenu': 'Open course menu',
+    'topbar.dashboard': 'Dashboard',
   },
 
   uz: {
@@ -346,6 +664,324 @@ export const UI = {
     'prompt.text': 'Yulduzlar va seriyangizni bulutga saqlash hamda istalgan qurilmada davom ettirish uchun bepul hisob yarating.',
     'prompt.save': 'Progressimni saqlash',
     'prompt.notNow': 'Hozir emas',
+
+    // home page — marketing copy (hero, features, trust, stats, sections, footer)
+    'home.chip.hero': 'AI va MLni noldan o’rganing',
+    'home.lead.pre': 'Sun’iy intellekt va mashinaviy o’qitishni o’rganishning futuristik, yangi boshlovchilarga qulay usuli — ',
+    'home.lead.post': ' ta interaktiv dars orqali: “ma’lumot nima?” degan savoldan tortib, haqiqiy Python modellarini ishga tushirish va AIni mas’uliyatli baholashgacha.',
+    'home.features.chip': 'Bu qanday ishlaydi',
+    'home.features.title': 'Yangi boshlovchilar haqiqatda qanday o’rganishi uchun yaratilgan',
+    'home.features.sub': 'Mexanizmdan oldin motivatsiya, yodlashdan oldin amaliyot — va tayyor bo’lganingizda haqiqiy vositalar.',
+    'home.feature.concept.title': 'Avval tushuncha beradigan darslar',
+    'home.feature.concept.body': 'Sodda g’oyalar va kundalik misollardan boshlang — intuitsiya matematika yoki koddan oldin keladi.',
+    'home.feature.interactive.title': 'Interaktiv mashqlar',
+    'home.feature.interactive.body': 'Amalda o’rganing: saralang, moslang, bashorat qiling va quring. Deyarli har bir dars test emas, balki amaliy mashq.',
+    'home.feature.python.title': 'Brauzerda haqiqiy Python',
+    'home.feature.python.body': 'Brauzerdagi notebookda haqiqiy scikit-learn kodini yozing va ishga tushiring — o’rnatishsiz, sozlashsiz, darhol baholanadi.',
+    'home.feature.responsible.title': 'Mas’uliyatli AI va LLM baholash',
+    'home.feature.responsible.body': 'AI model baholovchisidek fikrlash bilan yakunlang: javoblarni baholang, gallyutsinatsiyalarni toping va AIni mas’uliyatli baholang.',
+    'home.stats.aria': 'Qisqacha',
+    'home.stat.lessons.label': 'Amaliy, avval tushuncha beradigan',
+    'home.stat.python.value': 'Haqiqiy Python',
+    'home.stat.python.label': 'Brauzeringizda scikit-learn',
+    'home.stat.cloud.value': 'Bulutli progress',
+    'home.stat.cloud.label': 'Qurilmalar bo’ylab sinxronlangan',
+    'home.stat.beginner.value': 'Avval yangi boshlovchilar',
+    'home.stat.beginner.label': 'Oldindan kod yoki matematika talab qilinmaydi',
+    'home.path.chip': 'Yo’l',
+    'home.path.title': 'Aniq yo’l, bir vaqtning o’zida bitta daraja',
+    'home.path.sub': 'Beshta daraja sizni asoslardan amaliy AI baholashga olib boradi. Har biri keyingisini ochadi, shuning uchun yo’l doimo erishish mumkindek tuyuladi.',
+    'home.level': 'Daraja',
+    'home.lesson.one': 'dars',
+    'home.lesson.many': 'dars',
+    'home.pro': 'PRO',
+    'home.trust.chip': 'O’rganuvchilar nega qoladi',
+    'home.trust.title': 'Dizayni bo’yicha qulay',
+    'home.trust.beginner.title': 'Yangi boshlovchilarga qulay',
+    'home.trust.beginner.body': 'Oldindan kod yozish yoki matematika talab qilinmaydi. Har bir daraja keyingisini ochadi, shuning uchun siz hech qachon chuqurlikka tashlab qo’yilmaysiz.',
+    'home.trust.setup.title': 'Sozlashsiz',
+    'home.trust.setup.body': 'To’liq brauzeringizda ishlaydi. Boshlash uchun hech narsa o’rnatish, sozlash yoki to’lash shart emas.',
+    'home.trust.paced.title': 'Mustaqil sur’at',
+    'home.trust.paced.body': 'Progressingiz qurilmangizda avtomatik saqlanadi. Istalgan vaqtda aynan to’xtagan joyingizdan davom eting.',
+    'home.finalCta.pre': 'Birinchi modelingizni ',
+    'home.finalCta.highlight': 'qurishga tayyormisiz?',
+    'home.finalCta.sub': 'Boshlang — birinchi dars ikki daqiqalik yutuq, va hammasi davomida saqlanadi.',
+    'home.footer.tagline': 'AI va mashinaviy o’qitishni amaliyot orqali o’rganing.',
+    'home.footer.builtBy': 'Muallif:',
+
+    // shared activity shell + feedback
+    'feedback.correct': 'To’g’ri',
+    'feedback.incorrect': 'Unchalik emas — qayta urinib ko’ring',
+    'act.nextLesson': 'Keyingi dars',
+    'act.backToOverview': 'Kurs sharhiga qaytish',
+    'act.replay': 'Yaxshiroq natija uchun qayta o’ynash',
+    'act.tryAgain': 'Qayta urinib ko’ring',
+    'act.checkAnswer': 'Javobni tekshirish',
+    'act.checkAnswers': 'Javoblarni tekshirish',
+    'act.checkOrder': 'Tartibni tekshirish',
+    'act.checkScore': 'Bahoni tekshirish',
+    'act.checkScores': 'Baholarni tekshirish',
+    'act.checkChoice': 'Tanlovni tekshirish',
+    'act.checkChoices': 'Tanlovlarni tekshirish',
+    'act.checkDecisions': 'Qarorlarni tekshirish',
+    'act.checkNetwork': 'Tarmoqni tekshirish',
+    'act.checkHighlight': 'Belgilashni tekshirish',
+    'act.checkHighlights': 'Belgilashlarni tekshirish',
+    'act.checkLabels': 'Yorliqlarni tekshirish',
+    'act.continue': 'Davom etish',
+    'act.clear': 'Tozalash',
+
+    // guided practice
+    'guided.hint': 'Maslahat',
+    'guided.revealFirst': 'Qiynaldingizmi? Maslahatni ko’rsating',
+    'guided.revealMore.pre': 'Maslahatni ko’rsatish ',
+    'guided.revealMore.mid': ' / ',
+    'guided.showAnswer': 'Javobni ko’rsatish',
+    'guided.workThroughFirst': 'Avval maslahatlar bilan ishlang',
+    'guided.nudge': 'Avval chinakam o’ylab ko’ring — javobga qaramasdan oldin maslahatdan foydalaning.',
+
+    // spaced review
+    'spaced.aria': 'Oldingi darsning qisqa takrori',
+    'spaced.label': 'Qisqa takror',
+    'spaced.miss.pre': 'Unchalik emas — ',
+
+    // video card
+    'video.badge': 'Video',
+    'video.playLabel.pre': 'Videoni ijro etish: ',
+
+    // go deeper
+    'goDeeper.optional': 'Ixtiyoriy',
+
+    // pipeline
+    'pipeline.step': 'Bosqich',
+    'pipeline.infoEmpty': 'Uni quvurga qo’shish va nima qilishini bilish uchun quyidagi bosqichni bosing.',
+    'pipeline.correctOrder.pre': 'To’g’ri tartib: ',
+    'pipeline.stagesAria': 'Quvur bosqichlari',
+
+    // classify / general round labels
+    'classify.mystery': 'Sirli element',
+
+    // match
+    'match.nowSelect.pre': 'Endi “',
+    'match.nowSelect.post': '” uchun javobni tanlang.',
+    'match.start': 'Bog’lashni boshlash uchun chapdagi ipni tanlang.',
+
+    // sort
+    'sort.results': 'Natijalaringizni quyida ko’ring.',
+    'sort.allSorted': 'Hammasi saralandi — “Javobni tekshirish”ni tanlang.',
+    'sort.cardsAria': 'Saralash uchun kartalar',
+    'sort.dropHere': 'Kartalarni shu yerga tashlang',
+    'sort.placeHere': 'Shu yerga joylash',
+    'sort.mark.correct': 'to’g’ri',
+    'sort.mark.wrong': 'noto’g’ri guruh',
+    'sort.removeSuffix': ', olib tashlash uchun tanlang',
+
+    // predict
+    'predict.readout': 'Bashorat qilingan imtihon natijasi',
+    'predict.targetReached': 'Maqsadga erishildi — uni qulflang.',
+    'predict.lockIn': 'Bashoratni qulflash',
+    'predict.decrease.pre': 'Kamaytirish: ',
+    'predict.increase.pre': 'Oshirish: ',
+
+    // option marks (shared across scenario / featuremap / colab / pixel / ethics)
+    'mark.correct': 'to’g’ri',
+    'mark.notThis': 'bu emas',
+    'mark.recommended': 'tavsiya etiladi',
+    'mark.bestChoice': 'eng yaxshi tanlov',
+    'mark.shouldPick': 'tanlanishi kerak',
+    'mark.sample.one': 'namuna',
+    'mark.sample.many': 'namuna',
+
+    // featuremap
+    'fmap.exploreFirst': 'Yuqorida o’rganing, so’ng eng yaxshi javobni tanlang.',
+    'fmap.selfCheckAria': 'O’z-o’zini tekshirish tanlovlari',
+    'fmap.depthIntro': 'Tarmoq chuqurligi bo’ylab o’ting. Aktivatsiyalar umumiy qirralardan ob’ektga xos qismlarga o’tishini kuzating.',
+    'fmap.depthAria': 'Tarmoq chuqurligi',
+    'fmap.advIntro': 'Buzilish kuchini oshiring. Rasm deyarli o’zgarmaydi — lekin modelning bashoratini kuzating.',
+    'fmap.perturbInputLabel': 'Kirish rasmi (buzilish bilan)',
+    'fmap.perturbCaption.pre': 'Buzilish ε = ',
+    'fmap.perturbCaption.clean': ' — vizual jihatdan toza',
+    'fmap.perturbCaption.identical': ' — vizual jihatdan deyarli bir xil',
+    'fmap.attackStrength': 'Hujum kuchi (ε)',
+    'fmap.attackStrengthAria': 'Buzilish kuchi epsilon',
+    'fmap.prediction.pre': 'Bashorat: ',
+    'fmap.confident.post': '% ishonchli',
+    'fmap.activationSuffix': ' aktivatsiya xaritasi',
+
+    // shape calc
+    'calc.workItOut': 'Quyidagi formula yordamida hisoblang, so’ng javobingizni kiriting.',
+    'calc.invalidConfig': 'Bu stride/padding birikmasi yaroqsiz (butun sonli natija yo’q)',
+    'calc.yourAnswer': 'Sizning javobingiz',
+    'calc.given.inputW': 'Kirish o’lchami W',
+    'calc.given.filterF': 'Filtr F',
+    'calc.given.paddingP': 'Padding P',
+    'calc.given.strideS': 'Stride S',
+    'calc.given.image': 'Rasm',
+    'calc.given.convFilter': 'Conv filtri',
+    'calc.given.volume': 'Conv/pool hajmi (C, H, W)',
+    'calc.q.convOutput': 'Chiqish xususiyat xaritasining tomon uzunligi qancha?',
+    'calc.q.fc': 'BITTA to’liq bog’langan neyron nechta vaznga muhtoj?',
+    'calc.q.conv': 'BITTA conv filtri nechta vaznga muhtoj (hamma joyda umumiy)?',
+    'calc.q.ratio': 'FC neyron conv filtridan necha marta KO’P vazn ishlatadi?',
+    'calc.q.flatten': 'Tekislashdan keyin birinchi nn.Linear qanday in_features ishlatishi kerak?',
+    'calc.unit.px': 'piksel/tomon',
+    'calc.unit.weights': 'vazn',
+    'calc.unit.more': '× ko’p',
+    'calc.unit.features': 'belgilar',
+    'calc.result.answer.pre': 'Javob: ',
+    'calc.invalid.pre': 'To’g’ri qaror: ',
+    'calc.invalid.word': 'yaroqsiz',
+    'calc.invalid.mid': ' — (W − F + 2P) = ',
+    'calc.invalid.s': ' S = ',
+    'calc.invalid.post': ' ga bo’linmaydi, shuning uchun chiqish tomoni butun son emas. Stride yoki paddingni o’zgartiring.',
+
+    // scenario
+    'scenario.hint.multi': 'Mos keladigan har bir tanlovni belgilang, so’ng javobingizni tekshiring.',
+    'scenario.hint.single': 'Bitta eng yaxshi tanlovni tanlang, so’ng javobingizni tekshiring.',
+    'scenario.choicesAria': 'Tanlovlar',
+
+    // capstone
+    'capstone.progressAria': 'Baholash to’plami progressi',
+    'capstone.task.pre': 'Topshiriq ',
+    'capstone.task.mid': ' / ',
+    'capstone.yourScore': 'Sizning bahoyingiz',
+    'capstone.scoreAria': '1 dan 5 gacha baho',
+    'capstone.scale.poor': '1 · Yomon',
+    'capstone.scale.excellent': '5 · A’lo',
+    'capstone.expertScore.pre': 'Ekspert bahosi: ',
+    'capstone.rate.bad': 'Mezonni qayta tarozilang va boshqa bahoni sinab ko’ring.',
+    'capstone.compare.bad': 'Mezonga solishtiring — qaysi javob foydalanuvchiga chinakam xizmat qiladi?',
+    'capstone.highlight.bad': 'Ishonch bilan noto’g’ri bo’lgan gapni qidiring.',
+    'capstone.answer': 'Javob',
+    'capstone.weakTag': 'Zaif javob · 1 / 5',
+    'capstone.improvedLabel': 'Sizning yaxshilangan javobingiz',
+    'capstone.submitContinue': 'Yuborish va davom etish',
+    'capstone.submitReflection': 'Mulohazani yuborish',
+    'capstone.reflectionAria': 'Sizning mulohazangiz',
+    'capstone.summary.title': 'Baholash to’plami yakunlandi',
+    'capstone.summary.body.pre': 'Siz barcha ',
+    'capstone.summary.body.post': ' ta baholovchi topshiriqni bajardingiz — baholash, saralash, gallyutsinatsiyani topish, zaif javobni qayta yozish va o’z hukmingiz ustida mulohaza yuritish.',
+    'capstone.summary.cert': 'Siz AI model baholovchisidek fikrlay olasiz.',
+    'capstone.summary.claim': 'Natijangizni oling',
+
+    // ethics
+    'ethics.scenarioAria.pre': 'Vaziyat ',
+    'ethics.scenarioAria.post': ' tanlovlari',
+
+    // bias grid
+    'biasGrid.samplesAria': 'O’quv ma’lumotlari namunalari guruhlar bo’yicha',
+    'biasGrid.missingAria': 'Qaysi guruh yetishmayapti',
+
+    // overfit compare
+    'overfit.overfitAria': 'Har bir nuqtadan o’tish uchun bukiladigan chiziq',
+    'overfit.smoothAria': 'Nuqtalar o’rtasidan o’tuvchi to’g’ri chiziq',
+
+    // neural
+    'neural.layer.input': 'Kirish',
+    'neural.layer.hidden': 'Yashirin',
+    'neural.layer.output': 'Chiqish',
+    'neural.connections.pre': 'Bog’lanishlar: ',
+    'neural.connections.mid': ' / ',
+    'neural.connections.next': ' · endi keyingi qatlamdagi neyronni tanlang',
+
+    // pick dataset
+    'dataset.chooseAria': 'Ma’lumotlar to’plamini tanlang',
+
+    // convolve
+    'convolve.pool.max': 'Max pooling',
+    'convolve.pool.avg': 'O’rtacha pooling',
+    'convolve.kernel': 'Yadro (kernel)',
+    'convolve.formula.max': '2×2 oyna ichidagi eng katta qiymatni tanlang.',
+    'convolve.formula.avg': '2×2 oyna ichidagi to’rt qiymatni qo’shing, so’ng 4 ga bo’ling.',
+    'convolve.formula.kernel': 'Belgilangan 3×3 yamoqdagi har bir katakni yadroning xuddi shu pozitsiyadagi katagiga ko’paytiring, so’ng to’qqizta ko’paytmani qo’shing.',
+    'convolve.lead.post': '. Yorqin chiziq — bu oyna. U belgilangan chiqish katagiga uzatadi.',
+    'convolve.input': 'Kirish',
+    'convolve.q': 'Belgilangan chiqish katagiga qaysi son tushadi?',
+    'convolve.pickAria': 'Chiqish qiymatini tanlang',
+    'convolve.kernelAria': 'Yadro vaznlari',
+
+    // cnn builder
+    'builder.targetDefault': 'Tarmoqni yig’ish uchun qatlamlarni tartib bilan bosing. Joylashtirilgan qatlamni bosib, uni va undan keyingilarni olib tashlang.',
+    'builder.availableAria': 'Mavjud qatlamlar',
+    'builder.allPlaced': 'Barcha qatlamlar joylashtirildi — tartibni ko’rib chiqing, so’ng javobingizni tekshiring.',
+    'builder.inputImage': 'Kirish rasmi',
+    'builder.addAbove': '→ yuqorida qatlam qo’shing',
+    'builder.prediction': '→ bashorat',
+    'builder.networkAria': 'Sizning tarmog’ingiz, tartib bilan',
+    'builder.missing.pre': 'Quvurda ',
+    'builder.missing.post': ' yetishmayapti, qadam: ',
+    'builder.aLayer': 'qatlam',
+    'builder.step.wrong.pre': 'Qadam ',
+    'builder.step.wrong.post': ' noto’g’ri joyda — kanonik tartibni tekshiring.',
+    'builder.thisLayer': 'bu qatlam',
+
+    // colab launch
+    'colab.runsOn.pre': 'Bu sizning brauzeringizda emas, ',
+    'colab.runsOn.strong': 'bepul GPU notebookda',
+    'colab.runsOn.post': ' (Colab yoki Kaggle) ishlaydi. Uni oching, qadamlarni bajaring, so’ng bu darsni yakunlangan deb belgilash uchun quyidagi tekshiruvga javob bering.',
+    'colab.yourGoal': 'Sizning maqsadingiz',
+    'colab.inNotebook': 'Notebookda',
+    'colab.openColab': 'Colabda ochish',
+    'colab.openKaggle': 'Kaggleda ochish',
+    'colab.selfCheck': 'Qisqa o’z-o’zini tekshiruv',
+    'colab.pickAnswer': 'Notebookda ko’rganlaringizga asoslanib eng yaxshi javobni tanlang, so’ng uni tekshiring.',
+    'colab.selfCheckAria': 'O’z-o’zini tekshirish tanlovlari',
+
+    // pixel grid
+    'pixel.intro.pre': 'Bu rasm ',
+    'pixel.intro.post': ' sonlar to’ridir. Hissasini ko’rish uchun kanalni almashtiring va aniq qiymatlarini o’qish uchun istalgan pikselni bosing.',
+    'pixel.togglesAria': 'Kanal almashtirgichlari',
+    'pixel.channel.red': 'Qizil',
+    'pixel.channel.green': 'Yashil',
+    'pixel.channel.blue': 'Ko’k',
+    'pixel.label.pre': 'Piksel ',
+    'pixel.clickHint': 'Uning (R, G, B) qiymatlarini ko’rish uchun pikselni bosing.',
+    'pixel.pickAnswer': 'Yuqoridagi almashtirgichlar va piksel ko’rsatkichidan foydalaning, so’ng eng yaxshi javobni tanlang.',
+    'pixel.choicesAria': 'Bashorat tanlovlari',
+
+    // notebook
+    'notebook.yourCode': 'Sizning kodingiz',
+    'notebook.booting': 'Python muhitingiz ishga tushirilmoqda…',
+    'notebook.bootError': 'Python muhitini yuklab bo’lmadi — ulanishingizni tekshiring va qayta urinib ko’ring.',
+    'notebook.retry': 'Qayta urinish',
+    'notebook.running': 'Ishlamoqda…',
+    'notebook.run': 'Ishga tushirish',
+    'notebook.resetCell': 'Katakni tiklash',
+    'notebook.outputAria': 'Chiqish',
+
+    // rewrite
+    'rewrite.weakTag': 'Zaif javob · 1 / 5',
+    'rewrite.improvedLabel': 'Sizning yaxshilangan javobingiz',
+    'rewrite.whatNeeded': 'Bu javobga nima kerak edi? (mos keladiganlarning hammasini tanlang)',
+    'rewrite.improvementsAria': 'Bu javobga kerak bo’lgan yaxshilanishlar',
+    'rewrite.modelTag': 'Namunaviy 5 / 5 javob',
+    'rewrite.submit': 'Qayta yozishni yuborish',
+
+    // rate response / capstone shared
+    'rate.yourScore': 'Sizning bahoyingiz',
+    'rate.scale.poor': '1 · Yomon',
+    'rate.scale.excellent': '5 · A’lo',
+    'rate.expertScore.pre': 'Ekspert bahosi: ',
+    'rate.scoreAria.pre': '1 dan 5 gacha baho, mavzu: ',
+
+    // compare answers
+    'compare.answer': 'Javob',
+
+    // label issues
+    'label.labelsAria': 'Muammo yorliqlari',
+    'label.nowTap.pre': 'Endi javobni “',
+    'label.nowTap.post': '” deb belgilash uchun uni bosing.',
+    'label.dragHint': 'Yorliqni javob ustiga torting — yoki yorliqni bosing, so’ng javobni bosing.',
+    'label.dropLabel': 'yorliqni tashlang',
+    'label.shouldBe.pre': '“',
+    'label.shouldBe.post': '” bo’lishi kerak. ',
+    'label.answerAria.pre': 'Javob: ',
+    'label.answerAria.labeled': 'Belgilangan: ',
+    'label.answerAria.none': 'Hali yorliq yo’q',
+
+    // app topbar
+    'topbar.openMenu': 'Kurs menyusini ochish',
+    'topbar.dashboard': 'Boshqaruv paneli',
   },
 }
 

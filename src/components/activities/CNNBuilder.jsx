@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Check, X, Layers, Plus, RotateCcw, ArrowRight } from 'lucide-react'
 import { shuffle } from '../../utils/shuffle.js'
+import { useLanguage } from '../../i18n/useLanguage.js'
 
 /*
  * CNNBuilder — the architecture-assembly engine ('builder' type). The learner
@@ -34,6 +35,7 @@ import { shuffle } from '../../utils/shuffle.js'
  * required tile exactly once and in the right order.
  */
 export default function CNNBuilder({ data, onResult }) {
+  const { t } = useLanguage()
   const tiles = useMemo(() => shuffle(data.tiles ?? []), [data])
   const correct = data.correct ?? []
   const [pipeline, setPipeline] = useState([]) // ordered list of tile ids
@@ -96,31 +98,24 @@ export default function CNNBuilder({ data, onResult }) {
     if (got == null) {
       // pipeline too short — a required layer is missing at this position
       const missing = tileById[want]
-      return `The pipeline is missing ${missing?.label ?? 'a layer'} at step ${firstWrong + 1}.`
+      return `${t('builder.missing.pre')}${missing?.label ?? t('builder.aLayer')}${t('builder.missing.post')}${firstWrong + 1}.`
     }
-    const gotTile = tileById[got]
     const why = data.mismatch?.[got]
-    return (
-      why ||
-      `Step ${firstWrong + 1} should not be ${gotTile?.label ?? 'this layer'} — check the canonical order.`
-    )
+    return why || `${t('builder.step.wrong.pre')}${firstWrong + 1}${t('builder.step.wrong.post')}`
   }
 
   return (
     <div className="stack">
       <p className="count-hint" style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}>
         <Layers size={16} aria-hidden="true" />
-        <span>
-          {data.targetPrompt ||
-            'Tap layers in order to assemble the network. Tap a placed layer to remove it and everything after it.'}
-        </span>
+        <span>{data.targetPrompt || t('builder.targetDefault')}</span>
       </p>
 
       {/* Palette of available layer tiles */}
-      <div className="builder-palette" role="group" aria-label="Available layers">
+      <div className="builder-palette" role="group" aria-label={t('builder.availableAria')}>
         {available.length === 0 ? (
           <p className="count-hint" style={{ margin: 0 }}>
-            All layers placed — review the order, then check your answer.
+            {t('builder.allPlaced')}
           </p>
         ) : (
           available.map((t) => (
@@ -140,9 +135,9 @@ export default function CNNBuilder({ data, onResult }) {
       </div>
 
       {/* The assembled pipeline */}
-      <div className="builder-pipeline" aria-label="Your network, in order">
-        <span className="builder-pipeline__head">Input image</span>
-        {pipeline.length === 0 && <span className="builder-pipeline__empty">→ add layers above</span>}
+      <div className="builder-pipeline" aria-label={t('builder.networkAria')}>
+        <span className="builder-pipeline__head">{t('builder.inputImage')}</span>
+        {pipeline.length === 0 && <span className="builder-pipeline__empty">{t('builder.addAbove')}</span>}
         {pipeline.map((id, i) => {
           const t = tileById[id]
           let cls = 'builder-step'
@@ -175,7 +170,7 @@ export default function CNNBuilder({ data, onResult }) {
             </span>
           )
         })}
-        {complete && !submitted && <span className="builder-pipeline__tail">→ prediction</span>}
+        {complete && !submitted && <span className="builder-pipeline__tail">{t('builder.prediction')}</span>}
       </div>
 
       {/* Mistake explainer after submit */}
@@ -189,11 +184,11 @@ export default function CNNBuilder({ data, onResult }) {
       <div className="btn-row btn-row--center">
         {pipeline.length > 0 && !submitted && (
           <button className="btn btn--secondary" type="button" onClick={clear}>
-            <RotateCcw size={15} aria-hidden="true" /> Clear
+            <RotateCcw size={15} aria-hidden="true" /> {t('act.clear')}
           </button>
         )}
         <button className="btn btn--primary" type="button" onClick={check} disabled={!canCheck}>
-          Check answer
+          {t('act.checkAnswer')}
         </button>
       </div>
     </div>

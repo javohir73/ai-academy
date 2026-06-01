@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { ArrowRight, RotateCcw, LayoutGrid } from 'lucide-react'
 import Feedback from './Feedback.jsx'
 import { ACTIVITIES } from './activities/index.js'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * ActivityShell is the consistent wrapper around EVERY challenge. It:
@@ -21,6 +22,7 @@ function starsForAttempts(wrongCount) {
 }
 
 export default function ActivityShell({ activity, onComplete, onNext, onBack }) {
+  const { t } = useLanguage()
   const ActivityComponent = ACTIVITIES[activity.type]
   const [resetKey, setResetKey] = useState(0)
   const [result, setResult] = useState(null) // null | { correct, stars? }
@@ -81,26 +83,26 @@ export default function ActivityShell({ activity, onComplete, onNext, onBack }) 
               <>
                 {onNext ? (
                   <button className="btn btn--primary" onClick={onNext}>
-                    Next lesson <ArrowRight size={18} />
+                    {t('act.nextLesson')} <ArrowRight size={18} />
                   </button>
                 ) : (
                   <button className="btn btn--primary" onClick={onBack}>
-                    <LayoutGrid size={18} /> Back to overview
+                    <LayoutGrid size={18} /> {t('act.backToOverview')}
                   </button>
                 )}
                 {result.stars < 3 && (
                   <button className="btn btn--ghost" onClick={playAgain}>
-                    <RotateCcw size={16} /> Replay for a better score
+                    <RotateCcw size={16} /> {t('act.replay')}
                   </button>
                 )}
               </>
             ) : (
               <>
                 <button className="btn btn--primary" onClick={tryAgain}>
-                  <RotateCcw size={16} /> Try again
+                  <RotateCcw size={16} /> {t('act.tryAgain')}
                 </button>
                 <button className="btn btn--ghost" onClick={onBack}>
-                  Back to overview
+                  {t('act.backToOverview')}
                 </button>
               </>
             )
