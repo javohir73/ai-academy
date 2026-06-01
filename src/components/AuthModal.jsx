@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { X, Mail, Lock, Loader2, GraduationCap, CheckCircle2 } from 'lucide-react'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * AuthModal — a calm, futuristic-light auth dialog. Three modes:
@@ -20,6 +21,7 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
   const [notice, setNotice] = useState('')
   const firstFieldRef = useRef(null)
   const dialogRef = useRef(null)
+  const { t } = useLanguage()
 
   useEffect(() => {
     if (open) {
@@ -44,14 +46,13 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
   function friendlyError(err) {
     const msg = String(err?.message || err || '').toLowerCase()
     if (msg.includes('already registered') || msg.includes('already exists'))
-      return 'That email already has an account — try signing in instead.'
+      return t('auth.error.exists')
     if (msg.includes('invalid login') || msg.includes('invalid credentials'))
-      return 'Email or password looks incorrect. Please try again.'
-    if (msg.includes('password')) return 'Password must be at least 6 characters.'
-    if (msg.includes('not-configured'))
-      return 'Accounts aren’t set up on this deployment yet. Your progress is still saved on this device.'
-    if (msg.includes('email')) return 'Please enter a valid email address.'
-    return 'Something went wrong. Please try again.'
+      return t('auth.error.invalid')
+    if (msg.includes('password')) return t('auth.error.password')
+    if (msg.includes('not-configured')) return t('auth.error.notConfigured')
+    if (msg.includes('email')) return t('auth.error.email')
+    return t('auth.error.generic')
   }
 
   async function submit(e) {
@@ -62,10 +63,10 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
     try {
       if (mode === 'reset') {
         await onReset(email)
-        setNotice('Check your email for a password-reset link.')
+        setNotice(t('auth.notice.reset'))
       } else if (mode === 'signup') {
         await onSignUp(email, password)
-        setNotice('Account created. If email confirmation is on, check your inbox — then sign in.')
+        setNotice(t('auth.notice.signup'))
         setMode('signin')
       } else {
         await onSignIn(email, password)
@@ -79,14 +80,14 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
   }
 
   const titles = {
-    signin: 'Welcome back',
-    signup: 'Create your free account',
-    reset: 'Reset your password',
+    signin: t('auth.title.signin'),
+    signup: t('auth.title.signup'),
+    reset: t('auth.title.reset'),
   }
   const subtitles = {
-    signin: 'Sign in to sync your progress across devices.',
-    signup: 'Save your stars, streak, and progress to the cloud.',
-    reset: 'We’ll email you a secure link to set a new password.',
+    signin: t('auth.sub.signin'),
+    signup: t('auth.sub.signup'),
+    reset: t('auth.sub.reset'),
   }
 
   return (
@@ -101,7 +102,7 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
         aria-label={titles[mode]}
         ref={dialogRef}
       >
-        <button className="auth-modal__close icon-btn" onClick={onClose} aria-label="Close">
+        <button className="auth-modal__close icon-btn" onClick={onClose} aria-label={t('auth.close')}>
           <X size={18} />
         </button>
 
@@ -115,7 +116,7 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
 
         <form onSubmit={submit} className="auth-form">
           <label className="auth-field">
-            <span className="auth-field__label">Email</span>
+            <span className="auth-field__label">{t('auth.field.email')}</span>
             <span className="auth-field__wrap">
               <Mail size={16} aria-hidden="true" />
               <input
@@ -125,14 +126,14 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('auth.placeholder.email')}
               />
             </span>
           </label>
 
           {mode !== 'reset' && (
             <label className="auth-field">
-              <span className="auth-field__label">Password</span>
+              <span className="auth-field__label">{t('auth.field.password')}</span>
               <span className="auth-field__wrap">
                 <Lock size={16} aria-hidden="true" />
                 <input
@@ -142,7 +143,7 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder={t('auth.placeholder.password')}
                 />
               </span>
             </label>
@@ -162,14 +163,14 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
           <button type="submit" className="btn btn--primary btn--block" disabled={busy}>
             {busy ? (
               <>
-                <Loader2 size={16} className="spin" /> Working…
+                <Loader2 size={16} className="spin" /> {t('auth.btn.working')}
               </>
             ) : mode === 'signin' ? (
-              'Sign in'
+              t('auth.btn.signin')
             ) : mode === 'signup' ? (
-              'Create account'
+              t('auth.btn.signup')
             ) : (
-              'Send reset link'
+              t('auth.btn.reset')
             )}
           </button>
         </form>
@@ -178,21 +179,21 @@ export default function AuthModal({ open, initialMode = 'signin', onClose, onSig
           {mode === 'signin' && (
             <>
               <button className="link-btn" onClick={() => setMode('signup')}>
-                Create an account
+                {t('auth.switch.create')}
               </button>
               <button className="link-btn" onClick={() => setMode('reset')}>
-                Forgot password?
+                {t('auth.switch.forgot')}
               </button>
             </>
           )}
           {mode === 'signup' && (
             <button className="link-btn" onClick={() => setMode('signin')}>
-              Already have an account? Sign in
+              {t('auth.switch.haveAccount')}
             </button>
           )}
           {mode === 'reset' && (
             <button className="link-btn" onClick={() => setMode('signin')}>
-              Back to sign in
+              {t('auth.switch.backToSignin')}
             </button>
           )}
         </div>
