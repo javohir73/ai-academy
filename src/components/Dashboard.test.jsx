@@ -1,7 +1,15 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import Dashboard from './Dashboard.jsx'
+import { LanguageProvider } from '../i18n/LanguageProvider.jsx'
 import { LEVELS } from '../data/tracks.js'
+
+// Force the English locale so chrome strings render deterministically regardless
+// of the jsdom navigator — the English-text assertions below depend on it.
+beforeEach(() => {
+  localStorage.clear()
+  localStorage.setItem('ai-academy:lang.v1', 'en')
+})
 
 /* Mirrors useProgress()'s return shape, driven by a { lessonId: stars } map. */
 function mockProgress(completed = {}, streak = { current: 0, longest: 0, activeToday: false }) {
@@ -20,15 +28,17 @@ const noop = () => {}
 
 function renderDash(progress, props = {}) {
   return render(
-    <Dashboard
-      progress={progress}
-      onOpenLevel={props.onOpenLevel ?? noop}
-      onOverview={props.onOverview ?? noop}
-      onHome={props.onHome ?? noop}
-      user={props.user ?? null}
-      configured={props.configured ?? false}
-      syncState={props.syncState ?? 'idle'}
-    />,
+    <LanguageProvider>
+      <Dashboard
+        progress={progress}
+        onOpenLevel={props.onOpenLevel ?? noop}
+        onOverview={props.onOverview ?? noop}
+        onHome={props.onHome ?? noop}
+        user={props.user ?? null}
+        configured={props.configured ?? false}
+        syncState={props.syncState ?? 'idle'}
+      />
+    </LanguageProvider>,
   )
 }
 
