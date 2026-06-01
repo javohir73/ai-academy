@@ -24,4 +24,10 @@ describe('glossary', () => {
   it('bilingual() returns the raw term unchanged when unknown', () => {
     expect(bilingual('not-a-term')).toBe('not-a-term')
   })
+
+  it('Uzbek uses U+2019 (right quote), never U+2018 (left quote)', () => {
+    for (const [term, pair] of Object.entries(GLOSSARY)) {
+      expect(pair.uz.includes('‘'), `${term}.uz contains U+2018`).toBe(false)
+    }
+  })
 })

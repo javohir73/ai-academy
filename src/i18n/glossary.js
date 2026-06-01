@@ -5,8 +5,8 @@
 export const GLOSSARY = {
   features: { en: 'features', uz: 'belgilar' },
   labels: { en: 'labels', uz: 'javoblar' },
-  'training data': { en: 'training data', uz: 'o‘quv ma’lumotlari' },
-  dataset: { en: 'dataset', uz: 'ma’lumotlar to‘plami' },
+  'training data': { en: 'training data', uz: 'o’quv ma’lumotlari' },
+  dataset: { en: 'dataset', uz: 'ma’lumotlar to’plami' },
   model: { en: 'model', uz: 'model' },
   data: { en: 'data', uz: 'ma’lumot' },
   prediction: { en: 'prediction', uz: 'bashorat' },
