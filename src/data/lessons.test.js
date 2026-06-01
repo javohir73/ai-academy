@@ -72,6 +72,60 @@ describe('lesson data integrity', () => {
   })
 })
 
+describe('lesson richness — every lesson has the full I-do → We-do scaffold', () => {
+  // Every lesson (after enrichment is merged in tracks.js) must carry a narrated
+  // worked example and a guided practice, so no lesson jumps straight from the
+  // concept to the activity with no "We do" step. Code lessons author these
+  // inline; concept lessons may receive them from enrichment.js — either way the
+  // composed lesson must have them.
+  it('every lesson has a workedExample with an intro, 3–4 steps, and a takeaway', () => {
+    for (const l of LEVELS) {
+      const we = l.workedExample
+      expect(we, `${l.id} is missing a workedExample`).toBeTruthy()
+      expect(typeof we.intro, `${l.id} workedExample needs an intro`).toBe('string')
+      expect(we.intro.length, `${l.id} workedExample intro is empty`).toBeGreaterThan(0)
+      expect(Array.isArray(we.steps), `${l.id} workedExample needs steps[]`).toBe(true)
+      expect(we.steps.length, `${l.id} workedExample needs at least 3 steps`).toBeGreaterThanOrEqual(3)
+      expect(we.steps.length, `${l.id} workedExample has an unreasonable number of steps`).toBeLessThanOrEqual(6)
+      expect(typeof we.takeaway, `${l.id} workedExample needs a takeaway`).toBe('string')
+      expect(we.takeaway.length, `${l.id} workedExample takeaway is empty`).toBeGreaterThan(0)
+    }
+  })
+
+  it('every lesson has a guided practice with a prompt, 2–3 hints, an answer, and an explanation', () => {
+    for (const l of LEVELS) {
+      const g = l.guided
+      expect(g, `${l.id} is missing a guided practice`).toBeTruthy()
+      expect(typeof g.prompt, `${l.id} guided needs a prompt`).toBe('string')
+      expect(g.prompt.length, `${l.id} guided prompt is empty`).toBeGreaterThan(0)
+      expect(Array.isArray(g.hints), `${l.id} guided needs hints[]`).toBe(true)
+      expect(g.hints.length, `${l.id} guided needs 2–3 hints`).toBeGreaterThanOrEqual(2)
+      expect(g.hints.length, `${l.id} guided has too many hints`).toBeLessThanOrEqual(3)
+      expect(typeof g.answer, `${l.id} guided needs an answer`).toBe('string')
+      expect(g.answer.length, `${l.id} guided answer is empty`).toBeGreaterThan(0)
+      expect(typeof g.explanation, `${l.id} guided needs an explanation`).toBe('string')
+      expect(g.explanation.length, `${l.id} guided explanation is empty`).toBeGreaterThan(0)
+    }
+  })
+
+  it('every goDeeper (when present) has a title and a body', () => {
+    for (const l of LEVELS) {
+      if (!l.goDeeper) continue
+      expect(typeof l.goDeeper.title, `${l.id} goDeeper needs a title`).toBe('string')
+      expect(l.goDeeper.title.length, `${l.id} goDeeper title is empty`).toBeGreaterThan(0)
+      expect(typeof l.goDeeper.body, `${l.id} goDeeper needs a body`).toBe('string')
+      expect(l.goDeeper.body.length, `${l.id} goDeeper body is empty`).toBeGreaterThan(0)
+    }
+  })
+
+  it('enriched concept lessons keep their original activity (enrichment is additive only)', () => {
+    // The enrichment merge must not have altered or removed any activity.
+    for (const l of LEVELS) {
+      expect(l.activity?.type, `${l.id} lost its activity after enrichment merge`).toBeTruthy()
+    }
+  })
+})
+
 describe('Level 4 — Computer Vision', () => {
   const trackIds = TRACKS.map((t) => t.id)
   const l4 = TRACKS.find((t) => t.id === 'level-4')
