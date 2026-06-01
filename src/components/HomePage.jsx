@@ -140,7 +140,7 @@ function levelVars(n) {
 }
 
 /* Premium vertical timeline for the curriculum. A gradient spine threads
-   glowing, color-coded level nodes (L0..L5), one per real track in TRACKS.
+   glowing, color-coded level nodes (L0..L5), one per real track (localized).
    Pure CSS/HTML — no three here. */
 function LearningPath() {
   const { tracks } = useLocalizedTracks()
