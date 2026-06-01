@@ -54,22 +54,54 @@ describe('curriculum.uz — quality', () => {
   })
 })
 
-describe('curriculum.uz — C1 body coverage (L0 + L1)', () => {
-  const C1 = ['what-is-data', 'what-ai', 'ai-ethics']
-  it('each C1 lesson has translated explanation, workedExample, guided, goDeeper, activity', () => {
-    for (const id of C1) {
-      const u = LESSONS_UZ[id]
-      expect(u.explanation, `${id}.explanation`).toBeTruthy()
-      expect(u.example?.text, `${id}.example`).toBeTruthy()
+/*
+ * Body coverage is data-driven: for every lesson whose body is "done" (its
+ * track has been C-translated), assert that each body field the ENGLISH lesson
+ * actually HAS is also present in the uz entry. As each level's body lands, add
+ * its ids to DONE_BODY. This auto-checks explanation/example/workedExample/
+ * guided/goDeeper/video/activity prompt+feedback against the real source shape.
+ */
+const byIdEn = Object.fromEntries(LEVELS.map((l) => [l.id, l]))
+const DONE_BODY = [
+  // L0 + L1 (C1)
+  'what-is-data', 'what-ai', 'ai-ethics',
+  // L2 (C2)
+  'what-ml', 'training-data', 'features-labels', 'classification', 'prediction',
+  'bias', 'overfitting', 'neural-networks', 'code-first-classifier', 'code-metrics-overfitting',
+]
+
+describe('curriculum.uz — body coverage (matches English source shape)', () => {
+  it.each(DONE_BODY)('%s has every body field its English source has', (id) => {
+    const e = byIdEn[id]
+    const u = LESSONS_UZ[id]
+    expect(u, `${id} uz entry`).toBeTruthy()
+    if (e.explanation) expect(u.explanation, `${id}.explanation`).toBeTruthy()
+    if (e.example?.text) expect(u.example?.text, `${id}.example.text`).toBeTruthy()
+    if (e.workedExample) {
       expect(u.workedExample?.intro, `${id}.we.intro`).toBeTruthy()
-      expect(Array.isArray(u.workedExample?.steps) && u.workedExample.steps.length, `${id}.we.steps`).toBeTruthy()
+      expect(u.workedExample?.steps?.length, `${id}.we.steps`).toBe(e.workedExample.steps.length)
       expect(u.workedExample?.takeaway, `${id}.we.takeaway`).toBeTruthy()
+    }
+    if (e.guided) {
       expect(u.guided?.prompt, `${id}.guided.prompt`).toBeTruthy()
-      expect(Array.isArray(u.guided?.hints) && u.guided.hints.length, `${id}.guided.hints`).toBeTruthy()
+      expect(u.guided?.hints?.length, `${id}.guided.hints`).toBe(e.guided.hints.length)
       expect(u.guided?.answer, `${id}.guided.answer`).toBeTruthy()
+      expect(u.guided?.explanation, `${id}.guided.explanation`).toBeTruthy()
+    }
+    if (e.goDeeper) {
+      expect(u.goDeeper?.title, `${id}.goDeeper.title`).toBeTruthy()
       expect(u.goDeeper?.body, `${id}.goDeeper.body`).toBeTruthy()
+    }
+    if (e.video) {
+      expect(u.video?.title, `${id}.video.title`).toBeTruthy()
+      expect(u.video?.description, `${id}.video.description`).toBeTruthy()
+    }
+    if (e.activity) {
       expect(u.activity?.prompt, `${id}.activity.prompt`).toBeTruthy()
-      expect(u.activity?.feedback?.correct, `${id}.activity.feedback`).toBeTruthy()
+      if (e.activity.feedback) {
+        expect(u.activity?.feedback?.correct, `${id}.activity.feedback.correct`).toBeTruthy()
+        expect(u.activity?.feedback?.incorrect, `${id}.activity.feedback.incorrect`).toBeTruthy()
+      }
     }
   })
 })

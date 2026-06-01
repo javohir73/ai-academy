@@ -1,11 +1,15 @@
-/* Uzbek (Latin) translations for curriculum METADATA only — lesson/track titles,
-   lesson concepts, track blurbs + comingSoon. Keyed by STABLE ids. Lesson BODY
-   content (explanation/example/workedExample/guided/goDeeper/activities) is NOT
-   here — that is Phase C. English is the fallback for anything missing.
+/* Uzbek (Latin) translations for the curriculum. Keyed by STABLE ids.
+   - Track metadata (tag/title/blurb/comingSoon) + lesson title/concept: TRACKS_UZ / LESSONS_UZ below.
+   - Lesson title/concept for every level: inline in LESSONS_UZ (Phase B).
+   - Lesson BODY (explanation/example/workedExample/guided/goDeeper/video/activity):
+       L0 + L1 inline below (Phase C1); L2–L5 in per-level body modules
+       (body.l2.uz.js, body.l4.uz.js, body.l5.uz.js, + L3 inline) deep-merged in.
+   English is the fallback for anything missing.
 
    Conventions: natural Latin Uzbek (no Cyrillic), U+2019 (’) for the o’/g’
    modifier and apostrophes. AI/ML terms follow src/i18n/glossary.js. Technical
    tokens (CNN, PyTorch, ResNet, CIFAR-10, GPU, RGB, LLM, …) are kept as-is. */
+import { BODY_L2 } from './body.l2.uz.js'
 
 export const TRACKS_UZ = {
   'level-0': {
@@ -404,6 +408,19 @@ export const LESSONS_UZ = {
     concept: 'To’liq baholash to’plami',
   },
 }
+
+/* Fold the per-level body modules into LESSONS_UZ. Each module supplies body
+   fields (explanation/workedExample/activity/…) for its lessons; we merge them
+   onto the existing { title, concept } entries. A shallow per-id merge is enough
+   because the body modules never set title/concept (those live above). */
+function mergeBody(into, body) {
+  for (const [id, fields] of Object.entries(body)) {
+    into[id] = { ...(into[id] ?? {}), ...fields }
+  }
+  return into
+}
+
+mergeBody(LESSONS_UZ, BODY_L2)
 
 /** Combined map shape consumed by localizeTracks(tracks, locale, CURRICULUM_UZ). */
 export const CURRICULUM_UZ = { tracks: TRACKS_UZ, lessons: LESSONS_UZ }
