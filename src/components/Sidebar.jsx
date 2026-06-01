@@ -1,6 +1,6 @@
 import { GraduationCap, LayoutDashboard, Lock, CheckCircle2, Circle, X, Flame } from 'lucide-react'
-import { TRACKS_WITH_OFFSETS, LEVELS } from '../data/tracks.js'
 import { useLanguage } from '../i18n/useLanguage.js'
+import { useLocalizedTracks } from '../i18n/useLocalizedTracks.js'
 import ProgressBar from './ProgressBar.jsx'
 import Stars from './Stars.jsx'
 
@@ -25,6 +25,7 @@ export default function Sidebar({
   accountSlot,
 }) {
   const { t } = useLanguage()
+  const { tracksWithOffsets, levels } = useLocalizedTracks()
 
   function statusFor(level, index) {
     if (!progress.isUnlocked(index)) return 'locked'
@@ -61,10 +62,10 @@ export default function Sidebar({
         <div className="side-progress__row">
           <span>{t('side.overallProgress')}</span>
           <span>
-            {progress.completedCount}/{LEVELS.length}
+            {progress.completedCount}/{levels.length}
           </span>
         </div>
-        <ProgressBar value={progress.completedCount} max={LEVELS.length} label="Overall course progress" />
+        <ProgressBar value={progress.completedCount} max={levels.length} label="Overall course progress" />
         {progress.streak.current > 0 && (
           <div className="streak" title={`${t('side.longestStreak')} ${progress.streak.longest} day${progress.streak.longest === 1 ? '' : 's'}`}>
             <Flame size={15} aria-hidden="true" />
@@ -104,9 +105,9 @@ export default function Sidebar({
         </span>
       </button>
 
-      {TRACKS_WITH_OFFSETS.map((track, ti) => {
+      {tracksWithOffsets.map((track, ti) => {
         const locked = !progress.isUnlocked(track.levels[0].index)
-        const prevTrack = TRACKS_WITH_OFFSETS[ti - 1]
+        const prevTrack = tracksWithOffsets[ti - 1]
         // Per-level accent index (0..5) parsed from the track tag — presentational only.
         const lvl = Math.min(5, Math.max(0, parseInt(String(track.tag).replace(/\D/g, ''), 10) || ti))
         return (
