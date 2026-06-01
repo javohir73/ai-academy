@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu } from 'lucide-react'
 import { LEVELS } from './data/tracks.js'
+import { useLocalizedTracks } from './i18n/useLocalizedTracks.js'
 import { useProgress } from './hooks/useProgress.js'
 import { useAuth } from './hooks/useAuth.js'
 import Sidebar from './components/Sidebar.jsx'
@@ -28,6 +29,7 @@ import { hasSavedLanguage } from './i18n/LanguageProvider.jsx'
 export default function App() {
   const auth = useAuth()
   const progress = useProgress(auth.user)
+  const { levels: localizedLevels } = useLocalizedTracks()
   const [view, setView] = useState('home') // 'home' | 'dashboard' | 'overview' | 'lesson'
   const [levelIndex, setLevelIndex] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -251,9 +253,9 @@ export default function App() {
             <Overview progress={progress} currentIndex={currentIndex} onOpenLevel={openLevel} />
           ) : (
             <LevelView
-              level={LEVELS[levelIndex]}
+              level={localizedLevels[levelIndex]}
               levelIndex={levelIndex}
-              totalLevels={LEVELS.length}
+              totalLevels={localizedLevels.length}
               onComplete={progress.completeLevel}
               onBack={goOverview}
               onNext={isLastLevel ? null : () => openLevel(levelIndex + 1)}
