@@ -21,6 +21,11 @@ export const UI = {
     'nav.closeMenu': 'Close menu',
     'nav.home': 'Go to AI Academy home',
 
+    // home page chrome (nav + hero CTAs)
+    'home.nav.curriculum': 'Curriculum',
+    'home.cta.start': 'Start learning',
+    'home.cta.explore': 'Explore curriculum',
+
     // sidebar
     'side.overallProgress': 'Overall progress',
     'side.streak.suffix': 'streak',
@@ -116,6 +121,11 @@ export const UI = {
     'nav.openMenu': 'Kurs menyusini ochish',
     'nav.closeMenu': 'Menyuni yopish',
     'nav.home': 'AI Academy bosh sahifasiga o’tish',
+
+    // home page chrome (nav + hero CTAs)
+    'home.nav.curriculum': 'Kurs dasturi',
+    'home.cta.start': 'O’rganishni boshlash',
+    'home.cta.explore': 'Kursni ko’rib chiqish',
 
     // sidebar
     'side.overallProgress': 'Umumiy progress',
