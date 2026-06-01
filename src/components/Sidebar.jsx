@@ -1,5 +1,6 @@
 import { GraduationCap, LayoutDashboard, Lock, CheckCircle2, Circle, X, Flame } from 'lucide-react'
 import { TRACKS_WITH_OFFSETS, LEVELS } from '../data/tracks.js'
+import { useLanguage } from '../i18n/useLanguage.js'
 import ProgressBar from './ProgressBar.jsx'
 import Stars from './Stars.jsx'
 
@@ -23,6 +24,8 @@ export default function Sidebar({
   onClose,
   accountSlot,
 }) {
+  const { t } = useLanguage()
+
   function statusFor(level, index) {
     if (!progress.isUnlocked(index)) return 'locked'
     if (progress.completed[level.id]) return 'done'
@@ -37,16 +40,16 @@ export default function Sidebar({
       aria-label="Course navigation"
     >
       <div className="brand">
-        <button className="brand__home" onClick={onHome} aria-label="Go to AI Academy home">
+        <button className="brand__home" onClick={onHome} aria-label={t('nav.home')}>
           <span className="brand__mark" aria-hidden="true">
             <GraduationCap size={20} />
           </span>
-          <span>AI Academy</span>
+          <span>{t('nav.brand')}</span>
         </button>
         <button
           className="icon-btn"
           onClick={onClose}
-          aria-label="Close menu"
+          aria-label={t('nav.closeMenu')}
           style={{ marginLeft: 'auto', width: 34, height: 34 }}
           data-mobile-only
         >
@@ -56,7 +59,7 @@ export default function Sidebar({
 
       <div className="side-progress">
         <div className="side-progress__row">
-          <span>Overall progress</span>
+          <span>{t('side.overallProgress')}</span>
           <span>
             {progress.completedCount}/{LEVELS.length}
           </span>
@@ -66,9 +69,9 @@ export default function Sidebar({
           <div className="streak" title={`Longest streak: ${progress.streak.longest} day${progress.streak.longest === 1 ? '' : 's'}`}>
             <Flame size={15} aria-hidden="true" />
             <span>
-              <strong>{progress.streak.current}-day</strong> streak
+              <strong>{progress.streak.current}-day</strong> {t('side.streak.suffix')}
             </span>
-            {!progress.streak.activeToday && <span className="streak__hint">— finish a lesson to keep it</span>}
+            {!progress.streak.activeToday && <span className="streak__hint">{t('side.streak.keep')}</span>}
           </div>
         )}
         {accountSlot && <div className="side-account">{accountSlot}</div>}
@@ -83,7 +86,7 @@ export default function Sidebar({
             <LayoutDashboard size={18} />
           </span>
           <span className="nav__body">
-            <span className="nav__title">Dashboard</span>
+            <span className="nav__title">{t('nav.dashboard')}</span>
           </span>
         </button>
       )}
@@ -97,7 +100,7 @@ export default function Sidebar({
           <GraduationCap size={18} />
         </span>
         <span className="nav__body">
-          <span className="nav__title">Course overview</span>
+          <span className="nav__title">{t('nav.overview')}</span>
         </span>
       </button>
 
@@ -169,7 +172,7 @@ export default function Sidebar({
             </ul>
             {locked && prevTrack && (
               <p className="track-locked">
-                <Lock size={13} /> Unlocks after {prevTrack.tag}
+                <Lock size={13} /> {t('side.unlocksAfter')} {prevTrack.tag}
               </p>
             )}
           </nav>
