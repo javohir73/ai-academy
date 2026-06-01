@@ -1,6 +1,6 @@
 import { ArrowRight, ChevronRight, Lock, Trophy } from 'lucide-react'
-import { TRACKS_WITH_OFFSETS, LEVELS } from '../data/tracks.js'
 import { useLanguage } from '../i18n/useLanguage.js'
+import { useLocalizedTracks } from '../i18n/useLocalizedTracks.js'
 import { iconForLevel } from './levelIcons.js'
 import Stars from './Stars.jsx'
 
@@ -11,7 +11,8 @@ import Stars from './Stars.jsx'
  */
 export default function Overview({ progress, currentIndex, onOpenLevel }) {
   const { t } = useLanguage()
-  const total = LEVELS.length
+  const { tracksWithOffsets, levels } = useLocalizedTracks()
+  const total = levels.length
   const done = progress.completedCount
   const allDone = done === total
   const started = done > 0
@@ -42,9 +43,9 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
         </div>
       </header>
 
-      {TRACKS_WITH_OFFSETS.map((track, ti) => {
+      {tracksWithOffsets.map((track, ti) => {
         const trackLocked = !progress.isUnlocked(track.levels[0].index)
-        const prevTrack = TRACKS_WITH_OFFSETS[ti - 1]
+        const prevTrack = tracksWithOffsets[ti - 1]
         // Per-level accent index (0..5) parsed from the track tag ("Level 3" -> 3),
         // clamped to the 6 defined --lvl-* color slots. Purely presentational.
         const lvl = Math.min(5, Math.max(0, parseInt(String(track.tag).replace(/\D/g, ''), 10) || ti))
