@@ -16,7 +16,9 @@ import {
   Sprout,
 } from 'lucide-react'
 import Hero3D from './Hero3D.jsx'
-import { TRACKS, LEVELS } from '../data/tracks.js'
+import LanguageSwitcher from './LanguageSwitcher.jsx'
+import { useLanguage } from '../i18n/useLanguage.js'
+import { useLocalizedTracks } from '../i18n/useLocalizedTracks.js'
 
 /*
  * HomePage — the marketing / landing screen shown before the course. It is the
@@ -138,12 +140,13 @@ function levelVars(n) {
 }
 
 /* Premium vertical timeline for the curriculum. A gradient spine threads
-   glowing, color-coded level nodes (L0..L5), one per real track in TRACKS.
+   glowing, color-coded level nodes (L0..L5), one per real track (localized).
    Pure CSS/HTML — no three here. */
 function LearningPath() {
-  const steps = TRACKS.map((track) => ({
+  const { tracks } = useLocalizedTracks()
+  const steps = tracks.map((track) => ({
     id: track.id,
-    num: Number(track.tag.replace('Level ', '')),
+    num: Number(String(track.tag).replace(/\D/g, '')),
     title: track.title,
     blurb: track.blurb,
     pro: track.pro,
@@ -209,12 +212,14 @@ function StatsStrip({ lessonCount }) {
 }
 
 export default function HomePage({ onStart, onExplore, accountSlot }) {
-  const lessonCount = LEVELS.length
+  const { t } = useLanguage()
+  const { levels } = useLocalizedTracks()
+  const lessonCount = levels.length
 
   return (
     <div className="home">
       {/* Top nav */}
-      <nav className="home__nav" aria-label="Home">
+      <nav className="home__nav" aria-label={t('home.nav.aria')}>
         <span className="brand">
           <span className="brand__mark" aria-hidden="true">
             <GraduationCap size={20} />
@@ -223,11 +228,12 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
         </span>
         <span className="home__nav-spacer" />
         <button className="btn btn--ghost home__nav-curriculum" onClick={onExplore}>
-          Curriculum
+          {t('home.nav.curriculum')}
         </button>
+        <LanguageSwitcher />
         {accountSlot}
         <button className="btn btn--primary" onClick={onStart}>
-          Start learning <ArrowRight size={18} />
+          {t('home.cta.start')} <ArrowRight size={18} />
         </button>
       </nav>
 
@@ -248,10 +254,10 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
           </p>
           <div className="btn-row hero-x__cta">
             <button className="btn btn--primary btn--lg" onClick={onStart}>
-              Start learning <ArrowRight size={20} />
+              {t('home.cta.start')} <ArrowRight size={20} />
             </button>
             <button className="btn btn--secondary btn--lg" onClick={onExplore}>
-              <Compass size={20} /> Explore curriculum
+              <Compass size={20} /> {t('home.cta.explore')}
             </button>
           </div>
         </div>
@@ -312,7 +318,7 @@ export default function HomePage({ onStart, onExplore, accountSlot }) {
           </h2>
           <p>Jump in — the first lesson is a two-minute win, and everything saves as you go.</p>
           <button className="btn btn--primary btn--lg" onClick={onStart}>
-            <Rocket size={20} /> Start learning
+            <Rocket size={20} /> {t('home.cta.start')}
           </button>
         </div>
       </section>

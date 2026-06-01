@@ -47,7 +47,7 @@ On first mount, `LanguageProvider` resolves the initial locale with pure
 **First-visit modal visibility is driven by a *separate* check:** the modal shows
 when `localStorage['ai-academy:lang.v1']` is **absent**, independent of the resolved
 locale. So a browser-detected Uzbek user sees the UI in Uzbek *and* is still asked to
-confirm English / O‘zbekcha. Once a choice is persisted, the modal never returns.
+confirm English / O’zbekcha. Once a choice is persisted, the modal never returns.
 
 **Storage resilience:**
 - If `localStorage` read throws/unavailable → treat as "no saved preference"
@@ -177,8 +177,8 @@ glossary is the single source so later phases stay consistent.
 |---|---|
 | features | belgilar |
 | labels | javoblar |
-| training data | o‘quv ma’lumotlari |
-| dataset | ma’lumotlar to‘plami |
+| training data | o’quv ma’lumotlari |
+| dataset | ma’lumotlar to’plami |
 | model | model |
 | data | ma’lumot |
 | prediction | bashorat |
@@ -212,7 +212,7 @@ before each phase merges.
   - localStorage write throws → locale updates in memory, no throw to user.
   - localStorage read throws → provider mounts at detected/`en`, no crash.
 - `LanguageModal.test.jsx`: shows when no saved pref; hidden when pref exists; picking
-  English / O‘zbekcha calls `setLocale` + closes; dismissible (never blocks) when
+  English / O’zbekcha calls `setLocale` + closes; dismissible (never blocks) when
   storage unavailable; doesn't touch auth or progress; **a11y**: `role="dialog"`,
   `aria-modal="true"`, headline-labelled, both buttons have clear accessible names.
 - `LanguageSwitcher.test.jsx`: renders EN/UZ; reflects active locale
@@ -230,7 +230,7 @@ stay green — proving Phase A is additive and progress/content are untouched.
 2. `npm test` — all new + existing green.
 3. `npm run build` — succeeds.
 4. **Browser smoke (Chrome DevTools MCP):** first-visit modal appears → pick
-   O‘zbekcha → chrome renders Uzbek (content English, by design); toggle switcher
+   O’zbekcha → chrome renders Uzbek (content English, by design); toggle switcher
    EN↔UZ live (no reload); open a lesson, switch, same lesson stays; mobile 390px —
    switcher compact, no overflow, modal usable; reload → preference persisted, no
    modal; auth modal + dashboard still work; console clean.

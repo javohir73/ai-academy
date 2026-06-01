@@ -16,6 +16,7 @@ import GuidedPractice from './GuidedPractice.jsx'
 import GoDeeper from './GoDeeper.jsx'
 import SpacedReview from './SpacedReview.jsx'
 import { iconForLevel } from './levelIcons.js'
+import { useLanguage } from '../i18n/useLanguage.js'
 import { TRACKS } from '../data/tracks.js'
 
 /*
@@ -48,9 +49,9 @@ const LEVEL_COLOR_INDEX = (() => {
  */
 
 const PHASE_META = {
-  learn: { doing: 'I do', title: 'Learn', Icon: BookOpen },
-  guided: { doing: 'We do', title: 'Practice together', Icon: Users },
-  practice: { doing: 'You do', title: 'Mastery check', Icon: Target },
+  learn: { doingKey: 'lesson.phase.learn.doing', titleKey: 'lesson.phase.learn.title', Icon: BookOpen },
+  guided: { doingKey: 'lesson.phase.guided.doing', titleKey: 'lesson.phase.guided.title', Icon: Users },
+  practice: { doingKey: 'lesson.phase.practice.doing', titleKey: 'lesson.phase.practice.title', Icon: Target },
 }
 
 export default function LevelView({
@@ -61,6 +62,7 @@ export default function LevelView({
   onBack,
   onNext,
 }) {
+  const { t } = useLanguage()
   const Icon = iconForLevel(level.id)
 
   // Build the phase list for THIS lesson (skip We-do if there's no guided data).
@@ -79,9 +81,9 @@ export default function LevelView({
   const nextPhase = phases[phaseIndex + 1]
   const continueLabel =
     nextPhase === 'guided'
-      ? 'Practice it together'
+      ? t('lesson.cta.guided')
       : nextPhase === 'practice'
-      ? 'Try the challenge yourself'
+      ? t('lesson.cta.practice')
       : null
 
   // Per-level accent for lesson chrome (icon, step, labels). Reading text stays
@@ -95,7 +97,7 @@ export default function LevelView({
       style={{ '--lvl-accent': `var(--lvl-${lvl})`, '--lvl-grad': `var(--lvl-${lvl}-grad)`, '--lvl-soft': `var(--lvl-${lvl}-soft)` }}
     >
       <button className="back-link" onClick={onBack}>
-        <ChevronLeft size={18} /> Course overview
+        <ChevronLeft size={18} /> {t('lesson.back')}
       </button>
 
       <header className="lesson-head">
@@ -104,7 +106,7 @@ export default function LevelView({
         </span>
         <div>
           <div className="lesson-head__crumb">
-            Lesson {levelIndex + 1} of {totalLevels}
+            {t('lesson.crumb')} {levelIndex + 1} {t('lesson.of')} {totalLevels}
           </div>
           <h1>{level.title}</h1>
           <div className="lesson-head__concept">{level.concept}</div>
@@ -112,7 +114,7 @@ export default function LevelView({
       </header>
 
       {/* Phase stepper — the gradual-release path through the lesson. */}
-      <nav className="phase-steps" aria-label="Lesson steps">
+      <nav className="phase-steps" aria-label={t('lesson.steps')}>
         {phases.map((p, i) => {
           const meta = PHASE_META[p]
           const StepIcon = meta.Icon
@@ -128,8 +130,8 @@ export default function LevelView({
                 <StepIcon size={16} />
               </span>
               <span className="phase-step__text">
-                <span className="phase-step__doing">{meta.doing}</span>
-                <span className="phase-step__title">{meta.title}</span>
+                <span className="phase-step__doing">{t(meta.doingKey)}</span>
+                <span className="phase-step__title">{t(meta.titleKey)}</span>
               </span>
             </button>
           )
@@ -141,15 +143,15 @@ export default function LevelView({
         <>
           {level.spacedReview && <SpacedReview data={level.spacedReview} />}
 
-          <section className="section" aria-label="Concept">
-            <div className="section__label">Concept</div>
+          <section className="section" aria-label={t('lesson.section.concept')}>
+            <div className="section__label">{t('lesson.section.concept')}</div>
             <p className="concept-text">{level.explanation}</p>
           </section>
 
           {level.video && (
-            <section className="section" aria-label="Watch">
+            <section className="section" aria-label={t('lesson.section.watch')}>
               <div className="section__label">
-                <PlayCircle size={15} /> Watch
+                <PlayCircle size={15} /> {t('lesson.section.watch')}
               </div>
               <VideoCard
                 title={level.video.title}
@@ -160,9 +162,9 @@ export default function LevelView({
             </section>
           )}
 
-          <section className="section" aria-label="Everyday example">
+          <section className="section" aria-label={t('lesson.section.everyday')}>
             <div className="section__label">
-              <Lightbulb size={15} /> Everyday example
+              <Lightbulb size={15} /> {t('lesson.section.everyday')}
             </div>
             <div className="callout">
               <Lightbulb className="callout__icon" size={20} aria-hidden="true" />
@@ -171,9 +173,9 @@ export default function LevelView({
           </section>
 
           {level.workedExample && (
-            <section className="section" aria-label="Worked example">
+            <section className="section" aria-label={t('lesson.section.worked')}>
               <div className="section__label">
-                <BookOpen size={15} /> Worked example
+                <BookOpen size={15} /> {t('lesson.section.worked')}
               </div>
               <WorkedExample data={level.workedExample} />
             </section>
@@ -185,20 +187,20 @@ export default function LevelView({
 
       {/* ---------------------------- WE DO --------------------------- */}
       {phase === 'guided' && (
-        <section className="section" aria-label="Practice together">
+        <section className="section" aria-label={t('lesson.phase.guided.title')}>
           <div className="section__label">
-            <Users size={15} /> Practice together
+            <Users size={15} /> {t('lesson.phase.guided.title')}
           </div>
-          <p className="prompt">Let's work through one step by step. Reach for a hint whenever you're stuck.</p>
+          <p className="prompt">{t('lesson.guided.lead')}</p>
           <GuidedPractice data={level.guided} />
         </section>
       )}
 
       {/* --------------------------- YOU DO --------------------------- */}
       {phase === 'practice' && (
-        <section className="section" aria-label="Mastery check">
+        <section className="section" aria-label={t('lesson.phase.practice.title')}>
           <div className="section__label">
-            <ListChecks size={15} /> Mastery check
+            <ListChecks size={15} /> {t('lesson.phase.practice.title')}
           </div>
           <p className="prompt">{level.activity.prompt}</p>
           <ActivityShell

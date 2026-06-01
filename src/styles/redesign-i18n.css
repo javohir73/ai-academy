@@ -1,0 +1,93 @@
+/* src/styles/redesign-i18n.css */
+/* Language switcher — compact segmented control. */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--surface-2, rgba(0, 0, 0, 0.08));
+  border-radius: var(--r-pill, 999px);
+  background: var(--surface, rgba(255, 255, 255, 0.6));
+}
+.lang-switch__icon {
+  margin: 0 4px 0 6px;
+  opacity: 0.65;
+}
+.lang-switch__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--r-pill, 999px);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-2, #555);
+  line-height: 1;
+}
+.lang-switch__opt--active {
+  background: var(--accent, #6366f1);
+  color: #fff;
+}
+.lang-switch__full {
+  display: none; /* show the long label only where there's room */
+}
+@media (min-width: 1024px) {
+  .lang-switch__full {
+    display: inline;
+  }
+}
+/* On narrow screens, the globe + EN/UZ codes stay compact (no overflow). */
+@media (max-width: 480px) {
+  .lang-switch__icon {
+    margin: 0 2px 0 4px;
+  }
+  .lang-switch__opt {
+    padding: 4px 8px;
+  }
+}
+
+/* First-visit language modal. */
+.lang-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: var(--s4, 16px);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+}
+.lang-modal {
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  padding: var(--s6, 28px) var(--s5, 22px);
+  border-radius: var(--r-lg, 18px);
+}
+.lang-modal__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--s3, 12px);
+  border-radius: 50%;
+  background: var(--accent-soft, rgba(99, 102, 241, 0.12));
+  color: var(--accent, #6366f1);
+}
+.lang-modal__title {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+}
+.lang-modal__sub {
+  margin: 0 0 var(--s5, 20px);
+  color: var(--text-2, #555);
+  font-size: 0.9rem;
+}
+.lang-modal__choices {
+  display: grid;
+  gap: var(--s3, 12px);
+}

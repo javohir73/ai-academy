@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu } from 'lucide-react'
 import { LEVELS } from './data/tracks.js'
+import { useLocalizedTracks } from './i18n/useLocalizedTracks.js'
 import { useProgress } from './hooks/useProgress.js'
 import { useAuth } from './hooks/useAuth.js'
 import Sidebar from './components/Sidebar.jsx'
@@ -11,6 +12,9 @@ import HomePage from './components/HomePage.jsx'
 import AuthModal from './components/AuthModal.jsx'
 import AccountMenu from './components/AccountMenu.jsx'
 import AccountPrompt from './components/AccountPrompt.jsx'
+import LanguageSwitcher from './components/LanguageSwitcher.jsx'
+import LanguageModal from './components/LanguageModal.jsx'
+import { hasSavedLanguage } from './i18n/LanguageProvider.jsx'
 
 /*
  * App is the layout shell. It has three views, tracked in `view`:
@@ -25,11 +29,14 @@ import AccountPrompt from './components/AccountPrompt.jsx'
 export default function App() {
   const auth = useAuth()
   const progress = useProgress(auth.user)
+  const { levels: localizedLevels } = useLocalizedTracks()
   const [view, setView] = useState('home') // 'home' | 'dashboard' | 'overview' | 'lesson'
   const [levelIndex, setLevelIndex] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
   const [authMode, setAuthMode] = useState('signin')
+  // First-visit language modal: shown only when no language preference is saved.
+  const [langModalOpen, setLangModalOpen] = useState(() => !hasSavedLanguage())
 
   const menuBtnRef = useRef(null)
   const sidebarRef = useRef(null)
@@ -123,6 +130,7 @@ export default function App() {
   // every view, so they overlay Home and the course alike.
   const authChrome = (
     <>
+      <LanguageModal open={langModalOpen} onClose={() => setLangModalOpen(false)} />
       <AuthModal
         open={authOpen}
         initialMode={authMode}
@@ -226,6 +234,7 @@ export default function App() {
             Dashboard
           </button>
           <span className="topbar__spacer" />
+          <LanguageSwitcher className="topbar__lang" />
           {accountMenu}
         </div>
 
@@ -244,9 +253,9 @@ export default function App() {
             <Overview progress={progress} currentIndex={currentIndex} onOpenLevel={openLevel} />
           ) : (
             <LevelView
-              level={LEVELS[levelIndex]}
+              level={localizedLevels[levelIndex]}
               levelIndex={levelIndex}
-              totalLevels={LEVELS.length}
+              totalLevels={localizedLevels.length}
               onComplete={progress.completeLevel}
               onBack={goOverview}
               onNext={isLastLevel ? null : () => openLevel(levelIndex + 1)}
