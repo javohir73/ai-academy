@@ -51,14 +51,218 @@ export const LESSONS_UZ = {
   'what-is-data': {
     title: 'Ma’lumot nima?',
     concept: 'Satrlar, ustunlar va nega modellarga misollar kerak',
+    explanation:
+      'Model o’rganadigan hamma narsa — bu ma’lumot: misollar jadvali, unda har bir satr bitta narsa, har bir ustun esa u haqidagi bitta fakt. Har qanday mashinaviy o’qitishdan oldin sizga aynan shunday tartibga solingan yaxshi misollar kerak.',
+    example: {
+      text: 'Uylar jadvali — har bir uy uchun bitta satr, maydoni, xonalar soni va narxi uchun ustunlar — bu ma’lumotlar to’plami (dataset). Model qonuniyatlarni o’rganish uchun shu satrlarni o’rganadi.',
+    },
+    workedExample: {
+      intro:
+        'Yaxshi ma’lumotlar to’plamining sinovi: bu MISOLLARning toza jadvalimi, unda har bir satr bitta element va har bir ustun bitta o’lchanadigan faktmi? Bir nechtasini qanday baholashimni kuzating.',
+      steps: [
+        'Spam / spam-emas deb belgilangan elektron xatlar jadvali: har bir satr — bitta xat, bitta ustun — belgi (javob). Toza misollar — o’rganish uchun ajoyib.',
+        'Bitta uzun matn paragrafi: satr ham, ustun ham yo’q, solishtirishga hech narsa yo’q. Bu hali ma’lumotlar to’plami emas — avval tuzilma kerak.',
+        'Surfatlar “mushuk” va “it” papkalariga ajratilgan: har bir rasm — misol, papka esa uning javobi (belgisi). Bu ma’lumotlar to’plami BO’LADI.',
+      ],
+      takeaway:
+        'Ma’lumotlar to’plami — bu misollar jadvali: satrlar — elementlar, ustunlar — faktlar, ko’pincha bitta ustun esa javob (belgi).',
+    },
+    guided: {
+      prompt:
+        'Bulardan qaysi biri o’rganishga tayyor?\n\nA) 1 000 ta mijoz sharhi, har biri ijobiy yoki salbiy deb belgilangan\nB) Bitta uzun, belgilanmagan insho',
+      hints: [
+        'O’rganish uchun ko’plab solishtiriladigan MISOLLAR kerak, eng yaxshisi — har biri nima ekanini aytuvchi belgi bilan.',
+        'A — bu ming dona belgilangan misol; B — bu tuzilmasiz bitta matn bo’lagi.',
+      ],
+      answer: 'A — belgilangan sharhlar.',
+      explanation:
+        'A — bu model qonuniyatlarni o’rgana oladigan, belgilangan misollarning tuzilgan to’plami. B esa tuzilmasiz va belgilanmagan, shuning uchun hozircha o’rganadigan narsa yo’q.',
+    },
+    goDeeper: {
+      title: 'Nega “axlat kirsa, axlat chiqadi” shu yerdan boshlanadi',
+      body:
+        'Model faqat o’z misollari darajasida yaxshi bo’la oladi. Noxolis, noto’g’ri belgilangan yoki juda kam satrlar — hech qanday algoritm qutqara olmaydigan zaif modelni beradi. Shuning uchun haqiqiy ML ishi vaqtining ko’pini modellarga emas, ma’lumotga sarflaydi — bu mavzuga har bir darajada yana duch kelasiz.',
+    },
+    video: {
+      title: 'Ma’lumot, satrlar va ustunlar',
+      description: 'Ma’lumotlar to’plami nima va misollar o’rganishga yetarli darajada yaxshi bo’lishi uchun nima kerak.',
+    },
+    activity: {
+      prompt: 'Jamoa uy narxlarini bashorat qilmoqchi. Buni haqiqatan ham o’rgata oladigan ma’lumotlar to’plamini tanlang.',
+      data: {
+        options: {
+          good: {
+            title: 'O’tgan uy sotuvlari',
+            sample: '5 000 ta sotilgan uy: maydoni, xonalar soni, joylashuvi va yakuniy sotuv narxi bilan.',
+            why: 'Ko’plab misollar, javob (sotuv narxi) bilan birga — aynan nazoratli o’qitishga kerak bo’lgan narsa.',
+          },
+          'no-label': {
+            title: 'Narxsiz uylar',
+            sample: '5 000 ta uy: maydoni va joylashuvi bor — lekin narx ustuni bo’sh.',
+            why: 'Narx ustunisiz o’rganadigan javob yo’q.',
+          },
+          tiny: {
+            title: 'Uchta uy',
+            sample: 'Atigi 3 ta uy: to’liq ma’lumot va narxlari bilan.',
+            why: 'Uchta satr ishonchli qonuniyatni o’rganish uchun juda kam.',
+          },
+        },
+      },
+      feedback: {
+        correct:
+          'To’g’ri — ko’plab belgilangan misollar (narx ham bor) narxni bashorat qilishni o’rgansa bo’ladigan qiladi. Har doim avval yaxshi ma’lumot.',
+        incorrect:
+          'Yana qarang: sizga bashorat qilmoqchi bo’lgan javobni (sotuv narxini) o’z ichiga olgan KO’P misollar kerak.',
+      },
+    },
   },
   'what-ai': {
     title: 'Sun’iy intellekt nima?',
     concept: 'Aqlli vazifalarni bajaradigan mashinalar',
+    explanation:
+      'Sun’iy intellekt (AI) — bu kompyuter odatda inson aqlini talab qiladigan ishlarni bajarishi: tilni tushunish, rasmlarni tanish yoki tanlov qilish kabi. Bu sehr emas va u tirik ham emas. Bu juda qobiliyatli dastur.',
+    example: {
+      text: 'Telefoningiz yuzingizga qarab ochilganda — bu AI sizni taniyapti. Sonlarni qo’shadigan cho’ntak kalkulyatori esa shunchaki odam yozgan qat’iy qadamlarga amal qiladi — shuning uchun u AI emas.',
+    },
+    workedExample: {
+      intro:
+        'Biror narsa AI hisoblanadimi-yo’qmi, qanday hal qilishimni kuzating. Men doim beradigan bitta sinov: u misollardan O’RGANDIMI, yoki shunchaki odam yozgan qat’iy qadamlarga AMAL QILADIMI?',
+      steps: [
+        'Yuz bilan ochishni olaylik. U vaqt o’tishi bilan sizni tanishda yaxshilanadi, yangi burchak va yorug’likka moslashadi. U aniq misollardan o’rgangan — shuning uchun men buni AI deyman.',
+        'Endi cho’ntak kalkulyatori. “2 + 2” har doim odam dasturlagan aynan o’sha qadamlarni bajaradi. Hech narsa o’rganilmagan. Demak, bu AI emas.',
+        'Murakkabrog’i: spam filtri. Hech kim har bir keraksiz xat uchun qoida yozmagan — u minglab xabarlarni o’rganib, qonuniyatlarni o’zi topdi. Misollardan o’rgangan, demak bu AI.',
+      ],
+      takeaway: 'Sinov: u misollardan O’RGANDIMI (AI) yoki shunchaki qat’iy qadamlarga AMAL QILADIMI (AI emas)?',
+    },
+    guided: {
+      prompt:
+        'To’liq to’plamni sinab ko’rishdan oldin bittasini birga qilaylik. Bu AImi yoki yo’qmi?\n\n“Siz yozayotganda gapingizni tugatadigan elektron pochta avtomatik to’ldirishi.”',
+      hints: [
+        'Sinovimizdan boshlang — u odam yozgan qat’iy qoidaga amal qiladimi, yoki qonuniyatlardan biror narsani o’zi aniqlaydimi?',
+        'Avtomatik to’ldirish keyingi so’zlaringizni ilgari ko’rgan juda katta hajmdagi matnga tayanib taklif qiladi. Bu misollardan o’rganishga juda o’xshaydi.',
+        'Spam filtrini eslang: u minglab xatlardan o’rgandi. Avtomatik to’ldirish milliardlab gaplardan o’rgandi — bu xuddi o’sha g’oya, qo’lda yozilgan qoida emas.',
+      ],
+      answer: 'Bu AI.',
+      explanation:
+        'Avtomatik to’ldirish juda katta hajmdagi matndan qonuniyatlarni o’rganadi, so’ng eng ehtimolli keyingi so’zlarni bashorat qiladi. Misollardan qonuniyatlarni o’rganish — bu mashinaviy o’qitish, ya’ni AIning bir turi.',
+    },
+    goDeeper: {
+      title: '“Mashinaviy o’qitish” qayerga to’g’ri keladi?',
+      body:
+        'AI — bu katta soyabon: inson kabi aql talab qiladigan vazifalarni bajaradigan har qanday dastur. Mashinaviy o’qitish (ML) — bugun AI qurishning eng keng tarqalgan usuli: qoidalarni qo’lda yozish o’rniga, dasturga misollardan qonuniyatlarni o’rgatamiz. Demak, har bir ML tizimi AI, lekin ba’zi eski uslubdagi AIlar (qo’lda yozilgan qoida tizimlari) ML emas. Bu trekning qolgan qismi aslida mashinaviy o’qitish haqida.',
+    },
+    video: {
+      title: 'Nima AI hisoblanadi?',
+      description: 'Yuz bilan ochishdan tavsiyalargacha — kundalik AIning ikki daqiqalik sayohati, va nima shunchaki oddiy dastur ekani.',
+    },
+    activity: {
+      prompt: 'Har bir kartani AI yoki AI emas guruhiga torting — yoki kartani bosib, so’ng guruhni bosing.',
+      data: {
+        buckets: { ai: 'AI', not: 'AI emas' },
+        tokens: {
+          t1: 'Telefonda yuz bilan ochish',
+          t2: 'Keraksiz xatlarni ilg’ovchi spam filtri',
+          t3: 'Cho’ntak kalkulyatori',
+          t4: 'Savollarga javob beruvchi ovozli yordamchi',
+          t5: 'Lampochkani yoqadigan yorug’lik kaliti',
+          t6: 'Sizga yoqishi mumkin bo’lgan ko’rsatuvni taklif qiluvchi xizmat',
+        },
+      },
+      feedback: {
+        correct:
+          'Aynan. AI mulohaza talab qiladigan vazifalarni bajaradi — tanish, tushunish va tanlash. Oddiy mashinalar esa shunchaki qat’iy qadamlarga amal qiladi.',
+        incorrect:
+          'Unchalik emas. AI o’rganadi yoki aqlli tanlov qiladi. Kalkulyator va yorug’lik kaliti faqat odam o’rnatgan qat’iy qadamlarga amal qiladi.',
+      },
+    },
   },
   'ai-ethics': {
     title: 'Hayotdagi AI etikasi',
     concept: 'AI’dan mas’uliyat bilan foydalanish',
+    explanation:
+      'AI kuchli, shuning uchun undan adolatli va mas’uliyat bilan foydalanish kerak. Yaxshi AI etikasi — bu kimga foyda yoki zarar bo’lishi mumkinligini o’ylash, AI xato qilishi mumkinligini tan olish, odamlarning maxfiyligini himoya qilish va muhim qarorlarda odamni nazoratda saqlash.',
+    example: {
+      text: 'Kasalxona rentgen tasvirlarida kasallikni aniqlashda AIdan yordam olmoqchi. Bu foydali — lekin natijani har doim shifokor ko’rib chiqishi kerak, chunki noto’g’ri xulosa kimgadir zarar yetkazishi mumkin.',
+    },
+    video: {
+      title: 'AI’dan mas’uliyat bilan foydalanish',
+      description: 'Adolat, maxfiylik, xatolarda halollik va katta qarorlarda odamni nazoratda saqlash.',
+    },
+    workedExample: {
+      intro:
+        'Haqiqiy AI taklifini qanday baholashimni ko’rib chiqaylik — u kimga ta’sir qilishi va kim nazoratda qolishi haqida ovoz chiqarib o’ylab.',
+      steps: [
+        'Bank AI kredit arizalarini mustaqil tasdiqlash yoki rad etishni xohlaydi. Avval so’rayman: kimga ta’sir qiladi va xato bo’lsa qanchalik yomon? Noto’g’ri rad etilgan kredit insonning hayotini o’zgartirishi mumkin — bu yuqori xavf.',
+        'Keyin so’rayman: AI noxolis bo’lishi mumkinmi? Agar u o’tmishdagi bir guruhni afzal ko’rgan qarorlardan o’rgangan bo’lsa, boshqacha ko’rinadigan odamlarga qarshi shu noxolislikni jimgina takrorlashi mumkin.',
+        'So’ng so’rayman: muhim qaror hali ham odam zimmasidami? AI yakuniy rad etishlarni yolg’iz yuborishiga ruxsat berish inson nazoratini olib tashlaydi.',
+        'Demak, mas’uliyatli yechim: AI arizalarni belgilab, saralasin, lekin kredit bo’yicha mutaxassis har bir rad etishni yakuniy bo’lishidan oldin ko’rib chiqsin — va bank AIni noxolis qonuniyatlar uchun tekshirsin.',
+      ],
+      takeaway:
+        'AI’dan mas’uliyatli foydalanish to’rtta odatga keladi: kimga foyda yoki zarar bo’lishini o’ylash, noxolislikni kuzatish, odamlarning maxfiyligini himoya qilish va haqiqatan muhim qarorlarda odamni nazoratda saqlash.',
+    },
+    guided: {
+      prompt:
+        'Bittasini birga mulohaza qilaylik. Ishga olish jamoasi AI ish izlovchilarni avtomatik rad etib, rad etish xatlarini yuborishini xohlaydi — hech bir tanlovchi qaramasdan. Qilinadigan eng mas’uliyatli bitta o’zgarish nima?',
+      hints: [
+        'Xavf haqida o’ylang. Rad etilgan ish arizasi haqiqiy inson uchun muhim qaror.',
+        'Muammo AI arizalarni saralashga yordam berishida emas — muammo shundaki, hech bir odam yakuniy qarorni ko’rib chiqmaydi.',
+        'Yechim AIni yordamchi sifatida saqlaydi, lekin muhim qarorni yana odam zimmasiga qaytaradi.',
+      ],
+      answer:
+        'AI nomzodlarni saralasin yoki ro’yxat tuzsin, lekin har qanday rad etish yuborilishidan oldin tanlovchi qarorlarni ko’rib chiqsin.',
+      explanation:
+        'AI arizalarni tez saralash va ko’rsatish bilan yordam berishi mumkin, lekin ishga olish qarori yuqori xavfli va model xato yoki noxolis bo’lishi mumkin. Yakuniy qarorni odam zimmasida saqlash — va noxolis qonuniyatlarni ushlash imkoni — mas’uliyatli tanlov. Vositani butunlay taqiqlash foydali yordamchini tashlab yuboradi; uni yolg’iz harakat qilishiga ruxsat berish esa inson nazoratini olib tashlaydi.',
+    },
+    goDeeper: {
+      title: 'Noxolislik “neytral” ma’lumot ichida yashirinishi mumkin',
+      body:
+        'Tizim hech kim shuni xohlamagan bo’lsa ham noxolis bo’lishi mumkin. Agar u o’rgangan misollar allaqachon nomutanosib o’tmishni aks ettirsa — masalan, ilgari asosan bir xil odamlar ishga olingan bo’lsa — model shu qonuniyatni “xolis” baho qiyofasida shunchaki takrorlashi mumkin. Shuning uchun mas’uliyatli jamoalar natijaga shunchaki ishonmaydi; ular tizimni turli guruhlarda sinaydi, kamchiliklarni izlaydi va odamlar hayotiga ta’sir qiluvchi qarorlarni odam ko’rib chiqishini saqlaydi.',
+    },
+    activity: {
+      prompt: 'Har bir hayotiy vaziyat uchun eng mas’uliyatli harakatni tanlang, so’ng qarorlaringizni tekshiring.',
+      data: {
+        scenarios: {
+          s1: {
+            situation:
+              'Maktab AI insholarni baholab, yakuniy baholarni o’quvchilarga elektron pochta orqali yuborishini xohlaydi — hech bir o’qituvchi ko’rib chiqmasdan.',
+            options: {
+              a: {
+                text: 'AI baholasin va yakuniy baholarni avtomatik yuborsin.',
+                why: 'AI xato qilishi va ma’noni o’tkazib yuborishi mumkin. Baho kabi muhim qarorni odam ko’rib chiqishi kerak.',
+              },
+              b: {
+                text: 'AI baho taklif qilsin, lekin u hisobga olinishidan oldin o’qituvchi ko’rib chiqsin.',
+                why: 'Muhim qaror odam zimmasida qoladi. AI yordam beradi; odamlar qaror qiladi.',
+              },
+              c: {
+                text: 'Maktabdagi barcha kompyuterlarni butunlay taqiqlash.',
+                why: 'AI foydali vosita bo’lishi mumkin. Maqsad — undan mas’uliyat bilan foydalanish, butunlay taqiqlash emas.',
+              },
+            },
+          },
+          s2: {
+            situation:
+              'Ilova chatbotini foydalanuvchilarning shaxsiy xabarlarida — ularga aytmasdan — o’qitmoqchi.',
+            options: {
+              a: {
+                text: 'Shaxsiy xabarlardan jimgina foydalanish — bu botni yaxshilaydi.',
+                why: 'Bu odamlarning maxfiyligi va ishonchini buzadi. Odamlar avval bilishi va rozi bo’lishi kerak.',
+              },
+              b: {
+                text: 'Avval foydalanuvchilardan ruxsat so’rash va rad etishga imkon berish.',
+                why: 'Maxfiylikni hurmat qilish va rozilik so’rash — AIdan mas’uliyatli foydalanish.',
+              },
+            },
+          },
+        },
+      },
+      feedback: {
+        correct:
+          'To’g’ri qarorlar. Mas’uliyatli AI muhim tanlovlarda odamni nazoratda saqlaydi va odamlarning maxfiyligini hurmat qiladi.',
+        incorrect:
+          'Adolat, halollik va maxfiylikni tarozida o’lchang. Eng mas’uliyatli tanlov odatda odamni nazoratda saqlaydi va odamlarning huquqlarini hurmat qiladi.',
+      },
+    },
   },
   'what-ml': {
     title: 'Mashinaviy o’qitish nima?',
