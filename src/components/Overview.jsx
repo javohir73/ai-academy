@@ -1,5 +1,6 @@
 import { ArrowRight, ChevronRight, Lock, Trophy } from 'lucide-react'
 import { TRACKS_WITH_OFFSETS, LEVELS } from '../data/tracks.js'
+import { useLanguage } from '../i18n/useLanguage.js'
 import { iconForLevel } from './levelIcons.js'
 import Stars from './Stars.jsx'
 
@@ -9,6 +10,7 @@ import Stars from './Stars.jsx'
  * cards with lock / progress state.
  */
 export default function Overview({ progress, currentIndex, onOpenLevel }) {
+  const { t } = useLanguage()
   const total = LEVELS.length
   const done = progress.completedCount
   const allDone = done === total
@@ -18,26 +20,23 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
   return (
     <div>
       <header className="hero">
-        <p className="eyebrow">Self-paced course</p>
-        <h1>Learn AI &amp; Machine Learning by doing</h1>
+        <p className="eyebrow">{t('overview.eyebrow')}</p>
+        <h1>{t('overview.title')}</h1>
         <p className="lead">
-          A hands-on course of {total} interactive lessons — from the fundamentals of AI, through
-          how machine learning works (with real Python you run in the browser), to evaluating AI
-          models responsibly. Each lesson pairs a plain-English idea with something you actually do.
+          {t('overview.lead.pre')}{total}{t('overview.lead.post')}
         </p>
         <p className="muted" style={{ marginTop: 'var(--s2)' }}>
-          Levels 0 through 5 of the AI Academy curriculum — foundations, machine learning, search,
-          computer vision, and AI evaluation. Code lessons (badged{' '}
-          <span className="code-badge">Code</span>) start at Level 2.
+          {t('overview.curriculumNote.pre')}{' '}
+          <span className="code-badge">Code</span>{t('overview.curriculumNote.post')}
         </p>
         <div className="btn-row" style={{ marginTop: 'var(--s5)' }}>
           {allDone ? (
             <button className="btn btn--primary" onClick={() => onOpenLevel(0)}>
-              <Trophy size={18} /> Review from the start
+              <Trophy size={18} /> {t('overview.cta.review')}
             </button>
           ) : (
             <button className="btn btn--primary" onClick={() => onOpenLevel(ctaIndex)}>
-              {started ? 'Continue learning' : 'Start the course'} <ArrowRight size={18} />
+              {started ? t('overview.cta.continue') : t('overview.cta.start')} <ArrowRight size={18} />
             </button>
           )}
         </div>
@@ -64,7 +63,7 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
               )}
               {trackLocked && prevTrack && (
                 <p className="track-locked track-locked--inline">
-                  <Lock size={14} /> Complete {prevTrack.tag} to unlock these lessons
+                  <Lock size={14} /> {t('overview.unlock.pre')}{prevTrack.tag}{t('overview.unlock.post')}
                 </p>
               )}
             </div>
@@ -92,9 +91,11 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
                     onClick={() => onOpenLevel(index)}
                     aria-label={
                       locked
-                        ? `${level.title}. Locked — complete the previous lesson to unlock.`
+                        ? `${level.title}. ${t('overview.aria.locked')}`
                         : `${level.title}. ${
-                            completed ? `Completed, ${progress.starsFor(level.id)} of 3 stars.` : 'Open lesson.'
+                            completed
+                              ? `${t('overview.aria.completedPre')}${progress.starsFor(level.id)}${t('overview.aria.completedPost')}`
+                              : t('overview.aria.open')
                           }`
                     }
                   >
@@ -102,7 +103,7 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
                       {locked ? <Lock size={20} /> : <Icon size={22} />}
                     </span>
                     <span className="module-card__body">
-                      <span className="module-card__index">Lesson {index + 1}</span>
+                      <span className="module-card__index">{t('lesson.crumb')} {index + 1}</span>
                       <span className="module-card__title">
                         {level.title}
                         {level.kind === 'code' && <span className="code-badge">Code</span>}

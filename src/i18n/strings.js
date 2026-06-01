@@ -33,6 +33,23 @@ export const UI = {
     'side.streak.keep': '— finish a lesson to keep it',
     'side.unlocksAfter': 'Unlocks after',
 
+    // course overview page chrome
+    'overview.eyebrow': 'Self-paced course',
+    'overview.title': 'Learn AI & Machine Learning by doing',
+    'overview.lead.pre': 'A hands-on course of ',
+    'overview.lead.post': ' interactive lessons — from the fundamentals of AI, through how machine learning works (with real Python you run in the browser), to evaluating AI models responsibly. Each lesson pairs a plain-English idea with something you actually do.',
+    'overview.curriculumNote.pre': 'Levels 0 through 5 of the AI Academy curriculum — foundations, machine learning, search, computer vision, and AI evaluation. Code lessons (badged',
+    'overview.curriculumNote.post': ') start at Level 2.',
+    'overview.cta.review': 'Review from the start',
+    'overview.cta.continue': 'Continue learning',
+    'overview.cta.start': 'Start the course',
+    'overview.unlock.pre': 'Complete ',
+    'overview.unlock.post': ' to unlock these lessons',
+    'overview.aria.locked': 'Locked — complete the previous lesson to unlock.',
+    'overview.aria.completedPre': 'Completed, ',
+    'overview.aria.completedPost': ' of 3 stars.',
+    'overview.aria.open': 'Open lesson.',
+
     // lesson chrome (LevelView)
     'lesson.crumb': 'Lesson',
     'lesson.of': 'of',
@@ -134,6 +151,23 @@ export const UI = {
     'side.streak.suffix': 'kunlik seriya',
     'side.streak.keep': '— uni saqlash uchun darsni yakunlang',
     'side.unlocksAfter': 'Quyidagidan keyin ochiladi:',
+
+    // course overview page chrome
+    'overview.eyebrow': 'Mustaqil o’rganish kursi',
+    'overview.title': 'AI va mashinaviy o’qitishni amaliyot orqali o’rganing',
+    'overview.lead.pre': 'Amaliy kurs — ',
+    'overview.lead.post': ' ta interaktiv darsdan iborat: AI asoslaridan tortib, mashinaviy o’qitish qanday ishlashigacha (brauzerda haqiqiy Python ishga tushirib), AI modellarini mas’uliyatli baholashgacha. Har bir dars sodda tushuntirishni siz amalda bajaradigan narsa bilan birlashtiradi.',
+    'overview.curriculumNote.pre': 'AI Academy dasturining 0 dan 5 gacha bo’lgan darajalari — asoslar, mashinaviy o’qitish, qidiruv, kompyuter ko’rishi va AI baholash. Kod darslari (',
+    'overview.curriculumNote.post': ' bilan belgilangan) 2-darajadan boshlanadi.',
+    'overview.cta.review': 'Boshidan ko’rib chiqish',
+    'overview.cta.continue': 'O’rganishni davom ettirish',
+    'overview.cta.start': 'Kursni boshlash',
+    'overview.unlock.pre': 'Ushbu darslarni ochish uchun ',
+    'overview.unlock.post': ' ni yakunlang',
+    'overview.aria.locked': 'Qulflangan — ochish uchun oldingi darsni yakunlang.',
+    'overview.aria.completedPre': 'Yakunlangan, 3 tadan ',
+    'overview.aria.completedPost': ' ta yulduz.',
+    'overview.aria.open': 'Darsni ochish.',
 
     // lesson chrome (LevelView)
     'lesson.crumb': 'Dars',
