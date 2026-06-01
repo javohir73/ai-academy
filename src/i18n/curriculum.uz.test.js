@@ -68,6 +68,15 @@ const DONE_BODY = [
   // L2 (C2)
   'what-ml', 'training-data', 'features-labels', 'classification', 'prediction',
   'bias', 'overfitting', 'neural-networks', 'code-first-classifier', 'code-metrics-overfitting',
+  // L3 (C3)
+  'code-bfs-maze',
+  // L4 — Computer Vision (C3)
+  'cv-pixels', 'cv-conv-by-hand', 'cv-why-fc-fails', 'cv-conv-layer', 'cv-pooling',
+  'cv-build-cnn', 'cv-feature-maps', 'cv-architectures', 'cv-residual', 'cv-transfer',
+  'cv-augmentation', 'cv-detect-segment', 'cv-failures', 'cv-adversarial', 'cv-project',
+  // L5 — LLM evaluation (C3)
+  'eval-intro', 'eval-rubrics', 'eval-rating', 'eval-ranking', 'eval-hallucination',
+  'eval-hhh', 'eval-rewrite', 'eval-capstone',
 ]
 
 describe('curriculum.uz — body coverage (matches English source shape)', () => {

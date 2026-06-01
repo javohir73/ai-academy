@@ -10,6 +10,8 @@
    modifier and apostrophes. AI/ML terms follow src/i18n/glossary.js. Technical
    tokens (CNN, PyTorch, ResNet, CIFAR-10, GPU, RGB, LLM, …) are kept as-is. */
 import { BODY_L2 } from './body.l2.uz.js'
+import { BODY_L4 } from './body.l4.uz.js'
+import { BODY_L5 } from './body.l5.uz.js'
 
 export const TRACKS_UZ = {
   'level-0': {
@@ -314,6 +316,59 @@ export const LESSONS_UZ = {
   'code-bfs-maze': {
     title: 'Labirintni qidiruv bilan yeching',
     concept: 'Kenglik bo’yicha qidiruv (BFS) bilan eng qisqa yo’lni toping — sof Python',
+    explanation:
+      'Tarmoq o’rgana olishidan oldin, agent qidira olishi kerak. Kenglik bo’yicha qidiruv (BFS) labirintni daraja-darajasi bo’yicha o’rganadi, shuning uchun u maqsadga birinchi marta yetganda ENG QISQA yo’lni topgan bo’ladi. Siz qidiruv siklini to’ldirasiz.',
+    example: {
+      text: 'Asosiy g’oyaga qaytsak: L1’da model qidiradigan qaror qabul qiluvchi edi. BFS — bu g’oyaning koddagi ko’rinishi: maqsadga yetguncha variantlarni tizimli sinab ko’rish, avval eng qisqa yo’l.',
+    },
+    workedExample: {
+      intro:
+        'BFS navbatdan (queue, FIFO — birinchi kirgan birinchi chiqadi) foydalanadi. Aynan FIFO tartibi eng qisqa yo’lni kafolatlaydi: 2 qadam naridagi hech narsaga o’tishdan oldin 1 qadam naridagi hammasini tugatamiz.',
+      steps: [
+        'Boshlang’ich katakni navbatga qo’ying va uni ko’rilgan deb belgilang.',
+        'Navbat boshidagi katakni oling; agar u maqsad bo’lsa, yo’lni qayta tiklang. Aks holda uning ko’rilmagan qo’shnilarini navbat OXIRIGA qo’shing.',
+        'Biz har doim eng yaqin kataklarni birinchi kengaytirganimiz uchun, maqsadga eng qisqa yo’l orqali yetiladi.',
+      ],
+      takeaway: 'BFS’ga shunchaki biror yo’lni emas, balki eng qisqa yo’lni toptiradigan narsa — bu FIFO navbati.',
+    },
+    guided: {
+      prompt:
+        'Nega BFS ENG QISQA yo’lni topadi, chuqurlik bo’yicha qidiruv (DFS) esa topmasligi mumkin?',
+      hints: [
+        'Har biri qidiradigan TARTIB haqida o’ylang: BFS bir tekis yoyiladi, DFS esa avval bitta shox bo’ylab chuqur sho’ng’iydi.',
+        'BFS avval 1 masofadagi barcha kataklarni, so’ng 2 masofadagilarni va hokazoni tugatadi — shuning uchun maqsadga uning haqiqiy minimal masofasida birinchi marta yetiladi.',
+      ],
+      answer: 'Chunki BFS masofa tartibida qidiradi (FIFO navbat), shuning uchun maqsadga avval eng qisqa yo’l orqali yetadi.',
+      explanation:
+        'BFS boshlanishga yaqin tugunlarni uzoqroqlardan oldin kengaytiradi, shuning uchun maqsadga birinchi marta yetganda eng kam qadam ishlatgan bo’ladi. DFS esa uzun shox bo’ylab sho’ng’ib, avval uzunroq yo’lni topishi mumkin.',
+    },
+    goDeeper: {
+      title: 'BFS, Dijkstra va A* taqqoslamasi',
+      body:
+        'Har bir qadam bir xil narx tursa, BFS eng qisqa yo’lni topadi. Qadamlar turli narxga ega bo’lsa, sizga Dijkstra kerak (umumiy narx bo’yicha ustuvor navbat). A* esa qidiruvni maqsad tomon yo’naltiradigan evristika qo’shadi va kamroq tugun kengaytiradi. Ularning hammasi bir xil skelet — kengaytiriladigan kataklar chegarasi — faqat aqlliroq tartiblash bilan.',
+    },
+    video: {
+      title: 'Kenglik bo’yicha qidiruv, ko’rgazmali',
+      description: 'Nega FIFO navbati vaznsiz labirintda eng qisqa yo’lni kafolatlaydi.',
+    },
+    activity: {
+      prompt:
+        'BFS siklini to’ldiring: har bir ko’rilmagan qo’shnini navbatga qo’shing va unga qanday yetganingizni yozib boring, shunda funksiya S’dan G’gacha eng qisqa yo’lni qaytaradi.',
+      feedback: {
+        correct:
+          'Agentingiz labirintni qidirib, eng qisqa yo’lni topdi — BFS to’g’ri bajarildi. O’sha “kengaytiriladigan kataklar chegarasi” skeleti aynan Dijkstra va A* tayanadigan skelet.',
+        incorrect:
+          'Unchalik emas. Faqat KO’RILMAGAN qo’shnilarni navbatga qo’shing va har biriga qanday yetganingizni yozib boring, shunda yo’lni qayta tiklay olasiz. Maslahatni o’qing.',
+      },
+      data: {
+        // Python code (starter/tests) stays English; only the prose hints are translated.
+        hints: [
+          'Qo’shnilar siklida: `if nb not in came_from:` deb tekshiring, shunda kataklarni qayta ko’rmaysiz.',
+          'Qo’shni yangi bo’lsa, came_from[nb] = cur va queue.append(nb) qiling.',
+          'To’liq tana: `if nb not in came_from: came_from[nb] = cur; queue.append(nb)`. FIFO tartibi eng qisqa yo’lni beradi.',
+        ],
+      },
+    },
   },
   'cv-pixels': {
     title: 'Tasvirlar — shunchaki sonlar to’ri',
@@ -421,6 +476,8 @@ function mergeBody(into, body) {
 }
 
 mergeBody(LESSONS_UZ, BODY_L2)
+mergeBody(LESSONS_UZ, BODY_L4)
+mergeBody(LESSONS_UZ, BODY_L5)
 
 /** Combined map shape consumed by localizeTracks(tracks, locale, CURRICULUM_UZ). */
 export const CURRICULUM_UZ = { tracks: TRACKS_UZ, lessons: LESSONS_UZ }
