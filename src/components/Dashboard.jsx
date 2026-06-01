@@ -14,6 +14,7 @@ import {
   GraduationCap,
 } from 'lucide-react'
 import { buildDashboardModel } from '../data/dashboardModel.js'
+import { useLanguage } from '../i18n/useLanguage.js'
 import { iconForLevel } from './levelIcons.js'
 import Stars from './Stars.jsx'
 
@@ -45,6 +46,7 @@ export default function Dashboard({
   onOverview,
   onHome,
 }) {
+  const { t } = useLanguage()
   const m = buildDashboardModel(progress)
 
   return (
@@ -52,14 +54,14 @@ export default function Dashboard({
       {/* ---- Header ------------------------------------------------------- */}
       <header className="dash__head">
         <div>
-          <p className="eyebrow">Your dashboard</p>
+          <p className="eyebrow">{t('dash.eyebrow')}</p>
           <h1 className="dash__title">
-            {m.hasProgress ? 'Welcome back' : 'Welcome to AI Academy'}
+            {m.hasProgress ? t('dash.welcome.back') : t('dash.welcome.new')}
           </h1>
           <p className="dash__sub">
             {m.hasProgress
-              ? `You’ve completed ${m.counts.completed} of ${m.counts.total} lessons — keep the momentum going.`
-              : 'Your learning home. Start the first lesson and your progress will appear here.'}
+              ? `${t('dash.sub.progressPre')}${m.counts.completed}${t('dash.sub.progressMid')}${m.counts.total}${t('dash.sub.progressPost')}`
+              : t('dash.sub.new')}
           </p>
         </div>
         <AccountLine user={user} configured={configured} syncState={syncState} />
@@ -70,20 +72,20 @@ export default function Dashboard({
         <button
           className="dash-continue"
           onClick={() => onOpenLevel(m.continueLesson.index)}
-          aria-label={`${m.continueLesson.isStart ? 'Start' : 'Continue'}: ${m.continueLesson.title}`}
+          aria-label={`${m.continueLesson.isStart ? t('dash.continue.startShort') : t('dash.continue.continueShort')}: ${m.continueLesson.title}`}
         >
           <span className="dash-continue__icon" aria-hidden="true">
             <Play size={26} />
           </span>
           <span className="dash-continue__body">
             <span className="dash-continue__eyebrow">
-              {m.continueLesson.isStart ? 'Start learning' : 'Continue learning'} ·{' '}
+              {m.continueLesson.isStart ? t('dash.continue.start') : t('dash.continue.continue')} ·{' '}
               {m.continueLesson.levelTag}
             </span>
             <span className="dash-continue__title">{m.continueLesson.title}</span>
             {m.hasProgress && (
               <span className="dash-continue__meta">
-                {m.currentLevel.tag}: {m.currentLevel.completed}/{m.currentLevel.total} lessons ·{' '}
+                {m.currentLevel.tag}: {m.currentLevel.completed}/{m.currentLevel.total} {t('dash.lessons')} ·{' '}
                 {m.currentLevel.percent}%
               </span>
             )}
@@ -98,41 +100,41 @@ export default function Dashboard({
             <Trophy size={26} />
           </span>
           <span className="dash-continue__body">
-            <span className="dash-continue__eyebrow">Course complete</span>
-            <span className="dash-continue__title">You’ve finished every lesson — incredible work.</span>
-            <span className="dash-continue__meta">Revisit any level below to sharpen low-star topics.</span>
+            <span className="dash-continue__eyebrow">{t('dash.complete.eyebrow')}</span>
+            <span className="dash-continue__title">{t('dash.complete.title')}</span>
+            <span className="dash-continue__meta">{t('dash.complete.meta')}</span>
           </span>
         </div>
       )}
 
       {/* ---- Stat tiles --------------------------------------------------- */}
-      <section className="dash-stats" aria-label="Your stats">
+      <section className="dash-stats" aria-label={t('dash.stats.aria')}>
         <StatTile
           Icon={CheckCircle2}
-          label="Lessons completed"
+          label={t('dash.stat.lessonsCompleted')}
           value={`${m.counts.completed}`}
-          sub={`of ${m.counts.total} · ${m.counts.percent}%`}
+          sub={`${t('dash.stat.of')}${m.counts.total} · ${m.counts.percent}%`}
           accent="emerald"
         />
         <StatTile
           Icon={Star}
-          label="Stars earned (XP)"
+          label={t('dash.stat.starsEarned')}
           value={`${m.xp.stars}`}
-          sub={`of ${m.xp.maxStars} · ${m.xp.percent}%`}
+          sub={`${t('dash.stat.of')}${m.xp.maxStars} · ${m.xp.percent}%`}
           accent="amber"
         />
         <StatTile
           Icon={Flame}
-          label="Current streak"
+          label={t('dash.stat.currentStreak')}
           value={`${m.streak.current}`}
-          sub={m.streak.activeToday ? 'active today' : m.streak.current > 0 ? 'keep it alive' : 'start today'}
+          sub={m.streak.activeToday ? t('dash.stat.activeToday') : m.streak.current > 0 ? t('dash.stat.keepAlive') : t('dash.stat.startToday')}
           accent="orange"
         />
         <StatTile
           Icon={Trophy}
-          label="Longest streak"
+          label={t('dash.stat.longestStreak')}
           value={`${m.streak.longest}`}
-          sub={m.streak.longest === 1 ? 'day' : 'days'}
+          sub={m.streak.longest === 1 ? t('dash.stat.day') : t('dash.stat.days')}
           accent="violet"
         />
       </section>
@@ -140,9 +142,9 @@ export default function Dashboard({
       {/* ---- Two-column: recommended + review ---------------------------- */}
       <div className="dash-cols">
         {/* Recommended next */}
-        <section className="dash-card" aria-label="Recommended next lesson">
+        <section className="dash-card" aria-label={t('dash.recommended.aria')}>
           <h2 className="dash-card__title">
-            <Sparkles size={18} aria-hidden="true" /> Recommended next
+            <Sparkles size={18} aria-hidden="true" /> {t('dash.recommended.title')}
           </h2>
           {m.recommended ? (
             <button className="dash-rec" onClick={() => onOpenLevel(m.recommended.index)}>
@@ -156,28 +158,28 @@ export default function Dashboard({
               <ChevronRight size={20} aria-hidden="true" />
             </button>
           ) : (
-            <p className="dash-empty">Nothing left to recommend — you’ve completed the course. 🎓</p>
+            <p className="dash-empty">{t('dash.recommended.empty')}</p>
           )}
         </section>
 
         {/* Review topics (low-star) */}
-        <section className="dash-card" aria-label="Topics to review">
+        <section className="dash-card" aria-label={t('dash.review.aria')}>
           <h2 className="dash-card__title">
-            <RotateCcw size={18} aria-hidden="true" /> Topics to review
+            <RotateCcw size={18} aria-hidden="true" /> {t('dash.review.title')}
           </h2>
           {m.reviewTopics.length > 0 ? (
             <ul className="dash-list">
-              {m.reviewTopics.map((t) => (
-                <li key={t.id}>
-                  <button className="dash-list__row" onClick={() => onOpenLevel(t.index)}>
+              {m.reviewTopics.map((rt) => (
+                <li key={rt.id}>
+                  <button className="dash-list__row" onClick={() => onOpenLevel(rt.index)}>
                     <span className="dash-list__icon" aria-hidden="true">
-                      <LevelIcon id={t.id} />
+                      <LevelIcon id={rt.id} />
                     </span>
                     <span className="dash-list__text">
-                      <span className="dash-list__tag">{t.levelTag}</span>
-                      <span className="dash-list__title">{t.title}</span>
+                      <span className="dash-list__tag">{rt.levelTag}</span>
+                      <span className="dash-list__title">{rt.title}</span>
                     </span>
-                    <Stars value={t.stars} size={14} />
+                    <Stars value={rt.stars} size={14} />
                   </button>
                 </li>
               ))}
@@ -185,8 +187,8 @@ export default function Dashboard({
           ) : (
             <p className="dash-empty">
               {m.hasProgress
-                ? 'No weak spots yet — every completed lesson is 3 stars. Nice.'
-                : 'As you complete lessons, any that score below 3 stars show up here to revisit.'}
+                ? t('dash.review.emptyDone')
+                : t('dash.review.emptyNew')}
             </p>
           )}
         </section>
@@ -194,9 +196,9 @@ export default function Dashboard({
 
       {/* ---- Recently completed ------------------------------------------ */}
       {m.recentLessons.length > 0 && (
-        <section className="dash-card" aria-label="Recently completed">
+        <section className="dash-card" aria-label={t('dash.recent.aria')}>
           <h2 className="dash-card__title">
-            <CheckCircle2 size={18} aria-hidden="true" /> Recently completed
+            <CheckCircle2 size={18} aria-hidden="true" /> {t('dash.recent.title')}
           </h2>
           <ul className="dash-recent">
             {m.recentLessons.map((r) => (
@@ -216,13 +218,13 @@ export default function Dashboard({
       )}
 
       {/* ---- Level progress cards (L0–L5) -------------------------------- */}
-      <section className="dash-levels" aria-label="Level progress">
+      <section className="dash-levels" aria-label={t('dash.path.aria')}>
         <div className="dash-levels__head">
           <h2 className="dash-card__title">
-            <GraduationCap size={18} aria-hidden="true" /> Your path
+            <GraduationCap size={18} aria-hidden="true" /> {t('dash.path.title')}
           </h2>
           <button className="dash-link" onClick={onOverview}>
-            Full course overview <ArrowRight size={15} aria-hidden="true" />
+            {t('dash.path.fullOverview')} <ArrowRight size={15} aria-hidden="true" />
           </button>
         </div>
         <div className="dash-levels__grid">
@@ -235,10 +237,10 @@ export default function Dashboard({
       {/* ---- Footer CTA -------------------------------------------------- */}
       <div className="dash-foot">
         <button className="btn btn--secondary" onClick={onHome}>
-          Back to home
+          {t('dash.foot.home')}
         </button>
         <button className="btn btn--primary" onClick={onOverview}>
-          Browse all lessons <ArrowRight size={18} aria-hidden="true" />
+          {t('dash.foot.browse')} <ArrowRight size={18} aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -266,6 +268,7 @@ function StatTile({ Icon, label, value, sub, accent }) {
 }
 
 function LevelCard({ lv, onOpen }) {
+  const { t } = useLanguage()
   const locked = lv.state === 'locked'
   const done = lv.state === 'done'
   return (
@@ -275,8 +278,8 @@ function LevelCard({ lv, onOpen }) {
       disabled={locked}
       aria-label={
         locked
-          ? `${lv.tag}: ${lv.title}. Locked — finish the previous level to unlock.`
-          : `${lv.tag}: ${lv.title}. ${lv.completed} of ${lv.total} lessons done.`
+          ? `${lv.tag}: ${lv.title}. ${t('dash.level.ariaLocked')}`
+          : `${lv.tag}: ${lv.title}. ${lv.completed}${t('dash.level.ariaProgressMid')}${lv.total}${t('dash.level.ariaProgressPost')}`
       }
     >
       <div className="dash-level__top">
@@ -293,39 +296,40 @@ function LevelCard({ lv, onOpen }) {
         <span className="dash-level__fill" style={{ width: `${lv.percent}%` }} />
       </div>
       <span className="dash-level__meta">
-        {lv.completed}/{lv.total} lessons · {lv.stars}/{lv.maxStars} ★
+        {lv.completed}/{lv.total} {t('dash.lessons')} · {lv.stars}/{lv.maxStars} ★
       </span>
     </button>
   )
 }
 
 function AccountLine({ user, configured, syncState }) {
+  const { t } = useLanguage()
   // Subtle, non-intrusive account/sync indicator.
   if (!configured) {
     return (
-      <span className="dash-account" title="Progress is saved on this device">
-        <CloudOff size={15} aria-hidden="true" /> Saved on this device
+      <span className="dash-account" title={t('dash.account.deviceTitle')}>
+        <CloudOff size={15} aria-hidden="true" /> {t('account.savedOnDevice')}
       </span>
     )
   }
   if (user) {
     const label =
       syncState === 'saved'
-        ? 'Synced to your account'
+        ? t('dash.account.synced')
         : syncState === 'syncing'
-          ? 'Syncing…'
+          ? t('sync.syncing')
           : syncState === 'error'
-            ? 'Sync error — saved locally'
-            : 'Synced to your account'
+            ? t('dash.account.syncError')
+            : t('dash.account.synced')
     return (
-      <span className="dash-account dash-account--in" title={user.email || 'Signed in'}>
+      <span className="dash-account dash-account--in" title={user.email || t('dash.account.signedIn')}>
         <Cloud size={15} aria-hidden="true" /> {label}
       </span>
     )
   }
   return (
-    <span className="dash-account" title="Sign in to sync across devices">
-      <CloudOff size={15} aria-hidden="true" /> Saved on this device
+    <span className="dash-account" title={t('dash.account.signinTitle')}>
+      <CloudOff size={15} aria-hidden="true" /> {t('account.savedOnDevice')}
     </span>
   )
 }
