@@ -20,6 +20,7 @@ export const UI = {
     'nav.openMenu': 'Open course menu',
     'nav.closeMenu': 'Close menu',
     'nav.home': 'Go to AI Academy home',
+    'nav.courseNav': 'Course navigation',
 
     // home page chrome (nav + hero CTAs)
     'home.nav.aria': 'Home',
@@ -31,6 +32,7 @@ export const UI = {
     'side.overallProgress': 'Overall progress',
     'side.streak.suffix': 'streak',
     'side.streak.keep': '— finish a lesson to keep it',
+    'side.longestStreak': 'Longest streak:',
     'side.unlocksAfter': 'Unlocks after',
 
     // course overview page chrome
@@ -104,6 +106,7 @@ export const UI = {
     'lesson.crumb': 'Lesson',
     'lesson.of': 'of',
     'lesson.back': 'Course overview',
+    'lesson.steps': 'Lesson steps',
     'lesson.phase.learn.doing': 'I do',
     'lesson.phase.learn.title': 'Learn',
     'lesson.phase.guided.doing': 'We do',
@@ -189,6 +192,7 @@ export const UI = {
     'nav.openMenu': 'Kurs menyusini ochish',
     'nav.closeMenu': 'Menyuni yopish',
     'nav.home': 'AI Academy bosh sahifasiga o’tish',
+    'nav.courseNav': 'Kurs navigatsiyasi',
 
     // home page chrome (nav + hero CTAs)
     'home.nav.aria': 'Bosh sahifa',
@@ -200,6 +204,7 @@ export const UI = {
     'side.overallProgress': 'Umumiy progress',
     'side.streak.suffix': 'kunlik seriya',
     'side.streak.keep': '— uni saqlash uchun darsni yakunlang',
+    'side.longestStreak': 'Eng uzoq seriya:',
     'side.unlocksAfter': 'Quyidagidan keyin ochiladi:',
 
     // course overview page chrome
@@ -273,6 +278,7 @@ export const UI = {
     'lesson.crumb': 'Dars',
     'lesson.of': '/',
     'lesson.back': 'Kurs sharhi',
+    'lesson.steps': 'Dars bosqichlari',
     'lesson.phase.learn.doing': 'Men qilaman',
     'lesson.phase.learn.title': 'O’rganish',
     'lesson.phase.guided.doing': 'Birga qilamiz',

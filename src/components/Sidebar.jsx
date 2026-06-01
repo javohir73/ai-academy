@@ -37,7 +37,7 @@ export default function Sidebar({
     <aside
       ref={panelRef}
       className={`sidebar${open ? ' sidebar--open' : ''}`}
-      aria-label="Course navigation"
+      aria-label={t('nav.courseNav')}
     >
       <div className="brand">
         <button className="brand__home" onClick={onHome} aria-label={t('nav.home')}>
@@ -66,7 +66,7 @@ export default function Sidebar({
         </div>
         <ProgressBar value={progress.completedCount} max={LEVELS.length} label="Overall course progress" />
         {progress.streak.current > 0 && (
-          <div className="streak" title={`Longest streak: ${progress.streak.longest} day${progress.streak.longest === 1 ? '' : 's'}`}>
+          <div className="streak" title={`${t('side.longestStreak')} ${progress.streak.longest} day${progress.streak.longest === 1 ? '' : 's'}`}>
             <Flame size={15} aria-hidden="true" />
             <span>
               <strong>{progress.streak.current}-day</strong> {t('side.streak.suffix')}

@@ -114,7 +114,7 @@ export default function LevelView({
       </header>
 
       {/* Phase stepper — the gradual-release path through the lesson. */}
-      <nav className="phase-steps" aria-label="Lesson steps">
+      <nav className="phase-steps" aria-label={t('lesson.steps')}>
         {phases.map((p, i) => {
           const meta = PHASE_META[p]
           const StepIcon = meta.Icon
