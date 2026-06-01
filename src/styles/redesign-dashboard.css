@@ -21,13 +21,80 @@
   cursor: pointer;
   transition: color 0.12s ease, background 0.12s ease;
 }
+
 .topbar__nav:hover {
   color: var(--text);
   background: var(--surface-2);
 }
+
 .topbar__nav--active {
   color: var(--accent);
   background: var(--accent-soft);
+}
+
+/* ---------------------------------------------------------------------
+   Mobile topbar polish (Phase 1 follow-up). The course topbar only shows
+   at <=900px (it's a flex row: menu · brand · Dashboard nav · spacer ·
+   account). On narrow phones the brand was wrapping and the account chip
+   was stacking. Fixes, all scoped to the topbar:
+     - brand never wraps,
+     - the secondary "Dashboard" text link is hidden on mobile (it lives in
+       the hamburger drawer sidebar instead),
+     - the local-only "Saved on this device" chip becomes icon-only,
+     - the anonymous "Sign in" label is hidden (icon-only), as on Home.
+   The drawer sidebar still exposes Dashboard + Course overview, so no
+   navigation is lost.
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .topbar {
+    gap: var(--s2);
+  }
+
+  .topbar__brand {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  /* Secondary nav link is redundant on mobile — the drawer has it. */
+  .topbar .topbar__nav {
+    display: none;
+  }
+
+  /* Local-only chip → icon only (no wrapping text). */
+  .topbar .account-local {
+    gap: 0;
+  }
+
+  .topbar .account-local__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Anonymous "Sign in" → icon only, matching the Home nav treatment. */
+  .topbar .account-signin .account-signin__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .topbar .account-signin {
+    padding: var(--s2);
+    min-width: 40px;
+    justify-content: center;
+  }
 }
 
 .dash {
@@ -46,12 +113,14 @@
   justify-content: space-between;
   gap: var(--s3);
 }
+
 .dash__title {
   margin: 0.15rem 0 0.35rem;
   font-size: clamp(1.5rem, 4vw, 2.1rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
+
 .dash__sub {
   margin: 0;
   color: var(--text-2);
@@ -73,9 +142,11 @@
   font-weight: 600;
   white-space: nowrap;
 }
+
 .dash-account svg {
   flex: 0 0 auto;
 }
+
 .dash-account--in {
   color: var(--emerald-strong, var(--emerald, #059669));
   border-color: var(--emerald-soft, var(--border));
@@ -98,10 +169,12 @@
   box-shadow: var(--elev-3, 0 12px 28px rgba(16, 24, 40, 0.16));
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
 .dash-continue:hover {
   transform: translateY(-2px);
   box-shadow: var(--elev-4, 0 18px 40px rgba(16, 24, 40, 0.22));
 }
+
 .dash-continue--done {
   cursor: default;
   background: var(--surface);
@@ -109,6 +182,7 @@
   border-color: var(--border);
   box-shadow: var(--elev-1, 0 1px 2px rgba(16, 24, 40, 0.06));
 }
+
 .dash-continue__icon {
   flex: 0 0 auto;
   display: inline-flex;
@@ -119,10 +193,12 @@
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.18);
 }
+
 .dash-continue--done .dash-continue__icon {
   background: var(--accent-soft);
   color: var(--accent);
 }
+
 .dash-continue__body {
   display: flex;
   flex-direction: column;
@@ -130,6 +206,7 @@
   min-width: 0;
   flex: 1 1 auto;
 }
+
 .dash-continue__eyebrow {
   font-size: 0.74rem;
   font-weight: 700;
@@ -137,18 +214,22 @@
   text-transform: uppercase;
   opacity: 0.92;
 }
+
 .dash-continue__title {
   font-size: clamp(1.1rem, 3vw, 1.4rem);
   font-weight: 700;
   line-height: 1.2;
 }
+
 .dash-continue__meta {
   font-size: 0.85rem;
   opacity: 0.9;
 }
+
 .dash-continue--done .dash-continue__meta {
   color: var(--text-2);
 }
+
 .dash-continue__cta {
   flex: 0 0 auto;
   display: inline-flex;
@@ -166,6 +247,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: var(--s3);
 }
+
 .dash-stat {
   display: flex;
   flex-direction: column;
@@ -176,6 +258,7 @@
   background: var(--surface);
   box-shadow: var(--elev-1, 0 1px 2px rgba(16, 24, 40, 0.06));
 }
+
 .dash-stat__icon {
   display: inline-flex;
   align-items: center;
@@ -185,25 +268,44 @@
   border-radius: 10px;
   margin-bottom: 0.35rem;
 }
+
 .dash-stat__value {
   font-size: 1.65rem;
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
+
 .dash-stat__label {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text);
 }
+
 .dash-stat__sub {
   font-size: 0.76rem;
   color: var(--text-3, var(--text-2));
 }
-.dash-stat--emerald .dash-stat__icon { background: var(--emerald-soft, #ecfdf5); color: var(--emerald-strong, #059669); }
-.dash-stat--amber .dash-stat__icon { background: #fef3c7; color: var(--star, #d97706); }
-.dash-stat--orange .dash-stat__icon { background: var(--orange-soft, #fff1e6); color: var(--orange-strong, #ea580c); }
-.dash-stat--violet .dash-stat__icon { background: var(--violet-soft, #f1edff); color: var(--violet, #7c3aed); }
+
+.dash-stat--emerald .dash-stat__icon {
+  background: var(--emerald-soft, #ecfdf5);
+  color: var(--emerald-strong, #059669);
+}
+
+.dash-stat--amber .dash-stat__icon {
+  background: #fef3c7;
+  color: var(--star, #d97706);
+}
+
+.dash-stat--orange .dash-stat__icon {
+  background: var(--orange-soft, #fff1e6);
+  color: var(--orange-strong, #ea580c);
+}
+
+.dash-stat--violet .dash-stat__icon {
+  background: var(--violet-soft, #f1edff);
+  color: var(--violet, #7c3aed);
+}
 
 /* ---- Cards ----------------------------------------------------------- */
 .dash-cols {
@@ -211,6 +313,7 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--s4);
 }
+
 .dash-card {
   padding: var(--s4) var(--s5);
   border-radius: var(--r-lg, 16px);
@@ -218,6 +321,7 @@
   background: var(--surface);
   box-shadow: var(--elev-1, 0 1px 2px rgba(16, 24, 40, 0.06));
 }
+
 .dash-card__title {
   display: flex;
   align-items: center;
@@ -226,9 +330,11 @@
   font-size: 1rem;
   font-weight: 700;
 }
+
 .dash-card__title svg {
   color: var(--accent);
 }
+
 .dash-empty {
   margin: 0;
   color: var(--text-2);
@@ -250,10 +356,12 @@
   cursor: pointer;
   transition: border-color 0.15s ease, transform 0.1s ease;
 }
+
 .dash-rec:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
 }
+
 .dash-rec__icon,
 .dash-list__icon,
 .dash-recent__icon {
@@ -267,6 +375,7 @@
   background: var(--accent-soft);
   color: var(--accent);
 }
+
 .dash-rec__body,
 .dash-list__text,
 .dash-recent__text {
@@ -276,6 +385,7 @@
   min-width: 0;
   flex: 1 1 auto;
 }
+
 .dash-rec__tag,
 .dash-list__tag {
   font-size: 0.7rem;
@@ -284,6 +394,7 @@
   text-transform: uppercase;
   color: var(--text-3, var(--text-2));
 }
+
 .dash-rec__title,
 .dash-list__title,
 .dash-recent__title {
@@ -293,6 +404,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .dash-rec svg:last-child {
   color: var(--text-3, var(--text-2));
   flex: 0 0 auto;
@@ -307,6 +419,7 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
 .dash-list__row {
   display: flex;
   align-items: center;
@@ -320,6 +433,7 @@
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease;
 }
+
 .dash-list__row:hover {
   background: var(--surface-2);
   border-color: var(--border);
@@ -333,6 +447,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 0.6rem;
 }
+
 .dash-recent__item {
   display: flex;
   align-items: center;
@@ -350,6 +465,7 @@
   gap: var(--s3);
   margin-bottom: var(--s3);
 }
+
 .dash-link {
   display: inline-flex;
   align-items: center;
@@ -363,14 +479,17 @@
   padding: 0.25rem 0.4rem;
   border-radius: var(--r-sm, 8px);
 }
+
 .dash-link:hover {
   background: var(--accent-soft);
 }
+
 .dash-levels__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--s3);
 }
+
 .dash-level {
   display: flex;
   flex-direction: column;
@@ -384,24 +503,29 @@
   box-shadow: var(--elev-1, 0 1px 2px rgba(16, 24, 40, 0.06));
   transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
+
 .dash-level:hover:not(:disabled) {
   transform: translateY(-2px);
   border-color: var(--accent);
   box-shadow: var(--elev-2, 0 6px 16px rgba(16, 24, 40, 0.1));
 }
+
 .dash-level:disabled {
   cursor: not-allowed;
   opacity: 0.62;
 }
+
 .dash-level--done {
   border-color: var(--emerald-soft, var(--border));
   background: var(--emerald-soft, var(--surface));
 }
+
 .dash-level__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 .dash-level__tag {
   display: inline-flex;
   align-items: center;
@@ -412,6 +536,7 @@
   text-transform: uppercase;
   color: var(--text-3, var(--text-2));
 }
+
 .dash-level__pro {
   font-size: 0.6rem;
   font-weight: 800;
@@ -421,25 +546,30 @@
   background: var(--violet-soft, #f1edff);
   color: var(--violet, #7c3aed);
 }
+
 .dash-level__badge {
   display: inline-flex;
   color: var(--text-3, var(--text-2));
 }
+
 .dash-level--done .dash-level__badge {
   color: var(--emerald-strong, #059669);
 }
+
 .dash-level__name {
   margin: 0;
   font-size: 0.98rem;
   font-weight: 700;
   line-height: 1.25;
 }
+
 .dash-level__bar {
   height: 0.5rem;
   border-radius: 999px;
   background: var(--surface-2);
   overflow: hidden;
 }
+
 .dash-level__fill {
   display: block;
   height: 100%;
@@ -447,9 +577,11 @@
   background: var(--accent-grad, var(--accent));
   transition: width 0.3s ease;
 }
+
 .dash-level--done .dash-level__fill {
   background: var(--emerald-strong, #059669);
 }
+
 .dash-level__meta {
   font-size: 0.78rem;
   color: var(--text-2);
@@ -470,9 +602,11 @@
   .dash-stats {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .dash-cols {
     grid-template-columns: 1fr;
   }
+
   .dash-levels__grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -482,25 +616,33 @@
   .dash {
     gap: var(--s4);
   }
+
   .dash__head {
     flex-direction: column;
   }
+
   .dash-continue {
     padding: var(--s4);
     gap: var(--s3);
   }
+
   .dash-continue__cta {
-    display: none; /* the whole card is tappable; arrow is decorative */
+    display: none;
+    /* the whole card is tappable; arrow is decorative */
   }
+
   .dash-levels__grid {
     grid-template-columns: 1fr;
   }
+
   .dash-recent {
     grid-template-columns: 1fr;
   }
+
   .dash-foot {
     justify-content: stretch;
   }
+
   .dash-foot .btn {
     flex: 1 1 auto;
     justify-content: center;
