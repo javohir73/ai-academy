@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { X, Cloud, Sparkles } from 'lucide-react'
+import { useLanguage } from '../i18n/useLanguage.js'
 
 /*
  * AccountPrompt — a subtle, dismissible nudge to create an account, shown only
@@ -16,6 +17,7 @@ const DISMISS_KEY = 'ai-academy:account-prompt-dismissed.v1'
 const THRESHOLD = 3
 
 export default function AccountPrompt({ configured, user, completedCount, onSignUpClick }) {
+  const { t } = useLanguage()
   const [dismissed, setDismissed] = useState(() => {
     try {
       return localStorage.getItem(DISMISS_KEY) === '1'
@@ -48,8 +50,8 @@ export default function AccountPrompt({ configured, user, completedCount, onSign
   }
 
   return (
-    <div className={`account-prompt glass-card${entered ? ' account-prompt--in' : ''}`} role="region" aria-label="Save your progress">
-      <button className="account-prompt__close" onClick={dismiss} aria-label="Dismiss">
+    <div className={`account-prompt glass-card${entered ? ' account-prompt--in' : ''}`} role="region" aria-label={t('prompt.region')}>
+      <button className="account-prompt__close" onClick={dismiss} aria-label={t('prompt.dismiss')}>
         <X size={16} />
       </button>
       <div className="account-prompt__icon" aria-hidden="true">
@@ -57,17 +59,17 @@ export default function AccountPrompt({ configured, user, completedCount, onSign
       </div>
       <div className="account-prompt__body">
         <p className="account-prompt__title">
-          <Sparkles size={14} aria-hidden="true" /> Nice progress — {completedCount} lessons done!
+          <Sparkles size={14} aria-hidden="true" /> {t('prompt.title.prefix')} {completedCount} {t('prompt.title.suffix')}
         </p>
         <p className="account-prompt__text">
-          Create a free account to save your stars and streak to the cloud and pick up on any device.
+          {t('prompt.text')}
         </p>
         <div className="account-prompt__actions">
           <button className="btn btn--primary" onClick={onSignUpClick}>
-            Save my progress
+            {t('prompt.save')}
           </button>
           <button className="link-btn" onClick={dismiss}>
-            Not now
+            {t('prompt.notNow')}
           </button>
         </div>
       </div>
