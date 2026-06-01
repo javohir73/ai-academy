@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { buildDashboardModel } from '../data/dashboardModel.js'
 import { useLanguage } from '../i18n/useLanguage.js'
+import { useLocalizedTracks } from '../i18n/useLocalizedTracks.js'
 import { iconForLevel } from './levelIcons.js'
 import Stars from './Stars.jsx'
 
@@ -47,7 +48,8 @@ export default function Dashboard({
   onHome,
 }) {
   const { t } = useLanguage()
-  const m = buildDashboardModel(progress)
+  const { tracksWithOffsets } = useLocalizedTracks()
+  const m = buildDashboardModel(progress, tracksWithOffsets)
 
   return (
     <div className="dash">
