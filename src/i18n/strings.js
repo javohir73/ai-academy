@@ -51,6 +51,7 @@ export const UI = {
     'overview.aria.completedPre': 'Completed, ',
     'overview.aria.completedPost': ' of 3 stars.',
     'overview.aria.open': 'Open lesson.',
+    'overview.unlockAsYouGo': 'unlock as you go',
 
     // dashboard chrome
     'dash.eyebrow': 'Your dashboard',
@@ -541,6 +542,7 @@ export const UI = {
     'overview.aria.completedPre': 'Yakunlangan, 3 tadan ',
     'overview.aria.completedPost': ' ta yulduz.',
     'overview.aria.open': 'Darsni ochish.',
+    'overview.unlockAsYouGo': 'bosqichma-bosqich ochiladi',
 
     // dashboard chrome
     'dash.eyebrow': 'Sizning boshqaruv panelingiz',

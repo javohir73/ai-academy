@@ -30,6 +30,30 @@
 
 :root {
   /* ---------------------------------------------------------------
+     0. CANONICAL BREAKPOINTS (single source of truth)
+     ---------------------------------------------------------------
+     CSS custom properties cannot be used inside @media conditions, so
+     these can't be referenced as `@media (max-width: var(--bp-md))`.
+     They are the DOCUMENTED set every stylesheet must use — pick the
+     nearest value below instead of inventing a new one. Keeps responsive
+     behavior consistent and avoids near-duplicate breakpoints.
+
+       --bp-sm:  480px   small phones
+       --bp-md:  640px   large phones / phablet
+       --bp-tab: 768px   tablet (standard)
+       --bp-nav: 900px   sidebar drawer ↔ rail switch
+       --bp-lg: 1024px   desktop
+
+     Note: the capstone layout intentionally uses a non-overlapping
+     800/799 min/max PAIR (not a duplicate) — leave it as is.
+     --------------------------------------------------------------- */
+  --bp-sm: 480px;
+  --bp-md: 640px;
+  --bp-tab: 768px;
+  --bp-nav: 900px;
+  --bp-lg: 1024px;
+
+  /* ---------------------------------------------------------------
      1. VIBRANT ACCENT FAMILIES
      Each family: base + soft/tint (for fills/backgrounds) + gradient.
      Existing cyan / electric / indigo / violet live in global.css; we
