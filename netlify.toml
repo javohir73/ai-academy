@@ -3,6 +3,15 @@
   command = "npm run build"
   publish = "dist"
 
+# SPA fallback: client-side routes (/dashboard, /learn, /learn/:lessonId) must
+# serve index.html so a deep link or refresh doesn't 404. Netlify serves real
+# static files first, so this only catches app routes. (Vercel: see rewrites in
+# vercel.json.)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 [build.environment]
   NODE_VERSION = "20"
 
