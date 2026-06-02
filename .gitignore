@@ -25,3 +25,5 @@ npm-debug.log*
 
 # external review artifacts
 ai-academy-code-review.md
+ai-academy-design-review.md
+*-review.md
