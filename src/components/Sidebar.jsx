@@ -93,7 +93,7 @@ export default function Sidebar({
       )}
 
       <button
-        className={`nav__item${view === 'overview' ? ' nav__item--active' : ''}`}
+        className={`nav__item${view === 'catalog' ? ' nav__item--active' : ''}`}
         onClick={onOverview}
         style={{ marginBottom: 'var(--s3)' }}
       >
@@ -101,7 +101,7 @@ export default function Sidebar({
           <GraduationCap size={18} />
         </span>
         <span className="nav__body">
-          <span className="nav__title">{t('nav.overview')}</span>
+          <span className="nav__title">{t('nav.curriculum')}</span>
         </span>
       </button>
 
