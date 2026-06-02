@@ -64,7 +64,6 @@ function loadInitial() {
 export function useProgress(user = null) {
   const [state, setState] = useState(loadInitial)
   const [syncState, setSyncState] = useState('idle') // idle|syncing|saved|offline|error
-  const [syncNonce, setSyncNonce] = useState(0) // bump to force a cloud re-merge (manual retry)
   const userId = user?.id ?? null
   const mergedForUser = useRef(null) // which userId we've already merged for this session
   const saveTimer = useRef(null)
@@ -113,7 +112,7 @@ export function useProgress(user = null) {
     return () => {
       active = false
     }
-  }, [userId, syncNonce])
+  }, [userId])
 
   // Reset the "merged" guard when the user logs out, so a later login re-merges.
   useEffect(() => {
@@ -165,14 +164,6 @@ export function useProgress(user = null) {
   const setOnboarded = useCallback(() => {
     setState((s) => (s.onboarded ? s : { ...s, onboarded: true }))
   }, [])
-
-  // Manual retry for a failed cloud merge (used by the marketing-error banner).
-  // Clears the per-user merge guard and bumps the nonce so the merge effect re-runs.
-  const retrySync = useCallback(() => {
-    if (!userId) return
-    mergedForUser.current = null
-    setSyncNonce((n) => n + 1)
-  }, [userId])
 
   /**
    * Record a level as complete. Keeps the learner's BEST star score, and
@@ -239,6 +230,5 @@ export function useProgress(user = null) {
     completedCount,
     streak,
     syncState: userId ? syncState : 'idle',
-    retrySync,
   }
 }

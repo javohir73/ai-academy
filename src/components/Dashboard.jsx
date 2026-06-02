@@ -36,6 +36,7 @@ import Stars from './Stars.jsx'
  *   syncState   — 'idle'|'syncing'|'saved'|'offline'|'error'
  *   onOpenLevel(flatIndex) — open a lesson by its flat index
  *   onOverview() — go to the full course overview
+ *   onHome()     — go to the marketing home
  */
 export default function Dashboard({
   progress,
@@ -44,6 +45,7 @@ export default function Dashboard({
   syncState = 'idle',
   onOpenLevel,
   onOverview,
+  onHome,
 }) {
   const { t } = useLanguage()
   const { tracksWithOffsets } = useLocalizedTracks()
@@ -234,8 +236,11 @@ export default function Dashboard({
         </div>
       </section>
 
-      {/* ---- Footer CTA — the dashboard IS home, so one action: browse. -- */}
+      {/* ---- Footer CTA -------------------------------------------------- */}
       <div className="dash-foot">
+        <button className="btn btn--secondary" onClick={onHome}>
+          {t('dash.foot.home')}
+        </button>
         <button className="btn btn--primary" onClick={onOverview}>
           {t('dash.foot.browse')} <ArrowRight size={18} aria-hidden="true" />
         </button>

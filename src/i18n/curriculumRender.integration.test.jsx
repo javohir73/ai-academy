@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { LanguageProvider, LANG_STORAGE_KEY } from './LanguageProvider.jsx'
-import Catalog from '../components/Catalog.jsx'
+import Overview from '../components/Overview.jsx'
 import { LEVELS } from '../data/tracks.js'
 import { __resetCurriculumUzForTest } from './loadCurriculumUz.js'
 
@@ -25,7 +25,7 @@ const progress = {
 function renderOverview() {
   return render(
     <LanguageProvider>
-      <Catalog progress={progress} currentIndex={0} onOpenLevel={() => {}} />
+      <Overview progress={progress} currentIndex={0} onOpenLevel={() => {}} />
     </LanguageProvider>,
   )
 }
