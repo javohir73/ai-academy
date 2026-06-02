@@ -6,7 +6,8 @@ import { useLocalizedTracks } from './i18n/useLocalizedTracks.js'
 import { useProgress } from './hooks/useProgress.js'
 import { useAuth } from './hooks/useAuth.js'
 import Sidebar from './components/Sidebar.jsx'
-import Overview from './components/Overview.jsx'
+import Catalog from './components/Catalog.jsx'
+import HomeError from './components/HomeError.jsx'
 import LevelView from './components/LevelView.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import HomePage from './components/HomePage.jsx'
@@ -19,33 +20,34 @@ import { hasSavedLanguage } from './i18n/LanguageProvider.jsx'
 import { useLanguage } from './i18n/useLanguage.js'
 
 /*
- * App is the layout shell. It has four views, tracked in `view`:
- *   'home'      — the marketing/landing page (HomePage), shown first
- *   'dashboard' — the learner's home base (progress, continue, review)
- *   'overview'  — the course home (lesson grid)
- *   'lesson'    — a single lesson
- * Home is a full-bleed page with no sidebar; the course views keep the
- * persistent sidebar (a slide-in drawer on mobile). Using view state instead
- * of a router keeps deployment a plain static build (no SPA rewrites needed).
+ * App is the layout shell. The rendered view is derived from the URL + progress:
+ *   'home'      — the marketing/landing page (HomePage); new visitors at /
+ *   'deciding'  — neutral shell while a signed-in user's cloud progress resolves
+ *   'dashboard' — the learner's home base (progress, continue, review); / when
+ *                 the learner has progress (the progress-aware home)
+ *   'catalog'   — the course browse grid (/learn)
+ *   'lesson'    — a single lesson (/learn/:lessonId)
+ * Home/deciding are full-bleed pages with no sidebar; the course views keep the
+ * persistent sidebar (a slide-in drawer on mobile).
  */
-// Map a URL pathname to the app's view + lesson index. The URL is the single
-// source of navigation truth (deep-linkable, bookmarkable, back/forward-safe):
-//   /                  → home
-//   /dashboard         → dashboard
-//   /learn             → overview (the course map)
-//   /learn/:lessonId   → a single lesson (lessonId is the STABLE lesson id)
-// An unknown lessonId falls back to overview so a bad link never crashes.
+// Map a URL pathname to a BASE view + lesson index. The URL is the single
+// source of navigation truth (deep-linkable, bookmarkable, back/forward-safe).
+//   /                  → 'home'    (resolved to dashboard/home/deciding in the body)
+//   /dashboard         → 'home'    (legacy; redirected to / by an effect)
+//   /learn             → 'catalog' (the browse view)
+//   /learn/:lessonId   → 'lesson'  (lessonId is the STABLE lesson id)
+// An unknown lessonId falls back to the catalog so a bad link never crashes.
 function viewFromPath(pathname) {
-  if (pathname === '/dashboard') return { view: 'dashboard', levelIndex: 0 }
+  if (pathname === '/dashboard') return { view: 'home', levelIndex: 0 }
   if (pathname === '/learn' || pathname === '/learn/') {
-    return { view: 'overview', levelIndex: 0 }
+    return { view: 'catalog', levelIndex: 0 }
   }
   const lessonMatch = pathname.match(/^\/learn\/([^/]+)\/?$/)
   if (lessonMatch) {
     const lessonId = decodeURIComponent(lessonMatch[1])
     const idx = LEVELS.findIndex((l) => l.id === lessonId)
     if (idx >= 0) return { view: 'lesson', levelIndex: idx }
-    return { view: 'overview', levelIndex: 0 } // unknown id → the map
+    return { view: 'catalog', levelIndex: 0 } // unknown id → the catalog
   }
   return { view: 'home', levelIndex: 0 }
 }
@@ -58,8 +60,28 @@ export default function App() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // Navigation derives entirely from the URL (no view/levelIndex state).
-  const { view, levelIndex } = viewFromPath(location.pathname)
+  // Navigation derives from the URL; the home view is then resolved by progress.
+  const { view: baseView, levelIndex } = viewFromPath(location.pathname)
+
+  // Progress-aware home: '/' shows the dashboard for returning learners and the
+  // marketing page for new visitors. completedCount is read synchronously from
+  // localStorage on first paint, so most users resolve immediately. The one race
+  // is a signed-in user whose local store is empty while the cloud fetch is in
+  // flight (or has errored):
+  //   - syncing → 'deciding' (neutral shell, NOT marketing) until it resolves;
+  //   - error   → marketing + a quiet Retry banner (spec Decision A).
+  const hasProgress = progress.completedCount > 0
+  const cloudPending =
+    Boolean(auth.user) && progress.completedCount === 0 && progress.syncState === 'syncing'
+  const cloudErrored =
+    Boolean(auth.user) && progress.completedCount === 0 && progress.syncState === 'error'
+
+  let view = baseView
+  if (baseView === 'home') {
+    if (hasProgress) view = 'dashboard'
+    else if (cloudPending) view = 'deciding'
+    else view = 'home'
+  }
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
@@ -76,6 +98,13 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [location.pathname])
+
+  // /dashboard is a legacy URL — the home (/) is now progress-aware and shows the
+  // dashboard to returning learners. Keep old bookmarks working without creating
+  // a second canonical URL for the same surface.
+  useEffect(() => {
+    if (location.pathname === '/dashboard') navigate('/', { replace: true })
+  }, [location.pathname, navigate])
 
   // The next lesson to play: first unlocked + not completed (-1 if all done).
   const currentIndex = LEVELS.findIndex(
@@ -140,7 +169,7 @@ export default function App() {
     navigate(`/learn/${encodeURIComponent(LEVELS[index].id)}`)
   }
 
-  function goOverview() {
+  function goCatalog() {
     setSidebarOpen(false)
     navigate('/learn')
   }
@@ -148,7 +177,7 @@ export default function App() {
   function goDashboard() {
     progress.setOnboarded()
     setSidebarOpen(false)
-    navigate('/dashboard')
+    navigate('/')
   }
 
   function goHome() {
@@ -221,11 +250,31 @@ export default function App() {
 
   const isLastLevel = levelIndex >= LEVELS.length - 1
 
-  // Home is a standalone full-bleed page (no sidebar chrome).
+  // Neutral "deciding" shell: a signed-in user with empty local progress while
+  // the cloud merge is in flight. Show brand + a quiet spinner, never marketing
+  // (which would flash before their dashboard resolves).
+  if (view === 'deciding') {
+    return (
+      <main className="fade-in deciding">
+        <div className="deciding__brand">AI Academy</div>
+        <div className="deciding__spinner" aria-label={t('sync.syncing')} role="status" />
+        {authChrome}
+      </main>
+    )
+  }
+
+  // Home is a standalone full-bleed page (no sidebar chrome). On a cloud-load
+  // failure for a signed-in, locally-empty user, the marketing page also shows a
+  // quiet Retry banner (Decision A) that re-triggers the merge.
   if (view === 'home') {
     return (
       <main className="fade-in">
-        <HomePage onStart={enterCourse} onExplore={exploreCurriculum} accountSlot={accountMenu} />
+        <HomePage
+          onStart={enterCourse}
+          onExplore={exploreCurriculum}
+          accountSlot={accountMenu}
+          errorSlot={cloudErrored ? <HomeError onRetry={progress.retrySync} /> : null}
+        />
         {authChrome}
       </main>
     )
@@ -242,7 +291,7 @@ export default function App() {
         open={sidebarOpen}
         onHome={goHome}
         onDashboard={goDashboard}
-        onOverview={goOverview}
+        onOverview={goCatalog}
         onSelectLevel={openLevel}
         onClose={() => setSidebarOpen(false)}
         accountSlot={accountMenu}
@@ -285,18 +334,17 @@ export default function App() {
               configured={auth.configured}
               syncState={progress.syncState}
               onOpenLevel={openLevel}
-              onOverview={goOverview}
-              onHome={goHome}
+              onOverview={goCatalog}
             />
-          ) : view === 'overview' ? (
-            <Overview progress={progress} currentIndex={currentIndex} onOpenLevel={openLevel} />
+          ) : view === 'catalog' ? (
+            <Catalog progress={progress} currentIndex={currentIndex} onOpenLevel={openLevel} />
           ) : (
             <LevelView
               level={localizedLevels[levelIndex]}
               levelIndex={levelIndex}
               totalLevels={localizedLevels.length}
               onComplete={progress.completeLevel}
-              onBack={goOverview}
+              onBack={goCatalog}
               onNext={isLastLevel ? null : () => openLevel(levelIndex + 1)}
             />
           )}
