@@ -22,3 +22,6 @@ npm-debug.log*
 *.local
 
 .claude/
+
+# external review artifacts
+ai-academy-code-review.md
