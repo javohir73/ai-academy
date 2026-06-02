@@ -40,13 +40,15 @@
     display: inline;
   }
 }
-/* On narrow screens, the globe + EN/UZ codes stay compact (no overflow). */
+/* On narrow screens, the globe + EN/UZ codes stay compact (no overflow), but
+   each option gets a ≥44px touch target (WCAG 2.5.5 / Apple HIG). */
 @media (max-width: 480px) {
   .lang-switch__icon {
     margin: 0 2px 0 4px;
   }
   .lang-switch__opt {
     padding: 4px 8px;
+    min-height: 44px;
   }
 }
 

@@ -59,6 +59,13 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
               <p className="muted" style={{ margin: 0 }}>
                 {track.blurb}
               </p>
+              {/* Reframe the chained-unlock model as a journey, not a gate. */}
+              <p className="track-count">
+                {track.levels.length}{' '}
+                {track.levels.length === 1 ? t('home.lesson.one') : t('home.lesson.many')}
+                {' · '}
+                {t('overview.unlockAsYouGo')}
+              </p>
               {track.comingSoon && (
                 <p className="track-comingsoon">{track.comingSoon}</p>
               )}
@@ -101,7 +108,10 @@ export default function Overview({ progress, currentIndex, onOpenLevel }) {
                     }
                   >
                     <span className="module-icon" aria-hidden="true">
-                      {locked ? <Lock size={20} /> : <Icon size={22} />}
+                      {/* Always show the lesson's topic icon — even when locked —
+                          so upcoming lessons invite ("here's what's ahead") rather
+                          than forbid. The single lock lives in the status slot. */}
+                      <Icon size={22} />
                     </span>
                     <span className="module-card__body">
                       <span className="module-card__index">{t('lesson.crumb')} {index + 1}</span>

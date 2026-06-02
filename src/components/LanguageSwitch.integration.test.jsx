@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { LanguageProvider, LANG_STORAGE_KEY } from '../i18n/LanguageProvider.jsx'
 import App from '../App.jsx'
 
@@ -11,9 +12,11 @@ beforeEach(() => {
 
 function renderApp() {
   return render(
-    <LanguageProvider>
-      <App />
-    </LanguageProvider>,
+    <MemoryRouter initialEntries={['/']}>
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
+    </MemoryRouter>,
   )
 }
 

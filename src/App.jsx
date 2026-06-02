@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { LEVELS } from './data/tracks.js'
 import { useLocalizedTracks } from './i18n/useLocalizedTracks.js'
@@ -27,13 +28,39 @@ import { useLanguage } from './i18n/useLanguage.js'
  * persistent sidebar (a slide-in drawer on mobile). Using view state instead
  * of a router keeps deployment a plain static build (no SPA rewrites needed).
  */
+// Map a URL pathname to the app's view + lesson index. The URL is the single
+// source of navigation truth (deep-linkable, bookmarkable, back/forward-safe):
+//   /                  → home
+//   /dashboard         → dashboard
+//   /learn             → overview (the course map)
+//   /learn/:lessonId   → a single lesson (lessonId is the STABLE lesson id)
+// An unknown lessonId falls back to overview so a bad link never crashes.
+function viewFromPath(pathname) {
+  if (pathname === '/dashboard') return { view: 'dashboard', levelIndex: 0 }
+  if (pathname === '/learn' || pathname === '/learn/') {
+    return { view: 'overview', levelIndex: 0 }
+  }
+  const lessonMatch = pathname.match(/^\/learn\/([^/]+)\/?$/)
+  if (lessonMatch) {
+    const lessonId = decodeURIComponent(lessonMatch[1])
+    const idx = LEVELS.findIndex((l) => l.id === lessonId)
+    if (idx >= 0) return { view: 'lesson', levelIndex: idx }
+    return { view: 'overview', levelIndex: 0 } // unknown id → the map
+  }
+  return { view: 'home', levelIndex: 0 }
+}
+
 export default function App() {
   const auth = useAuth()
   const progress = useProgress(auth.user)
   const { levels: localizedLevels } = useLocalizedTracks()
   const { t } = useLanguage()
-  const [view, setView] = useState('home') // 'home' | 'dashboard' | 'overview' | 'lesson'
-  const [levelIndex, setLevelIndex] = useState(0)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // Navigation derives entirely from the URL (no view/levelIndex state).
+  const { view, levelIndex } = viewFromPath(location.pathname)
+
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
   const [authMode, setAuthMode] = useState('signin')
@@ -44,10 +71,25 @@ export default function App() {
   const sidebarRef = useRef(null)
   const wasOpen = useRef(false)
 
+  // Reset scroll on every navigation (each view starts at the top), matching
+  // the behavior the old per-handler window.scrollTo calls provided.
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [location.pathname])
+
   // The next lesson to play: first unlocked + not completed (-1 if all done).
   const currentIndex = LEVELS.findIndex(
     (lvl, i) => progress.isUnlocked(i) && !progress.completed[lvl.id],
   )
+
+  // A deep link to a LOCKED lesson (e.g. someone shares /learn/cv-build-cnn
+  // before earlier lessons are done) gracefully redirects to the course map
+  // instead of rendering a lesson the unlock rules forbid.
+  useEffect(() => {
+    if (view === 'lesson' && !progress.isUnlocked(levelIndex)) {
+      navigate('/learn', { replace: true })
+    }
+  }, [view, levelIndex, progress, navigate])
 
   const isMobile = () => window.matchMedia('(max-width: 900px)').matches
 
@@ -93,30 +135,25 @@ export default function App() {
 
   function openLevel(index) {
     if (!progress.isUnlocked(index)) return
-    setLevelIndex(index)
-    setView('lesson')
     setSidebarOpen(false)
     progress.setOnboarded()
-    window.scrollTo({ top: 0 })
+    navigate(`/learn/${encodeURIComponent(LEVELS[index].id)}`)
   }
 
   function goOverview() {
-    setView('overview')
     setSidebarOpen(false)
-    window.scrollTo({ top: 0 })
+    navigate('/learn')
   }
 
   function goDashboard() {
     progress.setOnboarded()
-    setView('dashboard')
     setSidebarOpen(false)
-    window.scrollTo({ top: 0 })
+    navigate('/dashboard')
   }
 
   function goHome() {
-    setView('home')
     setSidebarOpen(false)
-    window.scrollTo({ top: 0 })
+    navigate('/')
   }
 
   async function handleSignOut() {

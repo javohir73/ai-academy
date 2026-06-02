@@ -240,8 +240,9 @@ a {
 .icon-btn {
   display: inline-grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  /* ≥44px hit target (WCAG 2.5.5 / Apple HIG). */
+  width: 44px;
+  height: 44px;
   border-radius: var(--r-sm);
   border: 1px solid var(--border);
   background: var(--surface);
@@ -1405,7 +1406,7 @@ input[type='range'] {
   margin-top: 2px;
   color: var(--accent-strong);
 }
-@media (min-width: 760px) {
+@media (min-width: 768px) {
   .pipeline {
     flex-direction: row;
     align-items: stretch;
@@ -1709,6 +1710,12 @@ input[type='range'] {
 .track-section__head h2 {
   margin: var(--s2) 0 var(--s1);
 }
+.track-count {
+  margin: var(--s2) 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
 .track-chip {
   display: inline-block;
   font-size: 0.7rem;
@@ -1865,7 +1872,7 @@ input[type='range'] {
   grid-template-columns: 1fr;
   gap: var(--s3);
 }
-@media (min-width: 620px) {
+@media (min-width: 640px) {
   .compare {
     grid-template-columns: 1fr 1fr;
   }
