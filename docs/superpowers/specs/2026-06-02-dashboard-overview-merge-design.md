@@ -30,10 +30,19 @@ pure browse view.
 3. **Dashboard `LevelCard` is a per-level rollup only** — it has no per-lesson detail
    and no `concept` text. It cannot replace the catalog's browse affordance, so the
    catalog must survive as its own route.
-4. **The Sidebar is navigation, not a catalog.** It lists all lessons as a nav list
-   (an affordance to *jump*), not a browse-and-discover surface with concepts/blurbs.
+4. **The Sidebar is a jump-nav list, not a browse grid.** It lists all lessons as a
+   vertical nav list whose rows jump you to a lesson — and it *does* show
+   `level.concept` as a row subtitle (line 162), so it is not concept-free. The
+   distinction that matters: it is a navigation affordance (jump to a known lesson),
+   not a browse-and-discover card grid where a learner scans concepts/blurbs to decide
+   what to open. The catalog provides the latter; the sidebar does not.
 5. **`HomePage` `onExplore` scrolls to a `#curriculum` section on the marketing page
    itself** — it is NOT an Overview entry point and is unaffected by this change.
+6. **`goOverview` has FOUR call sites in `App.jsx`** (verified by grep): Dashboard
+   `onOverview` (line 245), Sidebar `onOverview` (line 288), and — the easy-to-miss
+   one — `onBack={goOverview}` on the lesson screen (line 299). `goHome` has three
+   references (brand click line 266, Sidebar `onHome` line 289, Dashboard `onHome`
+   line 243); the function stays, only the Dashboard *prop* is removed.
 
 ## Section 1 — Routing & progress-aware home (LOCKED)
 
@@ -103,8 +112,16 @@ and 4 (neither the Dashboard rollup nor the Sidebar nav provides a browse surfac
 
 - `viewFromPath` per Section 1; render `home` / `dashboard` / `catalog` / `lesson` /
   the deciding shell.
-- `goOverview` → renamed `goCatalog`, `navigate('/learn')`.
+- `goOverview` → renamed `goCatalog`, `navigate('/learn')`. **Resolve all FOUR call
+  sites** (fact 6): Dashboard `onOverview`, Sidebar `onOverview`, and the lesson
+  `onBack`.
+- **Lesson Back button (`onBack`, line 299) — DECISION: back → `/learn` (catalog).**
+  Back from a lesson is a spatial "up one level" to the list the lesson belongs to,
+  which is the catalog — not the home. The blanket `goOverview → goCatalog` rename
+  produces this, but it is a stated decision, not an inherited side effect.
 - `goDashboard` → `navigate('/')`.
+- `goHome` function **stays** (brand click + Sidebar still use it). Only the Dashboard
+  `onHome` *prop* is removed; do not delete the function.
 - `enterCourse` logic unchanged (new → first lesson; returning → `/`).
 - Add the deciding-shell render and the marketing-error Retry banner wiring.
 
