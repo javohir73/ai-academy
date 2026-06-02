@@ -179,13 +179,14 @@ function StatsStrip({ lessonCount, t }) {
   )
 }
 
-export default function HomePage({ onStart, onExplore, accountSlot }) {
+export default function HomePage({ onStart, onExplore, accountSlot, errorSlot = null }) {
   const { t } = useLanguage()
   const { levels } = useLocalizedTracks()
   const lessonCount = levels.length
 
   return (
     <div className="home">
+      {errorSlot}
       {/* Top nav */}
       <nav className="home__nav" aria-label={t('home.nav.aria')}>
         <span className="brand">
