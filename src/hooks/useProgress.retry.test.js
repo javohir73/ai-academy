@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useProgress } from './useProgress.js'
 import * as cloud from '../utils/cloudProgressService.js'
@@ -10,6 +10,8 @@ beforeEach(() => {
   vi.restoreAllMocks()
   vi.spyOn(cloud, 'isConfigured').mockReturnValue(true)
 })
+
+afterEach(() => vi.restoreAllMocks())
 
 describe('useProgress retrySync', () => {
   it('re-runs the cloud merge after a failure when retrySync() is called', async () => {
@@ -24,7 +26,7 @@ describe('useProgress retrySync', () => {
     await waitFor(() => expect(result.current.syncState).toBe('error'))
     expect(fetchSpy).toHaveBeenCalledTimes(1)
 
-    act(() => result.current.retrySync())
+    await act(async () => { result.current.retrySync() })
 
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2))
     await waitFor(() => expect(result.current.syncState).toBe('saved'))
