@@ -15,7 +15,8 @@
  *     updated_at timestamptz }
  */
 
-const URL = import.meta.env?.VITE_SUPABASE_URL
+// Note: named SUPABASE_URL (not URL) to avoid shadowing the global URL constructor.
+const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL
 const ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY
 
 let client = null // lazily created real client (or an injected fake in tests)
@@ -25,7 +26,7 @@ let testClient = undefined // set by __setClientForTest
 /** True only when both public env vars are present. */
 export function isConfigured() {
   if (testClient !== undefined) return true
-  return Boolean(URL && ANON_KEY)
+  return Boolean(SUPABASE_URL && ANON_KEY)
 }
 
 /** TEST ONLY: inject a fake Supabase client. Use a fake to simulate "configured";
@@ -55,7 +56,7 @@ async function getClient() {
   if (client) return client
   if (!clientPromise) {
     clientPromise = import('@supabase/supabase-js').then(({ createClient }) => {
-      client = createClient(URL, ANON_KEY, {
+      client = createClient(SUPABASE_URL, ANON_KEY, {
         auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
       })
       return client

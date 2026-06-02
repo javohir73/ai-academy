@@ -24,10 +24,12 @@
      }
    }
 
-   The 10 lessons deliberately use 10 DIFFERENT activity formats (sorting,
-   pipeline ordering, dataset choice, matching, visual classification, a
-   slider simulator, a bias grid, a model comparison, a network builder, and
-   scenario cards) so the course teaches by doing, not by repetitive quizzes.
+   These beginner lessons (L0–L2 concept + first code lessons) deliberately use
+   many DIFFERENT activity formats (sorting, pipeline ordering, dataset choice,
+   matching, visual classification, a slider simulator, a bias grid, a model
+   comparison, a network builder, scenario cards, and a runnable notebook) so the
+   course teaches by doing, not by repetitive quizzes. The full curriculum
+   (composed in tracks.js across L0–L5) adds many more lesson types beyond this file.
    ===================================================================== */
 
 export const BEGINNER_LEVELS = [

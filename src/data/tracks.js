@@ -1,5 +1,5 @@
 /* =====================================================================
-   TRACKS — the course organized into curriculum LEVELS (L0, L1, L2, L3, L5).
+   TRACKS — the course organized into curriculum LEVELS (L0, L1, L2, L3, L4, L5).
 
    Concept-first model: beginner levels (L0, L1) are code-free; runnable-code
    lessons (kind: 'code') begin at L2 and are listed AFTER each level's concept
