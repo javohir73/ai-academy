@@ -33,7 +33,6 @@ function renderDash(progress, props = {}) {
         progress={progress}
         onOpenLevel={props.onOpenLevel ?? noop}
         onOverview={props.onOverview ?? noop}
-        onHome={props.onHome ?? noop}
         user={props.user ?? null}
         configured={props.configured ?? false}
         syncState={props.syncState ?? 'idle'}

@@ -3687,9 +3687,8 @@ body::before {
   border-radius: 50%;
   border: 3px solid var(--surface-2, rgba(0, 0, 0, 0.1));
   border-top-color: var(--accent, #6366f1);
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.8s linear infinite; /* reuses the @keyframes spin defined earlier in this file */
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
   .deciding__spinner { animation: none; }
 }
