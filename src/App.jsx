@@ -18,7 +18,7 @@ import { hasSavedLanguage } from './i18n/LanguageProvider.jsx'
 import { useLanguage } from './i18n/useLanguage.js'
 
 /*
- * App is the layout shell. It has three views, tracked in `view`:
+ * App is the layout shell. It has four views, tracked in `view`:
  *   'home'      — the marketing/landing page (HomePage), shown first
  *   'dashboard' — the learner's home base (progress, continue, review)
  *   'overview'  — the course home (lesson grid)
