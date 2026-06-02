@@ -3671,3 +3671,25 @@ body::before {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* Neutral home shell while a signed-in user's cloud progress is resolving. */
+.deciding {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  gap: var(--s4, 16px);
+  justify-items: center;
+}
+.deciding__brand { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.01em; }
+.deciding__spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--surface-2, rgba(0, 0, 0, 0.1));
+  border-top-color: var(--accent, #6366f1);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .deciding__spinner { animation: none; }
+}
